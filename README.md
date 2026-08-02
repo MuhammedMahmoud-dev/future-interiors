@@ -1,36 +1,99 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Future Interiors
 
-## Getting Started
+Portfolio and client-tracking site for an engineer-supervised apartment finishing
+practice. Next.js 16 (App Router) · Tailwind v4 · Supabase · Arabic-first with English.
 
-First, run the development server:
+**Phase 1 (this repo state):** database schema + the full public site.
+Phase 2: client portal (`/track`) + PDF statement. Phase 3: admin dashboard.
+
+## Setup
+
+1. **Environment.** Copy `.env.example` to `.env.local` and fill in from
+   Supabase → Project Settings → API:
+
+   ```
+   NEXT_PUBLIC_SUPABASE_URL=https://xxxx.supabase.co
+   SUPABASE_SERVICE_ROLE_KEY=...
+   ```
+
+   `SUPABASE_SERVICE_ROLE_KEY` bypasses RLS. It is server-only and must never be
+   given a `NEXT_PUBLIC_` prefix or imported into a client component.
+
+2. **Database.** In the Supabase SQL editor, run in order:
+
+   - `supabase/migrations/0001_schema.sql` — tables, RLS, `gen_project_code()`, storage bucket
+   - `supabase/migrations/0002_seed_lookups.sql` — the six stages, six services, seven FAQs
+
+3. **Run.**
+
+   ```bash
+   npm run dev
+   ```
+
+## Checks
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm test
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Covers the mandatory acceptance case from the spec — `total_cost 893,004 →
+supervision_fee 133,951 → grand_total 1,026,955 → payments 1,060,000 → balance
++33,045` — plus the leak-barrier assertion that no private project field can be
+selected publicly.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run build
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run verify
+```
 
-## Learn More
+Runs against the live Supabase project (dev server must be up). Confirms the
+migrations landed, RLS denies the publishable key on every table, project codes
+auto-generate in the right shape, and — by publishing a throwaway project full of
+distinctive private values and grepping every public page for them — that nothing
+private reaches the HTML. The probe row is deleted afterwards.
 
-To learn more about Next.js, take a look at the following resources:
+## Adding content
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Until the admin dashboard lands in phase 3, content is entered through the
+Supabase **Table Editor**. Nothing is seeded with placeholder data, and every
+data-driven section hides itself entirely while its table is empty — so the site
+is presentable at any stage of filling it in.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| What | Where | Notes |
+| --- | --- | --- |
+| Hero photograph | `public/hero.jpg` | One real photo. A file, not a database row. |
+| The four headline numbers | `site_stats` | Section stays hidden until rows exist |
+| Projects | `projects` | `code` auto-generates. Set **both** `is_public` and `publish_approved_at` to publish |
+| Photos | `project_media` + `media` bucket | `url` is the object path inside the bucket; set `is_public` per photo |
+| Before/after | `project_media.phase` | The comparison slider appears only when a `before` **and** an `after` photo both exist |
+| Stage progress | `project_stages` | Drives the project timeline |
+| Testimonials | `testimonials` | `show_name` is the per-client consent flag — false renders anonymously |
+| Engineer bio, phone, syndicate no. | `engineer_profile` | Supplies the phone and WhatsApp number site-wide |
 
-## Deploy on Vercel
+Review before launch: the FAQ answers, the service descriptions, and the client
+journey step durations are first drafts written from the spec.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## What is private
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+These never appear on a public page, enforced by an allowlist in
+`src/lib/publicFields.ts` and asserted by a test:
+
+`projects.code` · `unit_no` · `building_no` · `client_name` · `client_phone` ·
+`supervision_rate`
+
+The supervision rate is private everywhere, including its own page: `/work-system`
+explains the process with no figure, percentage, or price per metre in it.
+
+## Layout notes
+
+- `src/proxy.ts` — Next 16 renamed the `middleware` convention to `proxy`. Redirects `/` → `/ar`.
+- `src/app/[locale]/layout.tsx` is the root layout (it owns `<html lang dir>`); there is deliberately no `src/app/layout.tsx`.
+- `src/lib/finance.ts` is the only place money is added up. Postgres returns
+  `numeric` as a **string**, so every amount goes through `Number()` there.
+- Storage is a private bucket; images are served as server-signed URLs valid 24h,
+  against pages that revalidate hourly.
+- Every table has RLS enabled with zero policies: anon and authenticated are denied
+  outright, and the server's service_role key is the only way in.

@@ -1,7 +1,23 @@
 import type { NextConfig } from "next";
 
+// Supabase Storage serves signed URLs from the project host, so it has to be
+// allowed explicitly — images.domains is deprecated in Next 16.
+const supabaseHostname = process.env.NEXT_PUBLIC_SUPABASE_URL
+  ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).hostname
+  : undefined;
+
 const nextConfig: NextConfig = {
-  /* config options here */
+  images: {
+    remotePatterns: supabaseHostname
+      ? [
+          {
+            protocol: "https",
+            hostname: supabaseHostname,
+            pathname: "/storage/v1/object/sign/**",
+          },
+        ]
+      : [],
+  },
 };
 
 export default nextConfig;

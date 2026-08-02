@@ -1,0 +1,90 @@
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { IBM_Plex_Sans_Arabic, Jost } from "next/font/google";
+import "../globals.css";
+
+import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
+import { WhatsAppFab } from "@/components/WhatsAppFab";
+import { getDictionary } from "@/lib/dictionary";
+import { dir, isLocale, locales, pick, whatsappLink, type Locale } from "@/lib/i18n";
+import { getEngineer, getServices, getWhatsappNumber } from "@/lib/data";
+
+const plexArabic = IBM_Plex_Sans_Arabic({
+  subsets: ["arabic", "latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-plex-arabic",
+  display: "swap",
+});
+
+const jost = Jost({
+  subsets: ["latin"],
+  variable: "--font-jost",
+  display: "swap",
+});
+
+export function generateStaticParams() {
+  return locales.map((locale) => ({ locale }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = getDictionary(isLocale(locale) ? locale : "ar");
+  return {
+    title: t.meta.title,
+    description: t.meta.description,
+  };
+}
+
+export default async function LocaleLayout({
+  children,
+  params,
+}: {
+  children: React.ReactNode;
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale: raw } = await params;
+  if (!isLocale(raw)) notFound();
+  const locale: Locale = raw;
+
+  const t = getDictionary(locale);
+  const [engineer, services, whatsapp] = await Promise.all([
+    getEngineer(),
+    getServices(),
+    getWhatsappNumber(),
+  ]);
+
+  const phone = engineer?.phone ?? null;
+  const bookHref = whatsappLink(whatsapp, t.whatsapp.book);
+
+  return (
+    <html
+      lang={locale}
+      dir={dir(locale)}
+      className={`${plexArabic.variable} ${jost.variable} h-full antialiased`}
+    >
+      <body className="flex min-h-full flex-col font-sans">
+        <Navbar
+          locale={locale}
+          nav={t.nav}
+          topbar={t.topbar}
+          phone={phone}
+          whatsappHref={bookHref}
+        />
+        <main className="flex-1">{children}</main>
+        <Footer
+          locale={locale}
+          t={t}
+          services={services.map((service) => pick(service, "title", locale))}
+          phone={phone}
+          whatsappHref={bookHref}
+        />
+        <WhatsAppFab href={bookHref} label={t.whatsapp.float} />
+      </body>
+    </html>
+  );
+}
