@@ -60,6 +60,23 @@ body {
   }
 }
 
+/* The statement page prints as the PDF, so the site chrome must not come with it. */
+@media print {
+  header[class*="fixed"],
+  footer,
+  a[href^="https://wa.me"] {
+    display: none !important;
+  }
+
+  body {
+    background: #ffffff;
+  }
+
+  @page {
+    margin: 16mm;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
