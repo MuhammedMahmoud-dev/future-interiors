@@ -3,8 +3,8 @@
 Portfolio and client-tracking site for an engineer-supervised apartment finishing
 practice. Next.js 16 (App Router) · Tailwind v4 · Supabase · Arabic-first with English.
 
-**Phases 1–2 (this repo state):** database schema, the full public site, and the
-client portal with its printable statement. Phase 3: admin dashboard.
+**All three phases are in this repo state:** the database schema, the public site,
+the client portal with its printable statement, and the admin dashboard.
 
 ## Setup
 
@@ -15,7 +15,12 @@ client portal with its printable statement. Phase 3: admin dashboard.
    NEXT_PUBLIC_SUPABASE_URL=https://xxxx.supabase.co
    SUPABASE_SERVICE_ROLE_KEY=...
    SESSION_SECRET=...
+   ADMIN_EMAIL=...
+   ADMIN_PASSWORD_HASH=...
    ```
+
+   Generate the admin password hash with
+   `node scripts/admin-password.mjs "your password"`. The plaintext is never stored.
 
    `SUPABASE_SERVICE_ROLE_KEY` bypasses RLS. It is server-only and must never be
    given a `NEXT_PUBLIC_` prefix or imported into a client component.
@@ -60,6 +65,20 @@ auto-generate in the right shape, and — by publishing a throwaway project full
 distinctive private values and grepping every public page for them — that nothing
 private reaches the HTML. The probe row is deleted afterwards.
 
+```bash
+npm run verify:admin
+```
+
+Confirms every admin route refuses an unauthenticated request; that forged,
+expired, wrong-secret, and **replayed client-portal** cookies are all rejected;
+that a valid session gets in; and that a ledger entered the way the engineer
+enters it produces the spec's acceptance figures. Its probe project is deleted
+too.
+
+The test suite additionally asserts, at source level, that **every exported
+Server Action calls `requireAdmin()`**. A Server Action is its own public HTTP
+endpoint — being rendered by a guarded page protects the page, not the action.
+
 ## The client portal
 
 `/track` takes a project code and the mobile number on file, and lands on
@@ -91,10 +110,30 @@ and prints its code and phone. Remove it with `cleanup`.
 
 ## Adding content
 
-Until the admin dashboard lands in phase 3, content is entered through the
-Supabase **Table Editor**. Nothing is seeded with placeholder data, and every
-data-driven section hides itself entirely while its table is empty — so the site
+Everything is entered through the admin dashboard at **`/admin`** — no code
+changes, no Table Editor. Nothing is seeded with placeholder data, and every
+data-driven section hides itself entirely while its table is empty, so the site
 is presentable at any stage of filling it in.
+
+| Section | Where in the admin |
+| --- | --- |
+| Projects, line items, payments, stages, photos | `/admin/projects` |
+| Services · FAQs · Testimonials · Headline numbers · Engineer profile | `/admin/content/…` |
+| Manually logged enquiries | `/admin/leads` |
+
+The hero photograph is the one exception: it is a file, `public/hero.jpg`, not a
+database row.
+
+### The ledger grid
+
+Line items and payments are a spreadsheet, not a form: **Enter** opens the next
+row, edits **autosave**, and a block **pasted straight out of Excel** fills many
+rows at once. Paste is forgiving of real export formats — `10/01/2025` is read
+day-first, `500,000` keeps its separator, and `(6,996)` is understood as a
+negative, because Excel writes discounts that way.
+
+Stage progress is **derived** from the six stage statuses; the percentage the
+client sees is never typed in by hand.
 
 | What | Where | Notes |
 | --- | --- | --- |

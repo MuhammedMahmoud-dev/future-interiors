@@ -1,68 +1,19 @@
 import "server-only";
-import { cookies, headers } from "next/headers";
+import { cookies } from "next/headers";
 import { getSupabase } from "./supabase";
 import { computeStatement, type Statement } from "./finance";
 import { normalizePhone } from "./i18n";
-import { SESSION_COOKIE, getSessionSecret, readSessionToken } from "./session";
+import { PORTAL_COOKIE, getSessionSecret, readSessionToken } from "./session";
 
 /**
- * Client portal internals: rate limiting, credential checks, and statement
- * assembly. Everything here runs server-side with the service_role key.
+ * Client portal internals: credential checks and statement assembly.
+ * Everything here runs server-side with the service_role key.
  *
  * The supervision rate is read here to compute the fee and is never returned.
  */
 
-const MAX_ATTEMPTS = 5;
-const WINDOW_MINUTES = 15;
-
-// ------------------------------------------------------------------ rate limit
-
-/** Client IP for rate limiting. Vercel sets x-forwarded-for. */
-export async function getClientIp(): Promise<string> {
-  const headerList = await headers();
-  const forwarded = headerList.get("x-forwarded-for");
-  if (forwarded) return forwarded.split(",")[0].trim();
-  return headerList.get("x-real-ip") ?? "unknown";
-}
-
-/**
- * 5 attempts per 15 minutes per (IP + code).
- *
- * Backed by Postgres rather than an in-memory counter: serverless instances do
- * not share memory, so a Map would reset on every cold start and the limit
- * would never actually bind.
- */
-export async function isRateLimited(ip: string, code: string): Promise<boolean> {
-  const supabase = getSupabase();
-  if (!supabase) return false;
-
-  const since = new Date(Date.now() - WINDOW_MINUTES * 60_000).toISOString();
-  const { count, error } = await supabase
-    .from("login_attempts")
-    .select("id", { count: "exact", head: true })
-    .eq("ip", ip)
-    .eq("code", code)
-    .gte("attempted_at", since);
-
-  if (error) {
-    console.error("[portal] rate limit check failed", error.message);
-    return false; // never lock a client out because of an infrastructure error
-  }
-  return (count ?? 0) >= MAX_ATTEMPTS;
-}
-
-export async function recordAttempt(ip: string, code: string): Promise<void> {
-  const supabase = getSupabase();
-  if (!supabase) return;
-  await supabase.from("login_attempts").insert({ ip, code });
-}
-
-/** A successful login clears the counter so a client is not punished for typos. */
-export async function clearAttempts(ip: string, code: string): Promise<void> {
-  const supabase = getSupabase();
-  if (!supabase) return;
-  await supabase.from("login_attempts").delete().eq("ip", ip).eq("code", code);
-}
+// Rate limiting is shared with the admin login; see ./rateLimit.
+export { getClientIp, isRateLimited, recordAttempt, clearAttempts } from "./rateLimit";
 
 // ------------------------------------------------------------------ credentials
 
@@ -93,7 +44,7 @@ export async function verifyCredentials(code: string, phone: string): Promise<st
 
 export async function getSessionProjectId(): Promise<string | null> {
   const store = await cookies();
-  return readSessionToken(store.get(SESSION_COOKIE)?.value, getSessionSecret());
+  return readSessionToken(store.get(PORTAL_COOKIE)?.value, getSessionSecret(), "portal");
 }
 
 // ------------------------------------------------------------------ statement

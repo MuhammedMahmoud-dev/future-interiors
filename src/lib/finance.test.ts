@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { computeStatement, sumAmounts, formatMoney } from "./finance.ts";
+import { computeStatement, sumAmounts, formatMoney, parseAmount } from "./finance.ts";
 import { PUBLIC_PROJECT_COLUMNS, PRIVATE_PROJECT_FIELDS } from "./publicFields.ts";
 
 test("mandatory acceptance test from the spec", () => {
@@ -45,6 +45,36 @@ test("the supervision rate never appears in the returned statement", () => {
   const statement = computeStatement([{ amount: 1000 }], [], 0.15);
   assert.equal(Object.values(statement).includes(0.15), false);
   assert.equal("supervision_rate" in statement, false);
+});
+
+test("pasted amounts survive real-world Excel formatting", () => {
+  assert.equal(parseAmount("1200"), 1200);
+  assert.equal(parseAmount("1,200"), 1200);
+  assert.equal(parseAmount("1,200.50"), 1200.5);
+  assert.equal(parseAmount(" 893004 "), 893004);
+  assert.equal(parseAmount("1200 ج.م"), 1200);
+  assert.equal(parseAmount(-250), -250);
+});
+
+test("accounting-style parentheses mean a negative amount", () => {
+  // Excel exports a discount as (500), not -500. Reading that as +500 would
+  // overstate the client's cost.
+  assert.equal(parseAmount("(500)"), -500);
+  assert.equal(parseAmount("(1,250.75)"), -1250.75);
+  assert.equal(parseAmount("-500"), -500);
+});
+
+test("arabic-indic digits parse as numbers", () => {
+  assert.equal(parseAmount("١٢٠٠"), 1200);
+  assert.equal(parseAmount("٨٩٣٠٠٤"), 893004);
+  assert.equal(parseAmount("١٢٠٠٫٥"), 1200.5);
+  assert.equal(parseAmount("۱۲۰۰"), 1200);
+});
+
+test("unparseable amounts return null rather than NaN", () => {
+  for (const bad of ["", "   ", "abc", "-", "ج.م", null, undefined, "()"]) {
+    assert.equal(parseAmount(bad), null, JSON.stringify(bad));
+  }
 });
 
 test("money formats with western digits and separators", () => {

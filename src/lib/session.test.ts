@@ -10,11 +10,20 @@ test("a freshly signed token round-trips to its project id", () => {
 });
 
 test("the token never contains the project code", () => {
-  // Only an id and an expiry are signed, so a leaked cookie cannot be replayed
-  // as a credential at the login form.
+  // Only a subject and an expiry are signed, so a leaked cookie cannot be
+  // replayed as a credential at the login form.
   const token = createSessionToken(PROJECT, SECRET);
   assert.equal(token.split(".").length, 3);
-  assert.equal(token.startsWith(`${PROJECT}.`), true);
+  assert.equal(readSessionToken(token, SECRET), PROJECT);
+});
+
+test("subjects containing dots survive the round trip", () => {
+  // An admin subject is an email, and the token itself is dot-delimited.
+  for (const subject of ["eng@example.com", "a.b.c.d@x.co.uk", PROJECT]) {
+    const token = createSessionToken(subject, SECRET, "admin");
+    assert.equal(token.split(".").length, 3, subject);
+    assert.equal(readSessionToken(token, SECRET, "admin"), subject);
+  }
 });
 
 test("a tampered project id is rejected", () => {
@@ -38,13 +47,32 @@ test("a token signed with another secret is rejected", () => {
 
 test("an expired token is rejected", () => {
   const now = Date.now();
-  const token = createSessionToken(PROJECT, SECRET, 60, now);
-  assert.equal(readSessionToken(token, SECRET, now + 30_000), PROJECT);
-  assert.equal(readSessionToken(token, SECRET, now + 61_000), null);
+  const token = createSessionToken(PROJECT, SECRET, "portal", 60, now);
+  assert.equal(readSessionToken(token, SECRET, "portal", now + 30_000), PROJECT);
+  assert.equal(readSessionToken(token, SECRET, "portal", now + 61_000), null);
 });
 
 test("malformed input is rejected without throwing", () => {
   for (const bad of [undefined, null, "", "a", "a.b", "a.b.c.d", "....", "a.b.c"]) {
     assert.equal(readSessionToken(bad, SECRET), null, String(bad));
   }
+});
+
+test("a client portal cookie cannot authenticate as admin", () => {
+  // Same secret, same wire format — only the signed purpose differs. Without
+  // that binding, any client could hand their own cookie to /admin.
+  const portalToken = createSessionToken(PROJECT, SECRET, "portal");
+  assert.equal(readSessionToken(portalToken, SECRET, "portal"), PROJECT);
+  assert.equal(readSessionToken(portalToken, SECRET, "admin"), null);
+
+  const adminToken = createSessionToken("eng@example.com", SECRET, "admin");
+  assert.equal(readSessionToken(adminToken, SECRET, "admin"), "eng@example.com");
+  assert.equal(readSessionToken(adminToken, SECRET, "portal"), null);
+});
+
+test("expiry is honoured per purpose", () => {
+  const now = Date.now();
+  const token = createSessionToken("eng@example.com", SECRET, "admin", 60, now);
+  assert.equal(readSessionToken(token, SECRET, "admin", now + 30_000), "eng@example.com");
+  assert.equal(readSessionToken(token, SECRET, "admin", now + 61_000), null);
 });

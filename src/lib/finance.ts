@@ -61,6 +61,41 @@ export function computeStatement(
   };
 }
 
+/**
+ * Parses an amount typed by hand or pasted out of Excel.
+ *
+ * Real paste data is messy: thousands separators, Arabic-Indic digits from an
+ * Arabic Windows locale, "ج.م" suffixes, and Excel's accounting style where a
+ * negative is wrapped in parentheses — "(500)" means -500. Returns null when the
+ * text is not a number at all, so the caller can reject the row instead of
+ * silently storing NaN.
+ */
+export function parseAmount(input: string | number | null | undefined): number | null {
+  if (typeof input === "number") return Number.isFinite(input) ? input : null;
+  if (input === null || input === undefined) return null;
+
+  let text = String(input).trim();
+  if (!text) return null;
+
+  // Arabic-Indic (٠-٩) and Extended Arabic-Indic (۰-۹) digits to Latin.
+  text = text.replace(/[٠-٩]/g, (d) => String(d.charCodeAt(0) - 0x0660));
+  text = text.replace(/[۰-۹]/g, (d) => String(d.charCodeAt(0) - 0x06f0));
+
+  // Arabic decimal separator and thousands separator.
+  text = text.replace(/٫/g, ".").replace(/٬/g, "");
+
+  // Accounting-style negatives: (500) -> -500
+  const parenthesised = /^\((.*)\)$/.exec(text);
+  if (parenthesised) text = `-${parenthesised[1]}`;
+
+  // Strip everything that is not a digit, sign, or decimal point.
+  text = text.replace(/[^\d.\-+]/g, "");
+  if (!text || text === "-" || text === "+" || text === ".") return null;
+
+  const value = Number(text);
+  return Number.isFinite(value) ? value : null;
+}
+
 /** Western digits with thousands separators, in both locales: "1,026,955". */
 export function formatMoney(value: number): string {
   return new Intl.NumberFormat("en-US", {
