@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 
 import { Counter } from "@/components/Counter";
 import { FaqList } from "@/components/FaqList";
+import { HeroPlaceholder } from "@/components/HeroPlaceholder";
 import { JourneyScroller } from "@/components/JourneyScroller";
 import { Fact, SectionHeading } from "@/components/Sections";
 import { ServiceCard } from "@/components/ServiceCard";
@@ -61,17 +62,21 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     <>
       {/* 1 — Hero */}
       <section className="relative flex h-[85vh] min-h-[520px] items-end overflow-hidden bg-ink">
-        {heroExists && (
-          <Image
-            src={HERO_IMAGE}
-            alt=""
-            fill
-            priority
-            sizes="100vw"
-            className="animate-hero-zoom object-cover opacity-70"
-          />
+        {heroExists ? (
+          <>
+            <Image
+              src={HERO_IMAGE}
+              alt=""
+              fill
+              priority
+              sizes="100vw"
+              className="animate-hero-zoom object-cover opacity-70"
+            />
+            <div className="absolute inset-0 bg-ink/45" />
+          </>
+        ) : (
+          <HeroPlaceholder />
         )}
-        <div className="absolute inset-0 bg-ink/45" />
 
         <div className="relative mx-auto w-full max-w-7xl px-4 pb-20 sm:px-6">
           <p className="animate-rise text-xs tracking-[0.2em] text-gold">{t.hero.eyebrow}</p>
