@@ -1,17 +1,46 @@
 @import "tailwindcss";
 
-/* Brand system, per spec: no gradients, no shadows.
-   Thin gold rules and near-sharp corners carry the whole visual identity. */
+/* Brand system: warm cream grounds, ink sections, a single gold accent.
+   Rounded corners and soft shadows — this replaces the earlier no-shadow,
+   sharp-corner system deliberately. */
 @theme {
-  --color-ink: #101010;
-  --color-gold: #c6a664;
-  --color-paper: #f5f4f2;
+  --color-ink: #16171a;
+  --color-gold: #c9a227;
+  --color-gold-soft: #d9c08a;
+  --color-cream: #f6f1e7;
+  --color-paper: #ffffff;
+  --color-body: #4a4a48;
 
-  /* Arabic body font. Latin/brand font is applied per-direction below. */
+  /*
+   * Two accessibility-driven variants, measured rather than guessed.
+   *
+   * --gold is the brand accent and reads at 7.41:1 on ink, which is where most
+   * of it lives. On cream it collapses to 2.15:1, so gold *text* on a light
+   * ground uses --gold-ink instead: the lightest gold that still clears 4.5:1
+   * (4.63 on cream, 5.21 on white). --gold itself stays exactly as specified
+   * and continues to carry every fill, border and icon.
+   *
+   * --muted was #8A8880, which measured 3.15:1 on cream — it is now the
+   * lightest grey that clears 4.5:1 (4.60 on cream, 5.17 on white).
+   */
+  --color-gold-ink: #856914;
+  --color-muted: #6f6d67;
+
+  /* Body text. The Latin face is swapped in per-direction below. */
   --font-sans: var(--font-plex-arabic), system-ui, sans-serif;
   --font-display: var(--font-jost), system-ui, sans-serif;
 
-  --radius-sharp: 2px;
+  /* Headings only. Arabic gets Noto Naskh Arabic — Google Fonts has no
+     "Noto Serif Arabic"; naskh is the Arabic analogue of a serif — and Latin
+     gets Playfair, resolved per-direction below so one `font-serif` class
+     works in both. */
+  --font-serif: var(--font-serif-ar), Georgia, serif;
+
+  --radius-card: 12px;
+  --radius-pill: 9999px;
+
+  --shadow-soft: 0 1px 2px rgb(22 23 26 / 0.04), 0 8px 24px rgb(22 23 26 / 0.06);
+  --shadow-lift: 0 2px 4px rgb(22 23 26 / 0.05), 0 16px 40px rgb(22 23 26 / 0.1);
 
   --animate-hero-zoom: hero-zoom 8s ease-out forwards;
   --animate-rise: rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
@@ -39,7 +68,7 @@
 
 body {
   background: #ffffff;
-  color: var(--color-ink);
+  color: var(--color-body);
 }
 
 /* English reads in Jost; Arabic stays on IBM Plex Sans Arabic. */
@@ -47,10 +76,48 @@ body {
   font-family: var(--font-jost), system-ui, sans-serif;
 }
 
-/* The brand name is always Latin, in both locales. */
-.brand {
+/* Latin headings use Playfair; Arabic keeps Noto Naskh Arabic from the theme.
+   One `font-serif` class therefore resolves correctly in both directions. */
+[dir="ltr"] {
+  --font-serif: var(--font-playfair), Georgia, serif;
+}
+
+/*
+ * Serif is opt-in past h1.
+ *
+ * h1 is always a page title, so it takes the heading face everywhere. Lower
+ * headings ask for it explicitly with `font-serif`, because the admin uses
+ * small tracked h2/h3 as field-group labels — a serif there reads as a mistake,
+ * not as a heading.
+ *
+ * Everything numeric or tabular stays sans regardless: a serif in a money
+ * column is a legibility regression, and this site is about money.
+ */
+.font-serif,
+h1 {
+  font-family: var(--font-serif);
+}
+
+/* Tables, figures and form controls opt back out of the heading face. */
+table,
+input,
+select,
+textarea,
+.tabular {
+  font-family: var(--font-sans);
+}
+[dir="ltr"] table,
+[dir="ltr"] input,
+[dir="ltr"] select,
+[dir="ltr"] textarea,
+[dir="ltr"] .tabular {
   font-family: var(--font-jost), system-ui, sans-serif;
-  letter-spacing: 0.14em;
+}
+
+/* The brand name is always Latin, in both locales — serif, widely tracked. */
+.brand {
+  font-family: var(--font-playfair), Georgia, serif;
+  letter-spacing: 0.18em;
 }
 
 /*

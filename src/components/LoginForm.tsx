@@ -54,7 +54,7 @@ export function LoginForm({ locale, t }: { locale: Locale; t: Strings }) {
           value={code}
           onChange={(event) => setCode(event.target.value)}
           placeholder={t.codePlaceholder}
-          className="mt-2 w-full rounded-sharp border border-white/20 bg-transparent px-4 py-3 text-white placeholder:text-white/25 focus:border-gold focus:outline-none"
+          className="mt-2 w-full rounded-card border border-white/20 bg-transparent px-4 py-3 text-white placeholder:text-white/25 focus:border-gold focus:outline-none"
         />
       </div>
 
@@ -73,7 +73,7 @@ export function LoginForm({ locale, t }: { locale: Locale; t: Strings }) {
           value={phone}
           onChange={(event) => setPhone(event.target.value)}
           placeholder={t.phonePlaceholder}
-          className="mt-2 w-full rounded-sharp border border-white/20 bg-transparent px-4 py-3 text-white placeholder:text-white/25 focus:border-gold focus:outline-none"
+          className="mt-2 w-full rounded-card border border-white/20 bg-transparent px-4 py-3 text-white placeholder:text-white/25 focus:border-gold focus:outline-none"
         />
       </div>
 
@@ -86,7 +86,7 @@ export function LoginForm({ locale, t }: { locale: Locale; t: Strings }) {
       <button
         type="submit"
         disabled={pending}
-        className="w-full rounded-sharp bg-gold px-6 py-4 text-sm font-medium text-ink transition-opacity hover:opacity-90 disabled:opacity-50"
+        className="w-full rounded-card bg-gold px-6 py-4 text-sm font-medium text-ink transition-opacity hover:opacity-90 disabled:opacity-50"
       >
         {pending ? t.submitting : t.submit}
       </button>

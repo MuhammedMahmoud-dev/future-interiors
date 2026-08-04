@@ -10,7 +10,7 @@ export function PrintButton({ label }: { label: string }) {
     <button
       type="button"
       onClick={() => window.print()}
-      className="rounded-sharp bg-ink px-6 py-3 text-sm text-white transition-opacity hover:opacity-90 print:hidden"
+      className="rounded-card bg-ink px-6 py-3 text-sm text-white transition-opacity hover:opacity-90 print:hidden"
     >
       {label}
     </button>

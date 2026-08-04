@@ -15,10 +15,10 @@ export function HeroPlaceholder() {
   return (
     <div aria-hidden="true" className="absolute inset-0 overflow-hidden bg-ink">
       {/* Base wash: charcoal falling away toward the corners. */}
-      <div className="absolute inset-0 bg-[linear-gradient(158deg,#181818_0%,#101010_48%,#080808_100%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(158deg,#1E1F23_0%,#16171A_48%,#0E0F11_100%)]" />
 
       {/* Faint warm lift behind the monogram so the centre reads as lit. */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_55%_at_50%_42%,rgba(198,166,100,0.10),transparent_70%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_55%_at_50%_42%,rgba(201,162,39,0.10),transparent_70%)]" />
 
       {/* Drafting grid: fine 48px squares, heavier every 240px.
           Layers below carry data-parallax and are over-sized vertically so
@@ -28,10 +28,10 @@ export function HeroPlaceholder() {
         data-parallax="0.12"
         style={{
           backgroundImage: [
-            "repeating-linear-gradient(to right, rgba(198,166,100,0.06) 0 1px, transparent 1px 48px)",
-            "repeating-linear-gradient(to bottom, rgba(198,166,100,0.06) 0 1px, transparent 1px 48px)",
-            "repeating-linear-gradient(to right, rgba(198,166,100,0.10) 0 1px, transparent 1px 240px)",
-            "repeating-linear-gradient(to bottom, rgba(198,166,100,0.10) 0 1px, transparent 1px 240px)",
+            "repeating-linear-gradient(to right, rgba(201,162,39,0.06) 0 1px, transparent 1px 48px)",
+            "repeating-linear-gradient(to bottom, rgba(201,162,39,0.06) 0 1px, transparent 1px 48px)",
+            "repeating-linear-gradient(to right, rgba(201,162,39,0.10) 0 1px, transparent 1px 240px)",
+            "repeating-linear-gradient(to bottom, rgba(201,162,39,0.10) 0 1px, transparent 1px 240px)",
           ].join(","),
         }}
       />
@@ -43,7 +43,7 @@ export function HeroPlaceholder() {
         viewBox="0 0 1440 900"
         preserveAspectRatio="xMidYMid slice"
         fill="none"
-        stroke="#c6a664"
+        stroke="#c9a227"
         strokeWidth="1.25"
       >
         <g opacity="0.22">
@@ -55,7 +55,7 @@ export function HeroPlaceholder() {
           <path d="M400 400v-60" opacity="0.7" />
           <path d="M400 340a60 60 0 0 1 60 60" opacity="0.7" />
           {/* Window openings, drawn as breaks in the wall */}
-          <path d="M150 240v70M150 470v70" strokeWidth="3" stroke="#101010" />
+          <path d="M150 240v70M150 470v70" strokeWidth="3" stroke="#16171A" />
           <path d="M150 240v70M150 470v70" strokeWidth="1.25" />
         </g>
 
@@ -94,7 +94,7 @@ export function HeroPlaceholder() {
           className="brand select-none leading-none text-transparent"
           style={{
             fontSize: "clamp(9rem, 30vw, 26rem)",
-            WebkitTextStroke: "1.25px rgba(198,166,100,0.13)",
+            WebkitTextStroke: "1.25px rgba(201,162,39,0.13)",
           }}
         >
           FI
@@ -105,7 +105,7 @@ export function HeroPlaceholder() {
           because the headline sat at the bottom; the headline is centred now, so
           the weight is centred with it and both edges stay open enough for the
           plan and the registration marks to still read. */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(16,16,16,0.55)_0%,rgba(16,16,16,0.62)_30%,rgba(16,16,16,0.62)_70%,rgba(16,16,16,0.30)_100%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(22,23,26,0.55)_0%,rgba(22,23,26,0.62)_30%,rgba(22,23,26,0.62)_70%,rgba(22,23,26,0.30)_100%)]" />
     </div>
   );
 }

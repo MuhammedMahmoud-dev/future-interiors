@@ -26,11 +26,12 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
   return (
     <>
       <PageHeader
+        eyebrow={t.about.eyebrow}
         title={t.about.title}
         subtitle={engineer ? pick(engineer, "title", locale) : undefined}
       />
 
-      <section className="py-20">
+      <section className="bg-cream py-20">
         <div className="mx-auto max-w-4xl px-4 sm:px-6">
           {!engineer ? (
             <EmptyState message={t.about.empty} />
@@ -56,7 +57,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
 
               {credentials.length > 0 && (
                 <div>
-                  <h3 className="text-sm tracking-widest text-gold">{t.about.credentials}</h3>
+                  <h3 className="text-sm tracking-widest text-gold-ink">{t.about.credentials}</h3>
                   <ul className="mt-6 divide-y divide-ink/10 border-y border-ink/10">
                     {credentials.map((credential) => (
                       <li key={credential} className="py-4 text-sm text-ink/70">
@@ -78,7 +79,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
                     index % 2 !== 0 ? "border-s border-ink/10" : ""
                   } ${index >= 2 ? "border-t border-ink/10 lg:border-t-0" : ""}`}
                 >
-                  <p className="brand text-3xl text-gold">
+                  <p className="brand text-3xl text-gold-ink">
                     <Counter value={Number(stat.value)} />
                     {pick(stat, "suffix", locale) && (
                       <span className="ms-1 text-lg">{pick(stat, "suffix", locale)}</span>
@@ -95,7 +96,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
               href={whatsappLink(whatsapp, t.whatsapp.book)}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-sharp bg-gold px-8 py-4 text-sm font-medium text-ink transition-opacity hover:opacity-90"
+              className="rounded-card bg-gold px-8 py-4 text-sm font-medium text-ink transition-opacity hover:opacity-90"
             >
               {t.hero.ctaBook}
             </a>

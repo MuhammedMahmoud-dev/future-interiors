@@ -106,7 +106,7 @@ export default async function ProjectPage({
         <div className="absolute inset-0 bg-ink/40" />
         <div className="absolute inset-x-0 bottom-0">
           <div className="mx-auto max-w-7xl px-4 pb-14 sm:px-6">
-            <h1 className="max-w-3xl text-3xl text-white sm:text-5xl">
+            <h1 className="max-w-3xl font-serif text-3xl text-white sm:text-5xl">
               {pick(project, "title", locale)}
             </h1>
           </div>
@@ -114,7 +114,7 @@ export default async function ProjectPage({
       </section>
 
       {/* Fact bar — public metadata only, never a unit or building number */}
-      <section className="border-b border-ink/10 bg-paper">
+      <section className="border-b border-ink/10 bg-cream">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <dl className="grid grid-cols-2 gap-y-8 py-10 text-sm lg:grid-cols-4">
             {project.area_m2 && (
@@ -132,7 +132,7 @@ export default async function ProjectPage({
         <section className="py-20">
           <div className="mx-auto max-w-3xl px-4 sm:px-6">
             <SectionHeading title={t.project.about} />
-            <p className="mt-8 whitespace-pre-line text-sm leading-9 text-ink/65">
+            <p className="mt-8 whitespace-pre-line text-sm leading-9 text-body">
               {pick(project, "description", locale)}
             </p>
           </div>
@@ -141,7 +141,7 @@ export default async function ProjectPage({
 
       {/* Before / after — auto-hidden without a matching pair */}
       {beforeUrl && afterUrl && (
-        <section className="bg-paper py-20">
+        <section className="bg-cream py-20">
           <div className="mx-auto max-w-5xl px-4 sm:px-6">
             <SectionHeading title={t.project.beforeAfter} />
             <div className="mt-10">
@@ -165,16 +165,16 @@ export default async function ProjectPage({
             <ol className="mt-12 space-y-12">
               {stageBlocks.map((block, index) => (
                 <li key={block.id} className="grid gap-6 sm:grid-cols-[auto_1fr]">
-                  <span className="brand text-sm text-gold">
+                  <span className="brand text-sm text-gold-ink">
                     {String(index + 1).padStart(2, "0")}
                   </span>
                   <div className="border-s border-gold/30 ps-6">
                     <div className="flex flex-wrap items-baseline gap-3">
-                      <h3 className="text-lg">{block.name}</h3>
+                      <h3 className="font-serif text-lg text-ink">{block.name}</h3>
                       {block.progress && (
                         <span
                           className={`text-xs ${
-                            block.progress.status === "done" ? "text-gold" : "text-ink/40"
+                            block.progress.status === "done" ? "text-gold-ink" : "text-muted"
                           }`}
                         >
                           {statusLabel[block.progress.status]}
@@ -183,7 +183,7 @@ export default async function ProjectPage({
                     </div>
 
                     {block.progress && pick(block.progress, "note", locale) && (
-                      <p className="mt-3 text-sm leading-7 text-ink/60">
+                      <p className="mt-3 text-sm leading-7 text-body">
                         {pick(block.progress, "note", locale)}
                       </p>
                     )}
@@ -191,7 +191,7 @@ export default async function ProjectPage({
                     {block.shots.length > 0 && (
                       <div className="mt-5 grid grid-cols-3 gap-3">
                         {block.shots.map((shot) => (
-                          <div key={shot.id} className="aspect-square overflow-hidden bg-ink/5">
+                          <div key={shot.id} className="aspect-square overflow-hidden rounded-card bg-ink/5">
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
                               src={shot.url}
@@ -213,7 +213,7 @@ export default async function ProjectPage({
 
       {/* Full gallery */}
       {gallery.length > 0 && (
-        <section className="bg-paper py-20">
+        <section className="bg-cream py-20">
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
             <SectionHeading title={t.project.gallery} />
             <div className="mt-10">
@@ -226,7 +226,7 @@ export default async function ProjectPage({
       {/* CTA */}
       <section className="bg-ink py-24 text-center text-white">
         <div className="mx-auto max-w-2xl px-4 sm:px-6">
-          <h2 className="text-3xl">{t.project.ctaTitle}</h2>
+          <h2 className="font-serif text-3xl">{t.project.ctaTitle}</h2>
           <p className="mt-4 text-sm text-white/60">{t.project.ctaText}</p>
           <a
             href={whatsappLink(
@@ -235,7 +235,7 @@ export default async function ProjectPage({
             )}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-10 inline-block rounded-sharp bg-gold px-8 py-4 text-sm font-medium text-ink transition-opacity hover:opacity-90"
+            className="mt-10 inline-block rounded-card bg-gold px-8 py-4 text-sm font-medium text-ink transition-opacity hover:opacity-90"
           >
             {t.project.ctaButton}
           </a>
@@ -244,7 +244,7 @@ export default async function ProjectPage({
 
       {/* Related */}
       {others.length > 0 && (
-        <section className="py-20">
+        <section className="bg-cream py-20">
           <div className="mx-auto max-w-7xl px-4 sm:px-6">
             <SectionHeading title={t.project.related} />
             <div className="mt-10 grid gap-6 md:grid-cols-3">
@@ -269,7 +269,7 @@ export default async function ProjectPage({
                         />
                       )}
                     </div>
-                    <h3 className="mt-4 border-b border-transparent pb-1 text-base transition-colors group-hover:border-gold">
+                    <h3 className="mt-4 font-serif text-base text-ink transition-colors group-hover:text-gold-ink">
                       {pick(other, "title", locale)}
                     </h3>
                   </Link>

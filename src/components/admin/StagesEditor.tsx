@@ -63,7 +63,7 @@ export function StagesEditor({
         {stages.map((stage, index) => (
           <li key={stage.id} className="grid gap-4 p-5 sm:grid-cols-[1fr_auto] sm:items-center">
             <div className="flex items-center gap-4">
-              <span className="brand text-xs text-gold">{String(index + 1).padStart(2, "0")}</span>
+              <span className="brand text-xs text-gold-ink">{String(index + 1).padStart(2, "0")}</span>
               <div className="flex-1">
                 <p>{stage.name_ar}</p>
                 <input
@@ -76,7 +76,7 @@ export function StagesEditor({
                   onBlur={(event) =>
                     persist(stage.id, progress[stage.id] ?? "not_started", event.target.value)
                   }
-                  className="mt-2 w-full border-b border-transparent bg-transparent py-1 text-xs text-ink/60 placeholder:text-ink/25 focus:border-gold focus:outline-none"
+                  className="mt-2 w-full border-b border-transparent bg-transparent py-1 text-xs text-ink/60 placeholder:text-ink/25 focus:border-gold-ink focus:outline-none"
                 />
               </div>
             </div>
@@ -90,7 +90,7 @@ export function StagesEditor({
                   setProgress((current) => ({ ...current, [stage.id]: status }));
                   persist(stage.id, status, notes[stage.id] ?? "");
                 }}
-                className="rounded-sharp border border-ink/15 bg-white px-3 py-2 text-sm focus:border-gold focus:outline-none"
+                className="rounded-card border border-ink/15 bg-white px-3 py-2 text-sm focus:border-gold-ink focus:outline-none"
               >
                 {OPTIONS.map((option) => (
                   <option key={option.value} value={option.value}>

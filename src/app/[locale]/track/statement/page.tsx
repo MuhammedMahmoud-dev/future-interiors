@@ -36,7 +36,7 @@ export default async function StatementPage({
         <PrintButton label={t.portal.print} />
         <Link
           href={`/${locale}/track/dashboard`}
-          className="rounded-sharp border border-ink px-6 py-3 text-sm transition-colors hover:border-gold"
+          className="rounded-pill border border-ink px-6 py-3 text-sm transition-colors hover:border-gold"
         >
           {t.portal.tabs.expenses}
         </Link>

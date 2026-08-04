@@ -39,7 +39,7 @@ export function TestimonialsSlider({ items }: { items: TestimonialItem[] }) {
               itemIndex === index ? "opacity-100" : "pointer-events-none absolute inset-0 opacity-0"
             }`}
           >
-            <p className="text-lg leading-9 text-white/85 sm:text-xl sm:leading-10">{item.quote}</p>
+            <p className="font-serif text-xl leading-9 text-white/90 sm:text-2xl sm:leading-10">{item.quote}</p>
             <footer className="mt-6 text-sm tracking-wide text-gold">{item.attribution}</footer>
           </blockquote>
         ))}

@@ -22,7 +22,7 @@ export default async function AdminProjectsPage() {
       action={
         <Link
           href="/admin/projects/new"
-          className="rounded-sharp bg-ink px-6 py-3 text-sm text-white transition-opacity hover:opacity-90"
+          className="rounded-pill bg-gold px-6 py-3 text-sm font-medium text-ink transition-opacity hover:opacity-90"
         >
           مشروع جديد
         </Link>
@@ -36,7 +36,7 @@ export default async function AdminProjectsPage() {
         <div className="overflow-x-auto border border-ink/10 bg-white">
           <table className="w-full min-w-[760px] text-sm">
             <thead>
-              <tr className="bg-paper text-xs text-ink/50">
+              <tr className="bg-cream text-xs text-ink/50">
                 <th className="px-4 py-3 text-start font-normal">المشروع</th>
                 <th className="px-4 py-3 text-start font-normal">الكود</th>
                 <th className="px-4 py-3 text-start font-normal">العميل</th>
@@ -46,9 +46,9 @@ export default async function AdminProjectsPage() {
             </thead>
             <tbody className="divide-y divide-ink/5">
               {projects.map((project) => (
-                <tr key={project.id} className="transition-colors hover:bg-paper">
+                <tr key={project.id} className="transition-colors hover:bg-cream">
                   <td className="px-4 py-3">
-                    <Link href={`/admin/projects/${project.id}`} className="hover:text-gold">
+                    <Link href={`/admin/projects/${project.id}`} className="hover:text-gold-ink">
                       {project.title_ar}
                     </Link>
                     <span className="block text-xs text-ink/35">{project.compound ?? "—"}</span>

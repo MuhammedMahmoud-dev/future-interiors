@@ -24,7 +24,7 @@ export default async function AdminClientsPage({
       action={
         <Link
           href={showArchived ? "/admin/clients" : "/admin/clients?archived=1"}
-          className="rounded-sharp border border-ink/20 px-5 py-2.5 text-sm transition-colors hover:border-gold"
+          className="rounded-pill border border-ink/20 px-5 py-2.5 text-sm transition-colors hover:border-gold"
         >
           {showArchived ? "النشطين بس" : "اعرض المؤرشفين كمان"}
         </Link>

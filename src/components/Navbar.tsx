@@ -128,7 +128,7 @@ export function Navbar({
 
             <Link
               href={href("/track", locale)}
-              className="hidden rounded-sharp bg-gold px-5 py-2.5 text-sm font-medium text-ink transition-opacity hover:opacity-90 sm:block"
+              className="hidden rounded-pill bg-gold px-6 py-2.5 text-sm font-medium text-ink transition-shadow duration-200 hover:shadow-lift sm:block"
             >
               {nav.track}
             </Link>
@@ -172,7 +172,7 @@ export function Navbar({
             href={href("/track", locale)}
             tabIndex={menuOpen ? 0 : -1}
             onClick={closeMenu}
-            className="mt-6 rounded-sharp bg-gold px-5 py-4 text-center font-medium text-ink"
+            className="mt-6 rounded-pill bg-gold px-5 py-4 text-center font-medium text-ink"
           >
             {nav.track}
           </Link>

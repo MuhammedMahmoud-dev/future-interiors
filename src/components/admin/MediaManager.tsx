@@ -75,7 +75,7 @@ export function MediaManager({
             name="files"
             multiple
             accept="image/jpeg,image/png,image/webp,image/avif"
-            className="mt-3 block w-full text-sm file:me-4 file:rounded-sharp file:border-0 file:bg-ink file:px-5 file:py-2.5 file:text-sm file:text-white"
+            className="mt-3 block w-full text-sm file:me-4 file:rounded-card file:border-0 file:bg-ink file:px-5 file:py-2.5 file:text-sm file:text-white"
           />
         </label>
         <p className="mt-2 text-xs text-ink/40">
@@ -84,7 +84,7 @@ export function MediaManager({
         <button
           type="submit"
           disabled={busy}
-          className="mt-4 rounded-sharp border border-ink/20 px-6 py-2.5 text-sm transition-colors hover:border-gold disabled:opacity-50"
+          className="mt-4 rounded-card border border-ink/20 px-6 py-2.5 text-sm transition-colors hover:border-gold disabled:opacity-50"
         >
           {busy ? "بيرفع…" : "رفع"}
         </button>
@@ -125,14 +125,14 @@ export function MediaManager({
                   defaultValue={item.caption_ar ?? ""}
                   placeholder="وصف الصورة"
                   onBlur={(event) => patch(item.id, { caption_ar: event.target.value })}
-                  className="w-full border-b border-ink/10 bg-transparent py-1 text-xs placeholder:text-ink/25 focus:border-gold focus:outline-none"
+                  className="w-full border-b border-ink/10 bg-transparent py-1 text-xs placeholder:text-ink/25 focus:border-gold-ink focus:outline-none"
                 />
 
                 <div className="grid grid-cols-2 gap-2">
                   <select
                     defaultValue={item.stage_id ?? ""}
                     onChange={(event) => patch(item.id, { stage_id: event.target.value || null })}
-                    className="rounded-sharp border border-ink/15 px-2 py-1.5 text-xs focus:border-gold focus:outline-none"
+                    className="rounded-card border border-ink/15 px-2 py-1.5 text-xs focus:border-gold-ink focus:outline-none"
                   >
                     <option value="">المرحلة —</option>
                     {stages.map((stage) => (
@@ -145,7 +145,7 @@ export function MediaManager({
                   <select
                     defaultValue={item.phase ?? ""}
                     onChange={(event) => patch(item.id, { phase: event.target.value || null })}
-                    className="rounded-sharp border border-ink/15 px-2 py-1.5 text-xs focus:border-gold focus:outline-none"
+                    className="rounded-card border border-ink/15 px-2 py-1.5 text-xs focus:border-gold-ink focus:outline-none"
                   >
                     {PHASES.map((phase) => (
                       <option key={phase.value} value={phase.value}>
@@ -173,7 +173,7 @@ export function MediaManager({
                         await setCover(projectId, item.url);
                       })
                     }
-                    className="text-ink/50 transition-colors hover:text-gold"
+                    className="text-ink/50 transition-colors hover:text-gold-ink"
                   >
                     اجعلها الغلاف
                   </button>

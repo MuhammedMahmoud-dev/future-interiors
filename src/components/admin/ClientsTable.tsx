@@ -47,7 +47,7 @@ export function ClientsTable({ clients }: { clients: AdminClient[] }) {
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="دوّر بالاسم أو الرقم…"
-          className="w-full max-w-md rounded-sharp border border-ink/15 bg-white px-4 py-2.5 text-sm focus:border-gold focus:outline-none"
+          className="w-full max-w-md rounded-card border border-ink/15 bg-white px-4 py-2.5 text-sm focus:border-gold-ink focus:outline-none"
         />
         <p className="mt-2 text-xs text-ink/40">
           {filtered.length} من {clients.length}
@@ -62,7 +62,7 @@ export function ClientsTable({ clients }: { clients: AdminClient[] }) {
         <div className="overflow-x-auto border border-ink/10 bg-white">
           <table className="w-full min-w-[720px] text-sm">
             <thead>
-              <tr className="bg-paper text-xs text-ink/50">
+              <tr className="bg-cream text-xs text-ink/50">
                 <th className="px-4 py-3 text-start font-normal">الاسم</th>
                 <th className="px-4 py-3 text-start font-normal">الموبايل</th>
                 <th className="px-4 py-3 text-start font-normal">المشاريع</th>
@@ -124,14 +124,14 @@ function ClientRow({
             <button
               type="submit"
               disabled={pending}
-              className="rounded-sharp bg-ink px-6 py-2.5 text-sm text-white disabled:opacity-50"
+              className="rounded-pill bg-ink px-6 py-2.5 text-sm text-white disabled:opacity-50"
             >
               {pending ? "بيحفظ…" : "حفظ"}
             </button>
             <button
               type="button"
               onClick={onToggleEdit}
-              className="rounded-sharp border border-ink/20 px-5 py-2.5 text-sm"
+              className="rounded-card border border-ink/20 px-5 py-2.5 text-sm"
             >
               إلغاء
             </button>
@@ -150,7 +150,7 @@ function ClientRow({
   }
 
   return (
-    <tr className={`transition-colors hover:bg-paper ${archived ? "text-ink/40" : ""}`}>
+    <tr className={`transition-colors hover:bg-cream ${archived ? "text-ink/40" : ""}`}>
       <td className="px-4 py-3">{client.name}</td>
       <td className="px-4 py-3" dir="ltr">
         {displayPhone(client.phone)}
@@ -168,7 +168,7 @@ function ClientRow({
           <button
             type="button"
             onClick={onToggleEdit}
-            className="rounded-sharp border border-ink/20 px-4 py-1.5 text-xs transition-colors hover:border-gold"
+            className="rounded-card border border-ink/20 px-4 py-1.5 text-xs transition-colors hover:border-gold"
           >
             تعديل
           </button>
@@ -176,7 +176,7 @@ function ClientRow({
             <form action={restoreClient.bind(null, client.id)}>
               <button
                 type="submit"
-                className="rounded-sharp border border-ink/20 px-4 py-1.5 text-xs transition-colors hover:border-gold"
+                className="rounded-card border border-ink/20 px-4 py-1.5 text-xs transition-colors hover:border-gold"
               >
                 إرجاع
               </button>
@@ -186,7 +186,7 @@ function ClientRow({
               <button
                 type="submit"
                 title="بيخفيه من القايمة بس — كل مشاريعه وبياناته بتفضل زي ما هي، ودخوله لبوابة المتابعة مابيتأثرش"
-                className="rounded-sharp border border-ink/20 px-4 py-1.5 text-xs transition-colors hover:border-gold"
+                className="rounded-card border border-ink/20 px-4 py-1.5 text-xs transition-colors hover:border-gold"
               >
                 أرشفة
               </button>
@@ -217,7 +217,7 @@ function AddClientForm() {
       <button
         type="submit"
         disabled={pending}
-        className="rounded-sharp bg-gold px-6 py-2.5 text-sm font-medium text-ink disabled:opacity-50"
+        className="rounded-pill bg-gold px-6 py-2.5 text-sm font-medium text-ink disabled:opacity-50"
       >
         {pending ? "بيضيف…" : "أضف عميل"}
       </button>
@@ -232,4 +232,4 @@ function AddClientForm() {
 }
 
 const input =
-  "mt-1 rounded-sharp border border-ink/15 bg-white px-3 py-2 text-sm focus:border-gold focus:outline-none";
+  "mt-1 rounded-card border border-ink/15 bg-white px-3 py-2 text-sm focus:border-gold-ink focus:outline-none";

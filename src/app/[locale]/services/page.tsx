@@ -18,9 +18,9 @@ export default async function ServicesPage({ params }: { params: Promise<{ local
 
   return (
     <>
-      <PageHeader title={t.services.title} subtitle={t.services.pageSubtitle} />
+      <PageHeader eyebrow={t.services.eyebrow} title={t.services.title} subtitle={t.services.pageSubtitle} />
 
-      <section className="py-20">
+      <section className="bg-cream py-20">
         <div className="mx-auto max-w-5xl px-4 sm:px-6">
           {services.length === 0 ? (
             <EmptyState message={t.common.unavailable} />
@@ -31,7 +31,7 @@ export default async function ServicesPage({ params }: { params: Promise<{ local
                 return (
                   <article key={service.id} className="grid gap-8 py-14 md:grid-cols-[auto_1fr]">
                     <div className="flex items-start gap-5">
-                      <span className="brand text-sm text-gold">
+                      <span className="brand text-sm text-gold-ink">
                         {String(index + 1).padStart(2, "0")}
                       </span>
                       <ServiceIcon name={service.icon} />
@@ -67,7 +67,7 @@ export default async function ServicesPage({ params }: { params: Promise<{ local
               href={whatsappLink(whatsapp, t.whatsapp.book)}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-sharp bg-gold px-8 py-4 text-sm font-medium text-ink transition-opacity hover:opacity-90"
+              className="rounded-card bg-gold px-8 py-4 text-sm font-medium text-ink transition-opacity hover:opacity-90"
             >
               {t.hero.ctaBook}
             </a>

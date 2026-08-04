@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { IBM_Plex_Sans_Arabic, Jost } from "next/font/google";
+import { IBM_Plex_Sans_Arabic, Jost, Noto_Naskh_Arabic, Playfair_Display } from "next/font/google";
 import "../globals.css";
 
 import { Navbar } from "@/components/Navbar";
@@ -21,6 +21,24 @@ const plexArabic = IBM_Plex_Sans_Arabic({
 const jost = Jost({
   subsets: ["latin"],
   variable: "--font-jost",
+  display: "swap",
+});
+
+/**
+ * Heading faces. Only one of the two is ever referenced by CSS on a given page —
+ * globals.css picks Playfair under [dir=ltr] and Noto Serif Arabic otherwise —
+ * so a reader downloads one serif, not both.
+ */
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  variable: "--font-playfair",
+  display: "swap",
+});
+
+const notoNaskhArabic = Noto_Naskh_Arabic({
+  subsets: ["arabic"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-serif-ar",
   display: "swap",
 });
 
@@ -66,7 +84,7 @@ export default async function LocaleLayout({
     <html
       lang={locale}
       dir={dir(locale)}
-      className={`${plexArabic.variable} ${jost.variable} h-full antialiased`}
+      className={`${plexArabic.variable} ${jost.variable} ${playfair.variable} ${notoNaskhArabic.variable} h-full antialiased`}
     >
       {/* type-scale-public enlarges the whole reading scale; /admin has its own
           root layout and deliberately keeps Tailwind's denser default. */}

@@ -147,7 +147,7 @@ export function ProjectForm({
             type="checkbox"
             name="is_public"
             defaultChecked={project?.is_public ?? false}
-            className="h-4 w-4 accent-[#c6a664]"
+            className="h-4 w-4 accent-[#c9a227]"
           />
           اعرض المشروع في المعرض
         </label>
@@ -157,7 +157,7 @@ export function ProjectForm({
             type="checkbox"
             name="publish_approved_at"
             defaultChecked={Boolean(project?.publish_approved_at)}
-            className="h-4 w-4 accent-[#c6a664]"
+            className="h-4 w-4 accent-[#c9a227]"
           />
           العميل وافق على النشر
         </label>
@@ -173,7 +173,7 @@ export function ProjectForm({
         <button
           type="submit"
           disabled={pending}
-          className="rounded-sharp bg-ink px-8 py-3 text-sm text-white transition-opacity hover:opacity-90 disabled:opacity-50"
+          className="rounded-pill bg-gold px-8 py-3 text-sm font-medium text-ink transition-opacity hover:opacity-90 disabled:opacity-50"
         >
           {pending ? "بيحفظ…" : submitLabel}
         </button>
@@ -184,7 +184,7 @@ export function ProjectForm({
 }
 
 const input =
-  "w-full rounded-sharp border border-ink/15 bg-white px-3 py-2.5 text-sm focus:border-gold focus:outline-none";
+  "w-full rounded-card border border-ink/15 bg-white px-3 py-2.5 text-sm focus:border-gold-ink focus:outline-none";
 
 function Section({
   title,
@@ -225,7 +225,7 @@ function Field({
     <label className={`block ${wide ? "sm:col-span-2" : ""}`}>
       <span className="block text-xs text-ink/50">
         {label}
-        {required && <span className="text-gold"> *</span>}
+        {required && <span className="text-gold-ink"> *</span>}
       </span>
       <div className="mt-2">{children}</div>
       {note && <span className="mt-1 block text-xs text-ink/35">{note}</span>}

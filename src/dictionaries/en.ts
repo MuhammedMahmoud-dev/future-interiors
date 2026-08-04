@@ -34,6 +34,7 @@ export const en: Dictionary = {
   },
 
   services: {
+    eyebrow: "What we do",
     title: "Services",
     subtitle: "Every finishing stage under one engineering supervisor",
     viewAll: "All services",
@@ -41,6 +42,7 @@ export const en: Dictionary = {
   },
 
   works: {
+    eyebrow: "Our work",
     title: "Our work",
     subtitle: "Projects delivered end to end",
     pageSubtitle: "Completed projects, published with their owners' consent",
@@ -75,6 +77,7 @@ export const en: Dictionary = {
   },
 
   journey: {
+    eyebrow: "Step by step",
     title: "The client journey",
     subtitle: "From the first site visit to the keys",
     steps: [
@@ -87,21 +90,25 @@ export const en: Dictionary = {
   },
 
   stats: {
+    eyebrow: "Built on trust",
     title: "By the numbers",
   },
 
   testimonials: {
+    eyebrow: "In their words",
     title: "What clients say",
     anonymous: "Client",
   },
 
   faq: {
+    eyebrow: "Questions & answers",
     title: "Frequently asked",
     subtitle: "What clients ask before the work starts",
     cta: "Ask your question",
   },
 
   workSystem: {
+    eyebrow: "How we work",
     title: "How we work",
     subtitle: "The process, step by step",
     steps: [
@@ -129,6 +136,7 @@ export const en: Dictionary = {
   },
 
   about: {
+    eyebrow: "Behind the work",
     title: "The engineer",
     bioTitle: "Profile",
     syndicate: "Engineers Syndicate",
@@ -137,6 +145,7 @@ export const en: Dictionary = {
   },
 
   contact: {
+    eyebrow: "Get in touch",
     title: "Get in touch",
     subtitle: "WhatsApp is the fastest way to reach us.",
     whatsappCta: "Message us on WhatsApp",

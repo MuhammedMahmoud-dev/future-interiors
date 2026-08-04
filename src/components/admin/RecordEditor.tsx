@@ -49,7 +49,7 @@ export function RecordEditor({
         <button
           type="button"
           onClick={addRow}
-          className="mt-6 rounded-sharp border border-ink/20 px-6 py-2.5 text-sm transition-colors hover:border-gold"
+          className="mt-6 rounded-card border border-ink/20 px-6 py-2.5 text-sm transition-colors hover:border-gold"
         >
           + إضافة
         </button>
@@ -124,7 +124,7 @@ function RecordCard({
           type="button"
           onClick={save}
           disabled={busy}
-          className="rounded-sharp bg-ink px-6 py-2.5 text-sm text-white transition-opacity hover:opacity-90 disabled:opacity-50"
+          className="rounded-card bg-ink px-6 py-2.5 text-sm text-white transition-opacity hover:opacity-90 disabled:opacity-50"
         >
           {busy ? "بيحفظ…" : "حفظ"}
         </button>
@@ -178,7 +178,7 @@ function Field({
   onChange: (next: string | boolean) => void;
 }) {
   const base =
-    "w-full rounded-sharp border border-ink/15 bg-white px-3 py-2.5 text-sm focus:border-gold focus:outline-none";
+    "w-full rounded-card border border-ink/15 bg-white px-3 py-2.5 text-sm focus:border-gold-ink focus:outline-none";
   const wide = field.type === "textarea" || field.type === "list";
 
   if (field.type === "boolean") {
@@ -199,7 +199,7 @@ function Field({
     <label className={`block ${wide ? "sm:col-span-2" : ""}`}>
       <span className="block text-xs text-ink/50">
         {field.label}
-        {field.required && <span className="text-gold"> *</span>}
+        {field.required && <span className="text-gold-ink"> *</span>}
       </span>
       <div className="mt-2">
         {field.type === "textarea" || field.type === "list" ? (

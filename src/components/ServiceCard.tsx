@@ -16,7 +16,7 @@ export function ServiceCard({
   return (
     <article
       data-reveal
-      className="relative overflow-hidden border border-ink/10 bg-white p-8 transition-colors hover:border-gold"
+      className="relative overflow-hidden rounded-card border border-ink/10 bg-paper p-8 shadow-soft transition-shadow duration-200 hover:shadow-lift"
     >
       {/* Faint background numeral, per spec */}
       <span
@@ -28,11 +28,11 @@ export function ServiceCard({
 
       <ServiceIcon name={icon} />
 
-      <h3 className="mt-6 text-xl">{title}</h3>
-      {description && <p className="mt-3 text-sm leading-7 text-ink/60">{description}</p>}
+      <h3 className="mt-6 font-serif text-xl text-ink">{title}</h3>
+      {description && <p className="mt-3 text-sm leading-7 text-body">{description}</p>}
 
       {bullets.length > 0 && (
-        <ul className="mt-6 space-y-2 border-t border-ink/10 pt-5 text-sm text-ink/70">
+        <ul className="mt-6 space-y-2 border-t border-ink/10 pt-5 text-sm text-body">
           {bullets.map((bullet) => (
             <li key={bullet} className="flex gap-2">
               <span aria-hidden="true" className="text-gold">

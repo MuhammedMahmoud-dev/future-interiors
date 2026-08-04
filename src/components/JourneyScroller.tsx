@@ -43,8 +43,8 @@ export function JourneyScroller({ steps }: { steps: JourneyStep[] }) {
             <span className="brand block text-sm text-gold">
               {String(index + 1).padStart(2, "0")}
             </span>
-            <h3 className="mt-3 text-lg">{step.title}</h3>
-            <p className="mt-2 text-sm text-ink/50">{step.duration}</p>
+            <h3 className="mt-3 font-serif text-lg text-ink">{step.title}</h3>
+            <p className="mt-2 text-sm text-muted">{step.duration}</p>
           </li>
         ))}
       </ol>

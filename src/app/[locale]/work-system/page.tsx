@@ -20,14 +20,14 @@ export default async function WorkSystemPage({ params }: { params: Promise<{ loc
 
   return (
     <>
-      <PageHeader title={t.workSystem.title} subtitle={t.workSystem.subtitle} />
+      <PageHeader eyebrow={t.workSystem.eyebrow} title={t.workSystem.title} subtitle={t.workSystem.subtitle} />
 
-      <section className="py-20">
+      <section className="bg-cream py-20">
         <div className="mx-auto max-w-3xl px-4 sm:px-6">
           <ol className="space-y-14">
             {t.workSystem.steps.map((step, index) => (
               <li key={step.title} className="grid gap-6 sm:grid-cols-[auto_1fr]">
-                <span className="brand text-2xl text-gold">
+                <span className="brand text-2xl text-gold-ink">
                   {String(index + 1).padStart(2, "0")}
                 </span>
                 <div className="border-s border-gold/30 ps-6">
@@ -43,7 +43,7 @@ export default async function WorkSystemPage({ params }: { params: Promise<{ loc
               href={whatsappLink(whatsapp, t.whatsapp.book)}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-sharp bg-gold px-8 py-4 text-sm font-medium text-ink transition-opacity hover:opacity-90"
+              className="rounded-card bg-gold px-8 py-4 text-sm font-medium text-ink transition-opacity hover:opacity-90"
             >
               {t.hero.ctaBook}
             </a>

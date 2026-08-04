@@ -31,7 +31,7 @@ export default async function AdminOverviewPage() {
               <li key={project.id}>
                 <Link
                   href={`/admin/projects/${project.id}`}
-                  className="flex flex-wrap items-baseline justify-between gap-2 px-4 py-4 transition-colors hover:bg-paper"
+                  className="flex flex-wrap items-baseline justify-between gap-2 px-4 py-4 transition-colors hover:bg-cream"
                 >
                   <span>{project.title_ar}</span>
                   <span className="brand text-xs text-ink/40" dir="ltr">
@@ -47,7 +47,7 @@ export default async function AdminOverviewPage() {
       <div className="mt-10">
         <Link
           href="/admin/projects/new"
-          className="rounded-sharp bg-ink px-6 py-3 text-sm text-white transition-opacity hover:opacity-90"
+          className="rounded-card bg-ink px-6 py-3 text-sm text-white transition-opacity hover:opacity-90"
         >
           مشروع جديد
         </Link>

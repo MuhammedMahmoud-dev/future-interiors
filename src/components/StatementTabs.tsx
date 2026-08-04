@@ -96,21 +96,21 @@ export function StatementTabs({
                   onChange={(event) => setQuery(event.target.value)}
                   placeholder={t.search}
                   aria-label={t.search}
-                  className="rounded-sharp border border-ink/15 px-4 py-2.5 text-sm focus:border-gold focus:outline-none"
+                  className="rounded-card border border-ink/15 px-4 py-2.5 text-sm focus:border-gold focus:outline-none"
                 />
                 <input
                   type="date"
                   value={from}
                   onChange={(event) => setFrom(event.target.value)}
                   aria-label={t.dateFrom}
-                  className="rounded-sharp border border-ink/15 px-4 py-2.5 text-sm focus:border-gold focus:outline-none"
+                  className="rounded-card border border-ink/15 px-4 py-2.5 text-sm focus:border-gold focus:outline-none"
                 />
                 <input
                   type="date"
                   value={to}
                   onChange={(event) => setTo(event.target.value)}
                   aria-label={t.dateTo}
-                  className="rounded-sharp border border-ink/15 px-4 py-2.5 text-sm focus:border-gold focus:outline-none"
+                  className="rounded-card border border-ink/15 px-4 py-2.5 text-sm focus:border-gold focus:outline-none"
                 />
               </div>
 

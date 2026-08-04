@@ -203,7 +203,7 @@ export function LedgerGrid({
       <div className="overflow-x-auto border border-ink/10 bg-white">
         <table className="w-full min-w-[720px] border-collapse text-sm">
           <thead>
-            <tr className="bg-paper text-start text-xs text-ink/50">
+            <tr className="bg-cream text-start text-xs text-ink/50">
               <th className="w-32 border-b border-ink/10 px-3 py-2 text-start font-normal">التاريخ</th>
               <th className="border-b border-ink/10 px-3 py-2 text-start font-normal">
                 {isExpenses ? "البند" : "الدفعة"}
@@ -301,7 +301,7 @@ export function LedgerGrid({
           </tbody>
 
           <tfoot>
-            <tr className="bg-paper">
+            <tr className="bg-cream">
               <td colSpan={isExpenses ? 3 : 2} className="px-3 py-3 text-xs text-ink/50">
                 {rows.filter((row) => row.text.trim()).length} سطر
               </td>
@@ -317,7 +317,7 @@ export function LedgerGrid({
       <button
         type="button"
         onClick={() => addRow()}
-        className="mt-4 rounded-sharp border border-ink/20 px-5 py-2.5 text-sm transition-colors hover:border-gold"
+        className="mt-4 rounded-pill border border-ink/20 px-5 py-2.5 text-sm transition-colors hover:border-gold"
       >
         + سطر جديد
       </button>

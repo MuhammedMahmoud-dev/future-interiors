@@ -83,7 +83,7 @@ export function ClientPicker({
                   <button
                     type="button"
                     onClick={() => setSelected(client.id)}
-                    className={`flex w-full items-baseline justify-between gap-4 px-4 py-2.5 text-start text-sm transition-colors hover:bg-paper ${
+                    className={`flex w-full items-baseline justify-between gap-4 px-4 py-2.5 text-start text-sm transition-colors hover:bg-cream ${
                       selected === client.id ? "bg-gold/10" : ""
                     }`}
                   >
@@ -140,7 +140,7 @@ function ModeButton({
     <button
       type="button"
       onClick={onClick}
-      className={`rounded-sharp border px-5 py-2 text-sm transition-colors ${
+      className={`rounded-card border px-5 py-2 text-sm transition-colors ${
         active ? "border-gold bg-gold text-ink" : "border-ink/15 text-ink/60 hover:border-gold"
       }`}
     >
@@ -150,4 +150,4 @@ function ModeButton({
 }
 
 const input =
-  "mt-1 w-full rounded-sharp border border-ink/15 bg-white px-3 py-2.5 text-sm focus:border-gold focus:outline-none";
+  "mt-1 w-full rounded-card border border-ink/15 bg-white px-3 py-2.5 text-sm focus:border-gold-ink focus:outline-none";

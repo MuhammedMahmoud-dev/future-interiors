@@ -38,6 +38,7 @@ export const ar = {
   },
 
   services: {
+    eyebrow: "اللي بنعمله",
     title: "خدماتنا",
     subtitle: "كل مراحل التشطيب تحت إشراف هندسي واحد",
     viewAll: "كل الخدمات",
@@ -45,6 +46,7 @@ export const ar = {
   },
 
   works: {
+    eyebrow: "أعمالنا",
     title: "أعمالنا",
     subtitle: "مشاريع اتنفذت بالكامل",
     pageSubtitle: "مشاريع مكتملة، معروضة بموافقة أصحابها",
@@ -79,6 +81,7 @@ export const ar = {
   },
 
   journey: {
+    eyebrow: "خطوة بخطوة",
     title: "رحلة العميل",
     subtitle: "من أول معاينة لحد استلام المفتاح",
     steps: [
@@ -91,21 +94,25 @@ export const ar = {
   },
 
   stats: {
+    eyebrow: "مبنية على الثقة",
     title: "أرقامنا",
   },
 
   testimonials: {
+    eyebrow: "اللي بيتقال عننا",
     title: "آراء العملاء",
     anonymous: "عميل",
   },
 
   faq: {
+    eyebrow: "أسئلة وإجابات",
     title: "أسئلة شائعة",
     subtitle: "أكتر الأسئلة اللي بتتسأل قبل بداية الشغل",
     cta: "اسأل سؤالك",
   },
 
   workSystem: {
+    eyebrow: "طريقة شغلنا",
     title: "نظام العمل",
     subtitle: "إزاي بنشتغل، خطوة بخطوة",
     steps: [
@@ -133,6 +140,7 @@ export const ar = {
   },
 
   about: {
+    eyebrow: "مين وراء الشغل",
     title: "عن المهندس",
     bioTitle: "نبذة",
     syndicate: "نقابة المهندسين",
@@ -141,6 +149,7 @@ export const ar = {
   },
 
   contact: {
+    eyebrow: "كلمنا",
     title: "تواصل معانا",
     subtitle: "واتساب هو أسرع طريقة توصلنا بيها.",
     whatsappCta: "ابعتلنا على واتساب",

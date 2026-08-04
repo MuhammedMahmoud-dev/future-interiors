@@ -22,9 +22,9 @@ export default async function TrackPage({ params }: { params: Promise<{ locale: 
 
   return (
     <section className="flex min-h-screen items-center justify-center bg-ink px-4 pb-20 pt-[164px]">
-      <div className="w-full max-w-md border border-gold/30 p-10">
+      <div className="w-full max-w-md rounded-card border border-gold/30 bg-white/[0.03] p-10">
         <div className="text-center">
-          <h1 className="text-2xl text-white">{t.track.title}</h1>
+          <h1 className="font-serif text-2xl text-white">{t.track.title}</h1>
           <div className="mx-auto mt-5 h-px w-12 bg-gold" />
           <p className="mt-6 text-sm leading-7 text-white/55">{t.track.subtitle}</p>
         </div>
