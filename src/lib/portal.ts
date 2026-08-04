@@ -20,6 +20,13 @@ export { getClientIp, isRateLimited, recordAttempt, clearAttempts } from "./rate
 /**
  * Returns the project id when both the code and the phone match, otherwise null.
  * The caller shows one generic message either way — never which field was wrong.
+ *
+ * The phone is read through the clients relation rather than off the project.
+ *
+ * There is deliberately NO filter on clients.archived_at here, and there must
+ * never be one. Archiving is a housekeeping flag for the admin's own list; it
+ * does not revoke a client's access to the statement for work they paid for.
+ * scripts/verify-clients.mjs signs in before and after archiving to prove it.
  */
 export async function verifyCredentials(code: string, phone: string): Promise<string | null> {
   const supabase = getSupabase();
@@ -27,14 +34,18 @@ export async function verifyCredentials(code: string, phone: string): Promise<st
 
   const { data, error } = await supabase
     .from("projects")
-    .select("id,client_phone")
+    .select("id,clients(phone)")
     .eq("code", code.trim().toUpperCase())
     .maybeSingle();
 
   if (error || !data) return null;
 
+  // PostgREST returns an embedded to-one relation as an object, but older
+  // versions and some shapes hand back a single-element array.
+  const client = Array.isArray(data.clients) ? data.clients[0] : data.clients;
+
   const given = normalizePhone(phone);
-  const stored = normalizePhone(data.client_phone ?? "");
+  const stored = normalizePhone(client?.phone ?? "");
   if (!given || !stored || given !== stored) return null;
 
   return data.id as string;

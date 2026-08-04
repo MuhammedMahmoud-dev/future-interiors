@@ -39,6 +39,21 @@ const PAYMENTS = [
   { date: "2025-05-01", label_ar: "دفعة ثالثة", amount: 260000, seq: 3 },
 ];
 
+/** The client is its own record now; reuse it across reseeds. */
+async function ensureClient() {
+  const stored = PHONE.replace(/\D/g, "").replace(/^0+/, "");
+  const found = await (await api(`clients?phone=eq.${stored}&select=id`)).json();
+  if (found[0]) return found[0].id;
+
+  const res = await api("clients", {
+    method: "POST",
+    headers: { Prefer: "return=representation" },
+    body: JSON.stringify({ name: "عميل الاختبار", phone: stored }),
+  });
+  const [row] = await res.json();
+  return row.id;
+}
+
 async function findFixture() {
   const res = await api(`projects?slug=eq.${SLUG}&select=id,code`);
   const rows = res.ok ? await res.json() : [];
@@ -65,8 +80,7 @@ async function seed() {
       title_ar: "شقة 200م - كمبوند تجريبي",
       title_en: "200 sqm apartment - test compound",
       description_ar: "مشروع تجريبي لاختبار بوابة المتابعة.",
-      client_name: "عميل الاختبار",
-      client_phone: PHONE,
+      client_id: await ensureClient(),
       unit_no: "13",
       building_no: "B7",
       supervision_rate: 0.15,

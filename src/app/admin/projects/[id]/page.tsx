@@ -13,6 +13,7 @@ import {
   getExpenses,
   getPayments,
   getStageProgress,
+  listClients,
 } from "@/lib/adminData";
 import { computeStatement, formatMoney } from "@/lib/finance";
 import { signMedia } from "@/lib/media";
@@ -44,10 +45,11 @@ export default async function AdminProjectPage({
   const project = await getAdminProject(id);
   if (!project) notFound();
 
-  const [expenses, payments, stageData] = await Promise.all([
+  const [expenses, payments, stageData, clients] = await Promise.all([
     getExpenses(id),
     getPayments(id),
     getStageProgress(id),
+    listClients(),
   ]);
 
   // The engineer needs the same totals the client sees, including the fee.
@@ -94,6 +96,7 @@ export default async function AdminProjectPage({
           action={updateProject.bind(null, id)}
           project={project}
           submitLabel="حفظ التعديلات"
+          clients={clients}
         />
       )}
 

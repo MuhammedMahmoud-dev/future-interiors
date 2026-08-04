@@ -15,6 +15,7 @@ import { readFileSync } from "node:fs";
 const GUARDED_FILES = [
   "src/app/admin/projects/actions.ts",
   "src/app/admin/content/actions.ts",
+  "src/app/admin/clients/actions.ts",
 ];
 
 /** Deliberately unguarded: these are how you obtain or drop a session. */

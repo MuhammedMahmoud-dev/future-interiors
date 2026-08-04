@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import type { ProjectFormState } from "@/app/admin/projects/actions";
 import type { AdminProject } from "@/lib/adminData";
+import { ClientPicker, type PickerClient } from "./ClientPicker";
 
 const initial: ProjectFormState = { error: null };
 
@@ -14,10 +15,13 @@ export function ProjectForm({
   action,
   project,
   submitLabel,
+  clients,
 }: {
   action: (state: ProjectFormState, formData: FormData) => Promise<ProjectFormState>;
   project?: AdminProject;
   submitLabel: string;
+  /** Active clients, for linking this project to one of them. */
+  clients: PickerClient[];
 }) {
   const [state, formAction, pending] = useActionState(action, initial);
 
@@ -117,19 +121,13 @@ export function ProjectForm({
           <input name="building_no" defaultValue={project?.building_no ?? ""} className={input} />
         </Field>
 
-        <Field label="اسم العميل">
-          <input name="client_name" defaultValue={project?.client_name ?? ""} className={input} />
-        </Field>
-
-        <Field label="موبايل العميل" note="ده اللي العميل بيدخل بيه صفحة المتابعة">
-          <input
-            name="client_phone"
-            dir="ltr"
-            placeholder="01xxxxxxxxx"
-            defaultValue={project?.client_phone ?? ""}
-            className={input}
-          />
-        </Field>
+        {/* The client is a record of its own now, so one person can hold several
+            projects. The phone here is what they sign in to the portal with. */}
+        <ClientPicker
+          clients={clients}
+          currentClientId={project?.client_id}
+          currentClientLabel={project?.clients?.name ?? null}
+        />
 
         <Field label="نسبة الإشراف" note="بين 0 و 1 — مثال 0.15 يعني 15%" required>
           <input

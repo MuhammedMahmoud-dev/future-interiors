@@ -26,13 +26,17 @@ export const PUBLIC_PROJECT_COLUMNS = [
   "cover_image",
 ].join(",");
 
-/** Never selectable on a public page. The project code is private too — it is the portal key. */
+/**
+ * Never selectable on a public page. The project code is private too — it is
+ * the portal key. `client_id` is listed because selecting it would let a public
+ * query embed `clients(...)` and pull a name and mobile number with it.
+ */
 export const PRIVATE_PROJECT_FIELDS = [
   "code",
   "unit_no",
   "building_no",
-  "client_name",
-  "client_phone",
+  "client_id",
+  "clients",
   "supervision_rate",
 ] as const;
 

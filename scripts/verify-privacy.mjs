@@ -23,7 +23,7 @@ if (!url || !secret) {
 }
 
 const TABLES = [
-  "projects", "expenses", "payments", "stages", "project_stages", "project_media",
+  "projects", "clients", "expenses", "payments", "stages", "project_stages", "project_media",
   "services", "testimonials", "faqs", "site_stats", "engineer_profile", "leads",
   "login_attempts",
 ];
@@ -36,9 +36,14 @@ const PROBE = {
   title_ar: "مشروع فحص الخصوصية",
   unit_no: "UNITNO-ZZ9",
   building_no: "BLDGNO-ZZ9",
-  client_name: "CLIENTNAME-ZZ9",
-  client_phone: "01099999999",
   supervision_rate: 0.1337,
+};
+
+// The client's name and number moved to their own table; they must stay just as
+// absent from public HTML as when they were columns on the project.
+const PROBE_CLIENT = {
+  name: "CLIENTNAME-ZZ9",
+  phone: "1099999999",
 };
 
 const api = (path, key, init = {}) =>
@@ -90,12 +95,25 @@ if (!publishable) {
 
 console.log("\nprivate fields absent from public HTML");
 let probeId = null;
+let probeClientId = null;
 try {
+  const clientInsert = await api("clients", secret, {
+    method: "POST",
+    headers: { Prefer: "return=representation" },
+    body: JSON.stringify(PROBE_CLIENT),
+  });
+  if (clientInsert.ok) {
+    [{ id: probeClientId }] = await clientInsert.json();
+  } else {
+    fail("insert probe client", `${clientInsert.status} ${(await clientInsert.text()).slice(0, 120)}`);
+  }
+
   const insert = await api("projects", secret, {
     method: "POST",
     headers: { Prefer: "return=representation" },
     body: JSON.stringify({
       ...PROBE,
+      client_id: probeClientId,
       status: "completed",
       compound: "ZZ Compound",
       area_m2: 200,
@@ -124,8 +142,9 @@ try {
       fail("dev server", `not reachable at ${site} — run npm run dev, then re-run`);
     } else {
       const needles = [
-        PROBE.unit_no, PROBE.building_no, PROBE.client_name, PROBE.client_phone,
-        "0.1337", "1337", "supervision_rate", "unit_no", "building_no", "client_name", "client_phone",
+        PROBE.unit_no, PROBE.building_no,
+        PROBE_CLIENT.name, PROBE_CLIENT.phone, `0${PROBE_CLIENT.phone}`,
+        "0.1337", "1337", "supervision_rate", "unit_no", "building_no", "client_id",
       ];
       const paths = ["/ar", "/en", "/ar/works", "/en/works", `/ar/works/${PROBE.slug}`, `/en/works/${PROBE.slug}`];
 
@@ -140,6 +159,9 @@ try {
     }
   }
 } finally {
+  // Project first: the client FK is ON DELETE RESTRICT by design.
+  if (probeId) await api(`projects?id=eq.${probeId}`, secret, { method: "DELETE" });
+  if (probeClientId) await api(`clients?id=eq.${probeClientId}`, secret, { method: "DELETE" });
   if (probeId) {
     const del = await api(`projects?id=eq.${probeId}`, secret, { method: "DELETE" });
     console.log(del.ok ? "\n  probe project deleted" : `\n  WARNING: probe ${probeId} NOT deleted`);

@@ -56,7 +56,21 @@ export default async function AdminProjectsPage() {
                   <td className="brand px-4 py-3 text-xs" dir="ltr">
                     {project.code}
                   </td>
-                  <td className="px-4 py-3 text-ink/70">{project.client_name ?? "—"}</td>
+                  {/* Read through the client_id relation, not duplicated here. */}
+                  <td className="px-4 py-3 text-ink/70">
+                    {project.clients ? (
+                      <>
+                        {project.clients.name}
+                        <span className="block text-xs text-ink/35" dir="ltr">
+                          {/^1\d{9}$/.test(project.clients.phone)
+                            ? `0${project.clients.phone}`
+                            : project.clients.phone}
+                        </span>
+                      </>
+                    ) : (
+                      "—"
+                    )}
+                  </td>
                   <td className="px-4 py-3 text-ink/70">
                     {STATUS_LABEL[project.status] ?? project.status}
                   </td>

@@ -19,8 +19,9 @@ export type AdminProject = {
   description_en: string | null;
   unit_no: string | null;
   building_no: string | null;
-  client_name: string | null;
-  client_phone: string | null;
+  client_id: string | null;
+  /** Embedded through the client_id foreign key, not stored on the project. */
+  clients: { id: string; name: string; phone: string; archived_at: string | null } | null;
   supervision_rate: number | string;
   compound: string | null;
   district: string | null;
@@ -65,21 +66,84 @@ export async function getAdminOverview() {
   };
 }
 
+const PROJECT_WITH_CLIENT = "*,clients(id,name,phone,archived_at)";
+
 export async function listProjects(): Promise<AdminProject[]> {
   const supabase = getSupabase();
   if (!supabase) return [];
   const { data } = await supabase
     .from("projects")
-    .select("*")
+    .select(PROJECT_WITH_CLIENT)
     .order("created_at", { ascending: false });
-  return (data ?? []) as AdminProject[];
+  return (data ?? []) as unknown as AdminProject[];
 }
 
 export async function getAdminProject(id: string): Promise<AdminProject | null> {
   const supabase = getSupabase();
   if (!supabase) return null;
-  const { data } = await supabase.from("projects").select("*").eq("id", id).maybeSingle();
-  return (data as AdminProject) ?? null;
+  const { data } = await supabase
+    .from("projects")
+    .select(PROJECT_WITH_CLIENT)
+    .eq("id", id)
+    .maybeSingle();
+  return (data as unknown as AdminProject) ?? null;
+}
+
+// ------------------------------------------------------------------ clients
+
+export type AdminClient = {
+  id: string;
+  name: string;
+  phone: string;
+  created_at: string;
+  archived_at: string | null;
+  /** Derived from the relation, so it can never drift from reality. */
+  projectCount: number;
+};
+
+/**
+ * Clients with their project counts.
+ *
+ * Archived clients are excluded by default — that is the entire point of the
+ * flag. Nothing here is ever deleted, so `includeArchived` brings them all back.
+ */
+export async function listClients(options?: { includeArchived?: boolean }): Promise<AdminClient[]> {
+  const supabase = getSupabase();
+  if (!supabase) return [];
+
+  let query = supabase
+    .from("clients")
+    .select("id,name,phone,created_at,archived_at,projects(count)")
+    .order("created_at", { ascending: false });
+
+  if (!options?.includeArchived) query = query.is("archived_at", null);
+
+  const { data, error } = await query;
+  if (error) {
+    console.error("[adminData] listClients", error.message);
+    return [];
+  }
+
+  return (data ?? []).map((row) => {
+    // PostgREST returns an aggregate embed as [{ count: n }].
+    const embed = row.projects as unknown;
+    const projectCount = Array.isArray(embed)
+      ? Number((embed[0] as { count?: number } | undefined)?.count ?? embed.length)
+      : 0;
+    return {
+      id: row.id,
+      name: row.name,
+      phone: row.phone,
+      created_at: row.created_at,
+      archived_at: row.archived_at,
+      projectCount: Number.isFinite(projectCount) ? projectCount : 0,
+    };
+  });
+}
+
+export async function getClient(id: string): Promise<AdminClient | null> {
+  const clients = await listClients({ includeArchived: true });
+  return clients.find((client) => client.id === id) ?? null;
 }
 
 export type LedgerExpense = {

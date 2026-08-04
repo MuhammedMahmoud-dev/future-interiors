@@ -121,8 +121,6 @@ try {
     body: JSON.stringify({
       slug: "zz-admin-probe",
       title_ar: "مشروع فحص اللوحة",
-      client_name: "ADMINPROBE-ZZ9",
-      client_phone: "01099999998",
       unit_no: "ADMINUNIT-ZZ9",
       supervision_rate: 0.15,
       status: "in_progress",
