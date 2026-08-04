@@ -61,12 +61,32 @@ export function pickList(
   return Array.isArray(chosen) ? chosen.filter((v): v is string => typeof v === "string") : [];
 }
 
-/** Builds a wa.me link with a prefilled message. */
+const EGYPT_COUNTRY_CODE = "20";
+
+/**
+ * Builds a wa.me link with a prefilled message.
+ *
+ * wa.me needs a full international number with no plus and no trunk zero, so a
+ * locally-written "01115134141" would produce a dead link. Egyptian numbers are
+ * normalised and re-prefixed here, which makes 01115134141, +20 111 513 4141,
+ * 00201115134141 and 201115134141 all resolve to the same chat.
+ *
+ * Numbers that are not Egyptian mobiles are passed through untouched — blindly
+ * prefixing 20 would corrupt, say, a Saudi or US number.
+ */
 export function whatsappLink(phone: string | null | undefined, message: string): string {
+  const text = encodeURIComponent(message);
   const digits = (phone ?? "").replace(/\D/g, "");
-  return digits
-    ? `https://wa.me/${digits}?text=${encodeURIComponent(message)}`
-    : `https://wa.me/?text=${encodeURIComponent(message)}`;
+  if (!digits) return `https://wa.me/?text=${text}`;
+
+  const local = normalizePhone(digits);
+  // Once the trunk zero and country code are stripped, an Egyptian mobile is
+  // exactly 10 digits starting with 1 (prefixes 010/011/012/015).
+  const international = /^1\d{9}$/.test(local)
+    ? `${EGYPT_COUNTRY_CODE}${local}`
+    : digits.replace(/^0+/, "");
+
+  return `https://wa.me/${international}?text=${text}`;
 }
 
 /**

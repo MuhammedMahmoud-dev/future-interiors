@@ -53,12 +53,41 @@ body {
   letter-spacing: 0.14em;
 }
 
+/*
+ * Enlarged reading scale for the public site.
+ *
+ * Tailwind v4 resolves every text-* utility through these variables, and pairs
+ * each with a UNITLESS line-height ratio, so overriding the size alone scales
+ * the leading with it. Redefining them here moves the whole scale at once —
+ * the hierarchy is preserved by construction instead of by hand-editing a
+ * hundred class names and hoping the steps stay in order.
+ *
+ * Body sizes go up about a full step; the display sizes are deliberately
+ * tapered so the hero headline still fits a 375px screen.
+ *
+ * Deliberately a class, not :root — /admin loads this same stylesheet, and its
+ * ledger grid runs past a hundred rows where bigger text costs more than it gives.
+ */
+.type-scale-public {
+  --text-xs: 0.8125rem;
+  --text-sm: 0.9375rem;
+  --text-base: 1.125rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.375rem;
+  --text-2xl: 1.75rem;
+  --text-3xl: 2.125rem;
+  --text-4xl: 2.5rem;
+  --text-5xl: 3.25rem;
+  --text-6xl: 4rem;
+}
+
 @utility no-scrollbar {
   scrollbar-width: none;
   &::-webkit-scrollbar {
     display: none;
   }
 }
+
 
 /* The statement page prints as the PDF, so the site chrome must not come with it. */
 @media print {

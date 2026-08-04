@@ -52,3 +52,33 @@ test("whatsapp links carry a url-encoded message", () => {
   assert.equal(link.startsWith("https://wa.me/201000000000?text="), true);
   assert.equal(link.includes(" "), false);
 });
+
+test("every way of writing the real number reaches the same chat", () => {
+  // A local 01… number is the one an engineer would type by hand, and it is
+  // exactly the form that produces a dead wa.me link if passed through raw.
+  for (const input of [
+    "01115134141",
+    "+201115134141",
+    "+20 111 513 4141",
+    "00201115134141",
+    "201115134141",
+    "0111 513 4141",
+  ]) {
+    assert.equal(
+      whatsappLink(input, "hi"),
+      "https://wa.me/201115134141?text=hi",
+      input,
+    );
+  }
+});
+
+test("a missing number never produces a recipient-less link silently", () => {
+  // It still degrades to the bare wa.me form, but nothing else should.
+  assert.equal(whatsappLink(null, "hi"), "https://wa.me/?text=hi");
+  assert.equal(whatsappLink("", "hi"), "https://wa.me/?text=hi");
+});
+
+test("non-Egyptian numbers are not given an Egyptian country code", () => {
+  assert.equal(whatsappLink("+966501234567", "hi"), "https://wa.me/966501234567?text=hi");
+  assert.equal(whatsappLink("+1 202 555 0123", "hi"), "https://wa.me/12025550123?text=hi");
+});

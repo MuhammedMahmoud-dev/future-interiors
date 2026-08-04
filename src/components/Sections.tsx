@@ -1,9 +1,16 @@
 export function SectionHeading({ title, subtitle }: { title: string; subtitle?: string }) {
   return (
     <header>
-      <h2 className="text-3xl sm:text-4xl">{title}</h2>
-      {subtitle && <p className="mt-4 max-w-2xl text-sm leading-7 text-ink/55">{subtitle}</p>}
-      <div className="mt-6 h-px w-16 bg-gold" />
+      <h2 data-reveal className="text-3xl sm:text-4xl">
+        {title}
+      </h2>
+      {subtitle && (
+        <p data-reveal className="mt-4 max-w-2xl text-sm leading-7 text-ink/55">
+          {subtitle}
+        </p>
+      )}
+      {/* Draws itself from the inline start — the brand mark in motion. */}
+      <div data-rule className="mt-6 h-px w-16 bg-gold" />
     </header>
   );
 }
@@ -13,9 +20,15 @@ export function PageHeader({ title, subtitle }: { title: string; subtitle?: stri
   return (
     <div className="border-b border-ink/10 bg-paper pb-16 pt-[164px]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <h1 className="text-4xl sm:text-5xl">{title}</h1>
-        {subtitle && <p className="mt-5 max-w-2xl text-sm leading-7 text-ink/55">{subtitle}</p>}
-        <div className="mt-6 h-px w-16 bg-gold" />
+        <h1 data-reveal className="text-4xl sm:text-5xl">
+          {title}
+        </h1>
+        {subtitle && (
+          <p data-reveal className="mt-5 max-w-2xl text-sm leading-7 text-ink/55">
+            {subtitle}
+          </p>
+        )}
+        <div data-rule className="mt-6 h-px w-16 bg-gold" />
       </div>
     </div>
   );

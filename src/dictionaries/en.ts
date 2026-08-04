@@ -28,10 +28,7 @@ export const en: Dictionary = {
   },
 
   hero: {
-    eyebrow: "October • Sheikh Zayed • Compounds",
     title: "Finishing under full engineering supervision",
-    subtitle:
-      "Your apartment executed end to end, from rough-in to handover, with daily engineering supervision and an itemised statement covering every line and every invoice as it happens.",
     ctaWorks: "See our work",
     ctaBook: "Book a site visit",
   },

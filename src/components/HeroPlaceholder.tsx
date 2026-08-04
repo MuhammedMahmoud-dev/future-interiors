@@ -20,9 +20,12 @@ export function HeroPlaceholder() {
       {/* Faint warm lift behind the monogram so the centre reads as lit. */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_55%_at_50%_42%,rgba(198,166,100,0.10),transparent_70%)]" />
 
-      {/* Drafting grid: fine 48px squares, heavier every 240px. */}
+      {/* Drafting grid: fine 48px squares, heavier every 240px.
+          Layers below carry data-parallax and are over-sized vertically so
+          drifting them never exposes an edge. */}
       <div
-        className="absolute inset-0"
+        className="absolute inset-x-0 -inset-y-[14%]"
+        data-parallax="0.12"
         style={{
           backgroundImage: [
             "repeating-linear-gradient(to right, rgba(198,166,100,0.06) 0 1px, transparent 1px 48px)",
@@ -35,7 +38,8 @@ export function HeroPlaceholder() {
 
       {/* Floor-plan motif: walls, a door swing, and a dimension run. */}
       <svg
-        className="absolute inset-0 h-full w-full"
+        className="absolute inset-x-0 -inset-y-[14%] h-[128%] w-full"
+        data-parallax="0.2"
         viewBox="0 0 1440 900"
         preserveAspectRatio="xMidYMid slice"
         fill="none"
@@ -77,21 +81,31 @@ export function HeroPlaceholder() {
         </g>
       </svg>
 
-      {/* Monogram: outlined, centred, deliberately quiet. */}
-      <div className="absolute inset-0 flex items-center justify-center">
+      {/* Monogram: outlined, centred, deliberately quiet. Now that the headline
+          is centred too it sits directly behind the type, so the stroke is
+          lighter than it was when the text sat at the bottom — a watermark, not
+          a second thing competing for the eye.
+          Drifts fastest, so it reads as the nearest layer. */}
+      <div
+        className="absolute inset-0 flex items-center justify-center"
+        data-parallax="0.3"
+      >
         <span
           className="brand select-none leading-none text-transparent"
           style={{
             fontSize: "clamp(9rem, 30vw, 26rem)",
-            WebkitTextStroke: "1.25px rgba(198,166,100,0.20)",
+            WebkitTextStroke: "1.25px rgba(198,166,100,0.13)",
           }}
         >
           FI
         </span>
       </div>
 
-      {/* Keeps the headline legible over the busiest part of the grid. */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(16,16,16,0.85)_0%,rgba(16,16,16,0.35)_45%,transparent_75%)]" />
+      {/* Settles the drawing behind the type. This used to be a bottom-up ramp,
+          because the headline sat at the bottom; the headline is centred now, so
+          the weight is centred with it and both edges stay open enough for the
+          plan and the registration marks to still read. */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(16,16,16,0.55)_0%,rgba(16,16,16,0.62)_30%,rgba(16,16,16,0.62)_70%,rgba(16,16,16,0.30)_100%)]" />
     </div>
   );
 }

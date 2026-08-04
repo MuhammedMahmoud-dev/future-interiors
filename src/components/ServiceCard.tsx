@@ -14,7 +14,10 @@ export function ServiceCard({
   icon: string | null;
 }) {
   return (
-    <article className="relative overflow-hidden border border-ink/10 bg-white p-8 transition-colors hover:border-gold">
+    <article
+      data-reveal
+      className="relative overflow-hidden border border-ink/10 bg-white p-8 transition-colors hover:border-gold"
+    >
       {/* Faint background numeral, per spec */}
       <span
         aria-hidden="true"

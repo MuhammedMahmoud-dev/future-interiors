@@ -5,14 +5,21 @@ import { useRef, useState } from "react";
 export type JourneyStep = { title: string; duration: string };
 
 /**
- * Horizontal timeline. On desktop the five steps sit in a row; on mobile they
- * become a swipeable scroll-snap track with position dots, rather than five
- * squashed columns.
+ * The five stages of the client journey.
+ *
+ * Desktop shows all five at once. An earlier version pinned the section and
+ * scrubbed the steps sideways, which looked cinematic but only ever framed
+ * about three of them — the rest read as missing, and the pin reserved roughly
+ * 1,500px of scroll that showed up as a dead gap before the next section.
+ *
+ * Mobile keeps the horizontal swipe with scroll-snap and position dots, because
+ * five columns will not fit a phone either way.
  */
 export function JourneyScroller({ steps }: { steps: JourneyStep[] }) {
   const trackRef = useRef<HTMLOListElement>(null);
   const [active, setActive] = useState(0);
 
+  // Only meaningful on mobile, where the track is the scrolling element.
   const onScroll = () => {
     const track = trackRef.current;
     if (!track) return;
@@ -25,12 +32,13 @@ export function JourneyScroller({ steps }: { steps: JourneyStep[] }) {
       <ol
         ref={trackRef}
         onScroll={onScroll}
-        className="no-scrollbar flex snap-x snap-mandatory gap-6 overflow-x-auto pb-2 md:grid md:grid-cols-5 md:gap-0 md:overflow-visible"
+        className="no-scrollbar flex snap-x snap-mandatory gap-6 overflow-x-auto pb-2 md:grid md:grid-cols-3 md:gap-x-8 md:gap-y-12 md:overflow-visible lg:grid-cols-5 lg:gap-x-6"
       >
         {steps.map((step, index) => (
           <li
             key={step.title}
-            className="min-w-[78%] shrink-0 snap-center border-t border-gold/30 pt-6 md:min-w-0 md:pe-6"
+            data-reveal
+            className="min-w-[78%] shrink-0 snap-center border-t border-gold/30 pt-6 sm:min-w-[52%] md:min-w-0 md:pe-2"
           >
             <span className="brand block text-sm text-gold">
               {String(index + 1).padStart(2, "0")}

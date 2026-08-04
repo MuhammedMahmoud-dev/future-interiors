@@ -60,8 +60,22 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
   return (
     <>
-      {/* 1 — Hero */}
-      <section className="relative flex h-[85vh] min-h-[520px] items-end overflow-hidden bg-ink">
+      {/*
+        1 — Hero. Fills the viewport exactly, so nothing of the next (white)
+        section shows before the first scroll.
+
+        The top bar and nav are position:fixed — that is what lets them go from
+        transparent to solid on scroll — so they are out of flow and cannot be
+        flex children here. They already overlay this section from y=0, which
+        makes the dark band they sit in exactly this element's height. The
+        pt-[100px] below reserves their combined 36px + 64px so the headline can
+        never slide underneath them on a short viewport.
+
+        dvh, not vh: on mobile, 100vh is the *largest* viewport and would push
+        the white section into view and add scroll while the URL bar is showing.
+        The 520px floor keeps the content from clipping on short landscape phones.
+      */}
+      <section className="relative flex min-h-[max(100dvh,520px)] flex-col overflow-hidden bg-ink pt-[100px]">
         {heroExists ? (
           <>
             <Image
@@ -78,38 +92,35 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           <HeroPlaceholder />
         )}
 
-        <div className="relative mx-auto w-full max-w-7xl px-4 pb-20 sm:px-6">
-          <p className="animate-rise text-xs tracking-[0.2em] text-gold">{t.hero.eyebrow}</p>
-          <h1
-            className="animate-rise mt-5 max-w-3xl text-4xl leading-tight text-white sm:text-5xl lg:text-6xl"
-            style={{ animationDelay: "120ms" }}
-          >
-            {t.hero.title}
-          </h1>
-          <p
-            className="animate-rise mt-6 max-w-2xl text-base leading-8 text-white/75 sm:text-lg"
-            style={{ animationDelay: "240ms" }}
-          >
-            {t.hero.subtitle}
-          </p>
-          <div
-            className="animate-rise mt-9 flex flex-wrap gap-4"
-            style={{ animationDelay: "360ms" }}
-          >
-            <Link
-              href={href("/works", locale)}
-              className="rounded-sharp bg-gold px-8 py-4 text-sm font-medium text-ink transition-opacity hover:opacity-90"
+        {/* Headline and the two calls to action, centred in what is left of the
+            viewport below the fixed nav. flex-1 claims that leftover space and
+            justify-center centres within it, so the block stays optically
+            centred at any height instead of sitting against an edge. The py
+            gutter keeps it off the nav and the fold on short screens. */}
+        <div className="relative flex flex-1 flex-col justify-center py-10">
+          <div className="mx-auto w-full max-w-7xl px-4 sm:px-6">
+            <h1
+              data-reveal
+              className="max-w-4xl text-4xl leading-tight text-white sm:text-5xl lg:text-6xl"
             >
-              {t.hero.ctaWorks}
-            </Link>
-            <a
-              href={bookHref}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-sharp border border-white px-8 py-4 text-sm font-medium text-white transition-colors hover:border-gold hover:text-gold"
-            >
-              {t.hero.ctaBook}
-            </a>
+              {t.hero.title}
+            </h1>
+            <div data-reveal className="mt-12 flex flex-wrap gap-4">
+              <Link
+                href={href("/works", locale)}
+                className="rounded-sharp bg-gold px-8 py-4 text-sm font-medium text-ink transition-opacity hover:opacity-90"
+              >
+                {t.hero.ctaWorks}
+              </Link>
+              <a
+                href={bookHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-sharp border border-white px-8 py-4 text-sm font-medium text-white transition-colors hover:border-gold hover:text-gold"
+              >
+                {t.hero.ctaBook}
+              </a>
+            </div>
           </div>
         </div>
       </section>
@@ -197,7 +208,11 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                     }`}
                   >
                     <div className="grid grid-cols-3 gap-3">
-                      <div className="col-span-3 aspect-[4/3] overflow-hidden bg-ink/5">
+                      {/* Wipes up from its own bottom edge as it enters. */}
+                      <div
+                        data-wipe
+                        className="col-span-3 aspect-[4/3] overflow-hidden bg-ink/5"
+                      >
                         {cover && (
                           <Image
                             src={cover}
@@ -205,12 +220,17 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                             width={1200}
                             height={900}
                             sizes="(max-width: 1024px) 100vw, 50vw"
-                            className="h-full w-full object-cover"
+                            className="h-full w-full scale-105 object-cover"
+                            data-parallax="0.06"
                           />
                         )}
                       </div>
                       {supporting.map((url) => (
-                        <div key={url} className="aspect-square overflow-hidden bg-ink/5">
+                        <div
+                          key={url}
+                          data-wipe
+                          className="aspect-square overflow-hidden bg-ink/5"
+                        >
                           <Image
                             src={url}
                             alt=""
@@ -224,8 +244,10 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                     </div>
 
                     <div className="lg:px-6">
-                      <h3 className="text-2xl sm:text-3xl">{pick(project, "title", locale)}</h3>
-                      <p className="mt-5 text-sm leading-8 text-ink/60">
+                      <h3 data-reveal className="text-2xl sm:text-3xl">
+                        {pick(project, "title", locale)}
+                      </h3>
+                      <p data-reveal className="mt-5 text-sm leading-8 text-ink/60">
                         {pick(project, "description", locale)}
                       </p>
 
@@ -269,7 +291,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         </section>
       )}
 
-      {/* 5 — Client journey */}
+      {/* 5 — Client journey. All five steps visible at once; same section rhythm
+          as everything else on the page. */}
       <section className="py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <SectionHeading title={t.journey.title} subtitle={t.journey.subtitle} />

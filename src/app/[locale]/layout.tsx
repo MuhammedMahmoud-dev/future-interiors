@@ -6,6 +6,7 @@ import "../globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { WhatsAppFab } from "@/components/WhatsAppFab";
+import { ScrollMotion } from "@/components/motion/ScrollMotion";
 import { getDictionary } from "@/lib/dictionary";
 import { dir, isLocale, locales, pick, whatsappLink, type Locale } from "@/lib/i18n";
 import { getEngineer, getServices, getWhatsappNumber } from "@/lib/data";
@@ -67,7 +68,9 @@ export default async function LocaleLayout({
       dir={dir(locale)}
       className={`${plexArabic.variable} ${jost.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col font-sans">
+      {/* type-scale-public enlarges the whole reading scale; /admin has its own
+          root layout and deliberately keeps Tailwind's denser default. */}
+      <body className="type-scale-public flex min-h-full flex-col font-sans">
         <Navbar
           locale={locale}
           nav={t.nav}
@@ -75,6 +78,9 @@ export default async function LocaleLayout({
           phone={phone}
           whatsappHref={bookHref}
         />
+        {/* Scroll motion is public-site only — it is never mounted on the
+            client portal or the admin, where people are working, not reading. */}
+        <ScrollMotion />
         <main className="flex-1">{children}</main>
         <Footer
           locale={locale}
