@@ -106,7 +106,7 @@ export default async function ProjectPage({
         <div className="absolute inset-0 bg-ink/40" />
         <div className="absolute inset-x-0 bottom-0">
           <div className="mx-auto max-w-7xl px-4 pb-14 sm:px-6">
-            <h1 className="max-w-3xl font-serif text-3xl text-white sm:text-5xl">
+            <h1 className="max-w-3xl text-3xl text-white sm:text-5xl">
               {pick(project, "title", locale)}
             </h1>
           </div>
@@ -114,7 +114,7 @@ export default async function ProjectPage({
       </section>
 
       {/* Fact bar — public metadata only, never a unit or building number */}
-      <section className="border-b border-ink/10 bg-cream">
+      <section className="border-b border-border bg-surface">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <dl className="grid grid-cols-2 gap-y-8 py-10 text-sm lg:grid-cols-4">
             {project.area_m2 && (
@@ -141,7 +141,7 @@ export default async function ProjectPage({
 
       {/* Before / after — auto-hidden without a matching pair */}
       {beforeUrl && afterUrl && (
-        <section className="bg-cream py-20">
+        <section className="bg-surface py-20">
           <div className="mx-auto max-w-5xl px-4 sm:px-6">
             <SectionHeading title={t.project.beforeAfter} />
             <div className="mt-10">
@@ -165,16 +165,16 @@ export default async function ProjectPage({
             <ol className="mt-12 space-y-12">
               {stageBlocks.map((block, index) => (
                 <li key={block.id} className="grid gap-6 sm:grid-cols-[auto_1fr]">
-                  <span className="brand text-sm text-gold-ink">
+                  <span className="brand text-sm text-accent">
                     {String(index + 1).padStart(2, "0")}
                   </span>
-                  <div className="border-s border-gold/30 ps-6">
+                  <div className="border-s border-accent/30 ps-6">
                     <div className="flex flex-wrap items-baseline gap-3">
-                      <h3 className="font-serif text-lg text-ink">{block.name}</h3>
+                      <h3 className="text-lg text-ink">{block.name}</h3>
                       {block.progress && (
                         <span
                           className={`text-xs ${
-                            block.progress.status === "done" ? "text-gold-ink" : "text-muted"
+                            block.progress.status === "done" ? "text-accent" : "text-muted"
                           }`}
                         >
                           {statusLabel[block.progress.status]}
@@ -213,7 +213,7 @@ export default async function ProjectPage({
 
       {/* Full gallery */}
       {gallery.length > 0 && (
-        <section className="bg-cream py-20">
+        <section className="bg-surface py-20">
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
             <SectionHeading title={t.project.gallery} />
             <div className="mt-10">
@@ -226,7 +226,7 @@ export default async function ProjectPage({
       {/* CTA */}
       <section className="bg-ink py-24 text-center text-white">
         <div className="mx-auto max-w-2xl px-4 sm:px-6">
-          <h2 className="font-serif text-3xl">{t.project.ctaTitle}</h2>
+          <h2 className="text-3xl">{t.project.ctaTitle}</h2>
           <p className="mt-4 text-sm text-white/60">{t.project.ctaText}</p>
           <a
             href={whatsappLink(
@@ -235,7 +235,7 @@ export default async function ProjectPage({
             )}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-10 inline-block rounded-card bg-gold px-8 py-4 text-sm font-medium text-ink transition-opacity hover:opacity-90"
+            className="mt-10 inline-block rounded-card bg-ink px-8 py-4 text-sm font-medium text-white transition-opacity hover:opacity-90"
           >
             {t.project.ctaButton}
           </a>
@@ -244,7 +244,7 @@ export default async function ProjectPage({
 
       {/* Related */}
       {others.length > 0 && (
-        <section className="bg-cream py-20">
+        <section className="bg-surface py-20">
           <div className="mx-auto max-w-7xl px-4 sm:px-6">
             <SectionHeading title={t.project.related} />
             <div className="mt-10 grid gap-6 md:grid-cols-3">
@@ -269,7 +269,7 @@ export default async function ProjectPage({
                         />
                       )}
                     </div>
-                    <h3 className="mt-4 font-serif text-base text-ink transition-colors group-hover:text-gold-ink">
+                    <h3 className="mt-4 text-base text-ink transition-colors group-hover:text-ink">
                       {pick(other, "title", locale)}
                     </h3>
                   </Link>

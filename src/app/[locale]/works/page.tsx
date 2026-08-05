@@ -38,7 +38,7 @@ export default async function WorksPage({ params }: { params: Promise<{ locale: 
   return (
     <>
       <PageHeader eyebrow={t.works.eyebrow} title={t.works.title} subtitle={t.works.pageSubtitle} />
-      <section className="bg-cream py-20">
+      <section className="bg-surface py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           {items.length > 0 ? (
             <WorksGrid

@@ -36,19 +36,19 @@ export default async function StatementPage({
         <PrintButton label={t.portal.print} />
         <Link
           href={`/${locale}/track/dashboard`}
-          className="rounded-pill border border-ink px-6 py-3 text-sm transition-colors hover:border-gold"
+          className="rounded-pill border border-ink px-6 py-3 text-sm transition-colors hover:border-ink"
         >
           {t.portal.tabs.expenses}
         </Link>
       </div>
 
-      <article className="border border-ink/15 p-10 print:border-0 print:p-0">
+      <article className="border border-border p-10 print:border-0 print:p-0">
         <header className="flex items-start justify-between border-b border-ink pb-6">
           <div>
-            <p className="brand text-lg">Future Interiors</p>
+            <p className="brand tracking-[0.18em] text-lg">Future Interiors</p>
             <h1 className="mt-2 text-xl">{t.portal.statementTitle}</h1>
           </div>
-          <dl className="text-end text-xs text-ink/60">
+          <dl className="text-end text-xs text-muted">
             <dt className="inline">{t.portal.projectCode}: </dt>
             <dd className="brand inline" dir="ltr">
               {project.code}
@@ -63,21 +63,21 @@ export default async function StatementPage({
 
         <p className="mt-6 text-sm">{pick(project, "title", locale)}</p>
 
-        <h2 className="mt-10 border-b border-ink/20 pb-2 text-sm tracking-widest text-ink/60">
+        <h2 className="mt-10 border-b border-border pb-2 text-sm tracking-widest text-muted">
           {t.portal.expensesSection}
         </h2>
         <table className="mt-4 w-full text-sm">
           <thead>
-            <tr className="text-xs text-ink/45">
+            <tr className="text-xs text-muted">
               <th className="py-2 text-start font-normal">{t.portal.columns.date}</th>
               <th className="py-2 text-start font-normal">{t.portal.columns.item}</th>
               <th className="py-2 text-end font-normal">{t.portal.columns.amount}</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-ink/10">
+          <tbody className="divide-y divide-border">
             {expenses.map((row) => (
               <tr key={row.id} className="break-inside-avoid">
-                <td className="py-2 whitespace-nowrap text-ink/55" dir="ltr">
+                <td className="py-2 whitespace-nowrap text-muted" dir="ltr">
                   {row.date}
                 </td>
                 <td className="py-2">{pick(row, "item", locale)}</td>
@@ -92,21 +92,21 @@ export default async function StatementPage({
           </tbody>
         </table>
 
-        <h2 className="mt-10 border-b border-ink/20 pb-2 text-sm tracking-widest text-ink/60">
+        <h2 className="mt-10 border-b border-border pb-2 text-sm tracking-widest text-muted">
           {t.portal.paymentsSection}
         </h2>
         <table className="mt-4 w-full text-sm">
           <thead>
-            <tr className="text-xs text-ink/45">
+            <tr className="text-xs text-muted">
               <th className="py-2 text-start font-normal">{t.portal.columns.date}</th>
               <th className="py-2 text-start font-normal">{t.portal.columns.label}</th>
               <th className="py-2 text-end font-normal">{t.portal.columns.amount}</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-ink/10">
+          <tbody className="divide-y divide-border">
             {payments.map((row) => (
               <tr key={row.id} className="break-inside-avoid">
-                <td className="py-2 whitespace-nowrap text-ink/55" dir="ltr">
+                <td className="py-2 whitespace-nowrap text-muted" dir="ltr">
                   {row.date}
                 </td>
                 <td className="py-2">{pick(row, "label", locale)}</td>
@@ -118,7 +118,7 @@ export default async function StatementPage({
           </tbody>
         </table>
 
-        <h2 className="mt-10 border-b border-ink/20 pb-2 text-sm tracking-widest text-ink/60">
+        <h2 className="mt-10 border-b border-border pb-2 text-sm tracking-widest text-muted">
           {t.portal.summarySection}
         </h2>
         <dl className="mt-4 space-y-2 text-sm">
@@ -129,7 +129,7 @@ export default async function StatementPage({
           <div className="flex justify-between border-t border-ink pt-3">
             <dt>
               {t.portal.balance}{" "}
-              <span className="text-xs text-ink/55">
+              <span className="text-xs text-muted">
                 ({inCredit ? t.portal.balanceCredit : t.portal.balanceDue})
               </span>
             </dt>

@@ -20,18 +20,18 @@ export default async function ServicesPage({ params }: { params: Promise<{ local
     <>
       <PageHeader eyebrow={t.services.eyebrow} title={t.services.title} subtitle={t.services.pageSubtitle} />
 
-      <section className="bg-cream py-20">
+      <section className="bg-surface py-20">
         <div className="mx-auto max-w-5xl px-4 sm:px-6">
           {services.length === 0 ? (
             <EmptyState message={t.common.unavailable} />
           ) : (
-            <div className="divide-y divide-ink/10">
+            <div className="divide-y divide-border">
               {services.map((service, index) => {
                 const bullets = pickList(service, "bullets", locale);
                 return (
                   <article key={service.id} className="grid gap-8 py-14 md:grid-cols-[auto_1fr]">
                     <div className="flex items-start gap-5">
-                      <span className="brand text-sm text-gold-ink">
+                      <span className="brand text-sm text-accent">
                         {String(index + 1).padStart(2, "0")}
                       </span>
                       <ServiceIcon name={service.icon} />
@@ -39,7 +39,7 @@ export default async function ServicesPage({ params }: { params: Promise<{ local
 
                     <div>
                       <h2 className="text-2xl">{pick(service, "title", locale)}</h2>
-                      <p className="mt-4 text-sm leading-8 text-ink/60">
+                      <p className="mt-4 text-sm leading-8 text-muted">
                         {pick(service, "desc", locale)}
                       </p>
 
@@ -48,7 +48,7 @@ export default async function ServicesPage({ params }: { params: Promise<{ local
                           {bullets.map((bullet) => (
                             <li
                               key={bullet}
-                              className="flex gap-3 border-s border-gold/40 ps-4 text-sm text-ink/70"
+                              className="flex gap-3 border-s border-accent/40 ps-4 text-sm text-muted"
                             >
                               {bullet}
                             </li>
@@ -67,7 +67,7 @@ export default async function ServicesPage({ params }: { params: Promise<{ local
               href={whatsappLink(whatsapp, t.whatsapp.book)}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-card bg-gold px-8 py-4 text-sm font-medium text-ink transition-opacity hover:opacity-90"
+              className="rounded-card bg-ink px-8 py-4 text-sm font-medium text-white transition-opacity hover:opacity-90"
             >
               {t.hero.ctaBook}
             </a>

@@ -10,9 +10,9 @@ export default async function AdminLoginPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-ink px-4">
-      <div className="w-full max-w-sm border border-gold/30 p-10">
-        <p className="brand text-center text-lg text-white">Future Interiors</p>
-        <h1 className="mt-3 text-center text-sm tracking-widest text-gold">لوحة التحكم</h1>
+      <div className="w-full max-w-sm border border-accent/30 p-10">
+        <p className="brand tracking-[0.18em] text-center text-lg text-white">Future Interiors</p>
+        <h1 className="mt-3 text-center text-sm tracking-widest text-accent">لوحة التحكم</h1>
         <AdminLoginForm />
       </div>
     </div>

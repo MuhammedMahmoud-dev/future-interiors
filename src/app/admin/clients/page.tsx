@@ -24,13 +24,13 @@ export default async function AdminClientsPage({
       action={
         <Link
           href={showArchived ? "/admin/clients" : "/admin/clients?archived=1"}
-          className="rounded-pill border border-ink/20 px-5 py-2.5 text-sm transition-colors hover:border-gold"
+          className="rounded-pill border border-border px-5 py-2.5 text-sm transition-colors hover:border-ink"
         >
           {showArchived ? "النشطين بس" : "اعرض المؤرشفين كمان"}
         </Link>
       }
     >
-      <p className="mb-6 max-w-2xl text-sm leading-7 text-ink/50">
+      <p className="mb-6 max-w-2xl text-sm leading-7 text-muted">
         العميل الواحد ممكن يكون له أكتر من مشروع. الأرشفة بتخفيه من القايمة دي بس — بياناته
         ومشاريعه بتفضل محفوظة بالكامل، وبيفضل يقدر يفتح صفحة متابعة مشروعه بالكود ورقمه عادي.
       </p>

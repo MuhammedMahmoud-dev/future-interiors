@@ -60,7 +60,7 @@ export default async function AdminProjectPage({
       title={project.title_ar}
       action={
         <div className="flex items-center gap-3 text-xs">
-          <span className="text-ink/40">كود المتابعة</span>
+          <span className="text-muted">كود المتابعة</span>
           <code className="brand bg-ink px-3 py-2 text-white" dir="ltr">
             {project.code}
           </code>
@@ -75,15 +75,15 @@ export default async function AdminProjectPage({
         <Total label="الفرق" value={statement.balance} highlight />
       </div>
 
-      <nav className="mb-8 flex flex-wrap gap-1 border-b border-ink/10">
+      <nav className="mb-8 flex flex-wrap gap-1 border-b border-border">
         {TABS.map((entry) => (
           <Link
             key={entry.key}
             href={`/admin/projects/${id}?tab=${entry.key}`}
             className={`-mb-px border-b-2 px-5 py-3 text-sm transition-colors ${
               tab === entry.key
-                ? "border-gold text-ink"
-                : "border-transparent text-ink/45 hover:text-ink"
+                ? "border-accent text-ink"
+                : "border-transparent text-muted hover:text-ink"
             }`}
           >
             {entry.label}
@@ -181,8 +181,8 @@ function Total({
 }) {
   const tone = highlight ? (value >= 0 ? "text-green-700" : "text-red-600") : "";
   return (
-    <div className="border border-ink/10 bg-white p-4">
-      <p className="text-xs text-ink/45">{label}</p>
+    <div className="border border-border bg-white p-4">
+      <p className="text-xs text-muted">{label}</p>
       <p className={`brand mt-2 text-lg ${tone}`} dir="ltr">
         {formatMoney(value)}
       </p>

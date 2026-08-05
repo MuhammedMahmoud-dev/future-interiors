@@ -29,7 +29,7 @@ export function RecordEditor({
 
   return (
     <div>
-      <p className="mb-6 text-sm text-ink/50">{spec.description}</p>
+      <p className="mb-6 text-sm text-muted">{spec.description}</p>
 
       <div className="space-y-5">
         {rows.map((record, index) => (
@@ -49,14 +49,14 @@ export function RecordEditor({
         <button
           type="button"
           onClick={addRow}
-          className="mt-6 rounded-card border border-ink/20 px-6 py-2.5 text-sm transition-colors hover:border-gold"
+          className="mt-6 rounded-card border border-border px-6 py-2.5 text-sm transition-colors hover:border-ink"
         >
           + إضافة
         </button>
       )}
 
       {rows.length === 0 && (
-        <p className="border border-dashed border-ink/15 px-6 py-16 text-center text-sm text-ink/40">
+        <p className="border border-dashed border-border px-6 py-16 text-center text-sm text-muted">
           لسه مفيش محتوى هنا.
         </p>
       )}
@@ -107,7 +107,7 @@ function RecordCard({
   };
 
   return (
-    <div className="border border-ink/10 bg-white p-6">
+    <div className="border border-border bg-white p-6">
       <div className="grid gap-5 sm:grid-cols-2">
         {spec.fields.map((field) => (
           <Field
@@ -119,7 +119,7 @@ function RecordCard({
         ))}
       </div>
 
-      <div className="mt-6 flex items-center gap-4 border-t border-ink/10 pt-4">
+      <div className="mt-6 flex items-center gap-4 border-t border-border pt-4">
         <button
           type="button"
           onClick={save}
@@ -134,7 +134,7 @@ function RecordCard({
             type="button"
             onClick={remove}
             disabled={busy}
-            className="text-sm text-ink/40 transition-colors hover:text-red-600"
+            className="text-sm text-muted transition-colors hover:text-red-600"
           >
             حذف
           </button>
@@ -178,7 +178,7 @@ function Field({
   onChange: (next: string | boolean) => void;
 }) {
   const base =
-    "w-full rounded-card border border-ink/15 bg-white px-3 py-2.5 text-sm focus:border-gold-ink focus:outline-none";
+    "w-full rounded-card border border-border bg-white px-3 py-2.5 text-sm focus:border-accent focus:outline-none";
   const wide = field.type === "textarea" || field.type === "list";
 
   if (field.type === "boolean") {
@@ -197,9 +197,9 @@ function Field({
 
   return (
     <label className={`block ${wide ? "sm:col-span-2" : ""}`}>
-      <span className="block text-xs text-ink/50">
+      <span className="block text-xs text-muted">
         {field.label}
-        {field.required && <span className="text-gold-ink"> *</span>}
+        {field.required && <span className="text-accent"> *</span>}
       </span>
       <div className="mt-2">
         {field.type === "textarea" || field.type === "list" ? (

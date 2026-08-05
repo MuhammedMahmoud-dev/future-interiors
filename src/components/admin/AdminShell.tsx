@@ -27,13 +27,13 @@ export function AdminShell({
     <div className="min-h-screen">
       <header className="bg-ink text-white">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6">
-          <Link href="/admin" className="brand text-base">
+          <Link href="/admin" className="brand tracking-[0.18em] text-base">
             Future Interiors
           </Link>
           <form action={adminLogout}>
             <button
               type="submit"
-              className="rounded-pill border border-white/25 px-4 py-2 text-xs text-white/70 transition-colors hover:border-gold hover:text-gold"
+              className="rounded-pill border border-white/25 px-4 py-2 text-xs text-white/70 transition-colors hover:border-white/60 hover:text-white"
             >
               خروج
             </button>
@@ -46,7 +46,7 @@ export function AdminShell({
               <Link
                 key={link.href}
                 href={link.href}
-                className="whitespace-nowrap px-4 py-3 text-xs text-white/60 transition-colors hover:text-gold"
+                className="whitespace-nowrap px-4 py-3 text-xs text-white/60 transition-colors hover:text-white"
               >
                 {link.label}
               </Link>
@@ -57,7 +57,7 @@ export function AdminShell({
 
       <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
         <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
-          <h1 className="font-serif text-2xl">{title}</h1>
+          <h1 className="text-2xl">{title}</h1>
           {action}
         </div>
         {children}

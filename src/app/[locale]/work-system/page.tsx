@@ -22,28 +22,28 @@ export default async function WorkSystemPage({ params }: { params: Promise<{ loc
     <>
       <PageHeader eyebrow={t.workSystem.eyebrow} title={t.workSystem.title} subtitle={t.workSystem.subtitle} />
 
-      <section className="bg-cream py-20">
+      <section className="bg-surface py-20">
         <div className="mx-auto max-w-3xl px-4 sm:px-6">
           <ol className="space-y-14">
             {t.workSystem.steps.map((step, index) => (
               <li key={step.title} className="grid gap-6 sm:grid-cols-[auto_1fr]">
-                <span className="brand text-2xl text-gold-ink">
+                <span className="brand text-2xl text-accent">
                   {String(index + 1).padStart(2, "0")}
                 </span>
-                <div className="border-s border-gold/30 ps-6">
+                <div className="border-s border-accent/30 ps-6">
                   <h2 className="text-xl">{step.title}</h2>
-                  <p className="mt-3 text-sm leading-8 text-ink/60">{step.body}</p>
+                  <p className="mt-3 text-sm leading-8 text-muted">{step.body}</p>
                 </div>
               </li>
             ))}
           </ol>
 
-          <div className="mt-20 border-t border-ink/10 pt-12 text-center">
+          <div className="mt-20 border-t border-border pt-12 text-center">
             <a
               href={whatsappLink(whatsapp, t.whatsapp.book)}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-card bg-gold px-8 py-4 text-sm font-medium text-ink transition-opacity hover:opacity-90"
+              className="rounded-card bg-ink px-8 py-4 text-sm font-medium text-white transition-opacity hover:opacity-90"
             >
               {t.hero.ctaBook}
             </a>

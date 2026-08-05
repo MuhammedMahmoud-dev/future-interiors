@@ -20,24 +20,24 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
     <>
       <PageHeader eyebrow={t.contact.eyebrow} title={t.contact.title} subtitle={t.contact.subtitle} />
 
-      <section className="bg-cream py-24">
+      <section className="bg-surface py-24">
         <div className="mx-auto max-w-2xl px-4 text-center sm:px-6">
           <a
             href={whatsappLink(whatsapp, t.whatsapp.book)}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block rounded-card bg-gold px-10 py-5 text-base font-medium text-ink transition-opacity hover:opacity-90"
+            className="inline-block rounded-card bg-ink px-10 py-5 text-base font-medium text-white transition-opacity hover:opacity-90"
           >
             {t.contact.whatsappCta}
           </a>
 
           {engineer?.phone && (
-            <div className="mt-14 border-t border-ink/10 pt-10">
-              <p className="text-xs text-ink/40">{t.contact.phone}</p>
+            <div className="mt-14 border-t border-border pt-10">
+              <p className="text-xs text-muted">{t.contact.phone}</p>
               <a
                 href={`tel:${engineer.phone}`}
                 dir="ltr"
-                className="brand mt-2 block text-2xl transition-colors hover:text-gold-ink"
+                className="brand mt-2 block text-2xl transition-colors hover:text-ink"
               >
                 {engineer.phone}
               </a>

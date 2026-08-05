@@ -33,7 +33,7 @@ export function AdminLoginForm() {
           dir="ltr"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
-          className="mt-2 w-full rounded-card border border-white/20 bg-transparent px-4 py-3 text-white focus:border-gold focus:outline-none"
+          className="mt-2 w-full rounded-card border border-white/20 bg-transparent px-4 py-3 text-white focus:border-accent focus:outline-none"
         />
       </div>
 
@@ -48,7 +48,7 @@ export function AdminLoginForm() {
           required
           autoComplete="current-password"
           dir="ltr"
-          className="mt-2 w-full rounded-card border border-white/20 bg-transparent px-4 py-3 text-white focus:border-gold focus:outline-none"
+          className="mt-2 w-full rounded-card border border-white/20 bg-transparent px-4 py-3 text-white focus:border-accent focus:outline-none"
         />
       </div>
 
@@ -61,7 +61,7 @@ export function AdminLoginForm() {
       <button
         type="submit"
         disabled={pending}
-        className="w-full rounded-pill bg-gold px-6 py-4 text-sm font-medium text-ink transition-opacity hover:opacity-90 disabled:opacity-50"
+        className="w-full rounded-pill bg-ink px-6 py-4 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-50"
       >
         {pending ? "بيتحقق…" : "دخول"}
       </button>

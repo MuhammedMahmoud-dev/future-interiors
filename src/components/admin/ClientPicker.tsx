@@ -73,34 +73,34 @@ export function ClientPicker({
           />
 
           {clients.length === 0 ? (
-            <p className="mt-3 text-xs text-ink/45">
+            <p className="mt-3 text-xs text-muted">
               مفيش عملاء نشطين لسه — استخدم &quot;عميل جديد&quot;.
             </p>
           ) : (
-            <ul className="mt-3 max-h-56 divide-y divide-ink/5 overflow-y-auto border border-ink/10 bg-white">
+            <ul className="mt-3 max-h-56 divide-y divide-border overflow-y-auto border border-border bg-white">
               {filtered.map((client) => (
                 <li key={client.id}>
                   <button
                     type="button"
                     onClick={() => setSelected(client.id)}
-                    className={`flex w-full items-baseline justify-between gap-4 px-4 py-2.5 text-start text-sm transition-colors hover:bg-cream ${
-                      selected === client.id ? "bg-gold/10" : ""
+                    className={`flex w-full items-baseline justify-between gap-4 px-4 py-2.5 text-start text-sm transition-colors hover:bg-surface ${
+                      selected === client.id ? "bg-accent/10" : ""
                     }`}
                   >
                     <span>{client.name}</span>
-                    <span className="text-xs text-ink/45" dir="ltr">
+                    <span className="text-xs text-muted" dir="ltr">
                       {displayPhone(client.phone)}
                     </span>
                   </button>
                 </li>
               ))}
               {filtered.length === 0 && (
-                <li className="px-4 py-3 text-xs text-ink/40">مفيش نتيجة.</li>
+                <li className="px-4 py-3 text-xs text-muted">مفيش نتيجة.</li>
               )}
             </ul>
           )}
 
-          <p className="mt-2 text-xs text-ink/45">
+          <p className="mt-2 text-xs text-muted">
             {chosen
               ? `المختار: ${chosen.name}`
               : currentClientLabel
@@ -111,14 +111,14 @@ export function ClientPicker({
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="block">
-            <span className="block text-xs text-ink/50">اسم العميل</span>
+            <span className="block text-xs text-muted">اسم العميل</span>
             <input name="new_client_name" placeholder="الاسم بالكامل" className={input} />
           </label>
           <label className="block">
-            <span className="block text-xs text-ink/50">موبايل العميل</span>
+            <span className="block text-xs text-muted">موبايل العميل</span>
             <input name="new_client_phone" dir="ltr" placeholder="01xxxxxxxxx" className={input} />
           </label>
-          <p className="text-xs text-ink/45 sm:col-span-2">
+          <p className="text-xs text-muted sm:col-span-2">
             لو الرقم ده مسجّل لعميل موجود، المشروع هيتربط بيه بدل ما يتعمل عميل مكرر.
           </p>
         </div>
@@ -141,7 +141,7 @@ function ModeButton({
       type="button"
       onClick={onClick}
       className={`rounded-card border px-5 py-2 text-sm transition-colors ${
-        active ? "border-gold bg-gold text-ink" : "border-ink/15 text-ink/60 hover:border-gold"
+        active ? "border-ink bg-ink text-white" : "border-border text-muted hover:border-ink"
       }`}
     >
       {children}
@@ -150,4 +150,4 @@ function ModeButton({
 }
 
 const input =
-  "mt-1 w-full rounded-card border border-ink/15 bg-white px-3 py-2.5 text-sm focus:border-gold-ink focus:outline-none";
+  "mt-1 w-full rounded-card border border-border bg-white px-3 py-2.5 text-sm focus:border-accent focus:outline-none";

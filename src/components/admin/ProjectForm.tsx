@@ -173,7 +173,7 @@ export function ProjectForm({
         <button
           type="submit"
           disabled={pending}
-          className="rounded-pill bg-gold px-8 py-3 text-sm font-medium text-ink transition-opacity hover:opacity-90 disabled:opacity-50"
+          className="rounded-pill bg-ink px-8 py-3 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-50"
         >
           {pending ? "بيحفظ…" : submitLabel}
         </button>
@@ -184,7 +184,7 @@ export function ProjectForm({
 }
 
 const input =
-  "w-full rounded-card border border-ink/15 bg-white px-3 py-2.5 text-sm focus:border-gold-ink focus:outline-none";
+  "w-full rounded-card border border-border bg-white px-3 py-2.5 text-sm focus:border-accent focus:outline-none";
 
 function Section({
   title,
@@ -199,10 +199,10 @@ function Section({
 }) {
   return (
     <section
-      className={`border p-6 ${isPrivate ? "border-gold/50 bg-gold/[0.04]" : "border-ink/10 bg-white"}`}
+      className={`border p-6 ${isPrivate ? "border-accent/50 bg-accent/[0.04]" : "border-border bg-white"}`}
     >
-      <h2 className="text-sm tracking-widest text-ink/60">{title}</h2>
-      {note && <p className="mt-1 text-xs text-ink/40">{note}</p>}
+      <h2 className="text-sm tracking-widest text-muted">{title}</h2>
+      {note && <p className="mt-1 text-xs text-muted">{note}</p>}
       <div className="mt-6 grid gap-5 sm:grid-cols-2">{children}</div>
     </section>
   );
@@ -223,12 +223,12 @@ function Field({
 }) {
   return (
     <label className={`block ${wide ? "sm:col-span-2" : ""}`}>
-      <span className="block text-xs text-ink/50">
+      <span className="block text-xs text-muted">
         {label}
-        {required && <span className="text-gold-ink"> *</span>}
+        {required && <span className="text-accent"> *</span>}
       </span>
       <div className="mt-2">{children}</div>
-      {note && <span className="mt-1 block text-xs text-ink/35">{note}</span>}
+      {note && <span className="mt-1 block text-xs text-muted">{note}</span>}
     </label>
   );
 }

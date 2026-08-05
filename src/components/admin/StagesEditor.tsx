@@ -47,23 +47,23 @@ export function StagesEditor({
 
   return (
     <div>
-      <div className="mb-8 border border-ink/10 bg-white p-6">
+      <div className="mb-8 border border-border bg-white p-6">
         <div className="flex items-baseline justify-between">
-          <span className="text-sm text-ink/60">التقدم اللي بيشوفه العميل</span>
+          <span className="text-sm text-muted">التقدم اللي بيشوفه العميل</span>
           <span className="brand text-2xl" dir="ltr">
             {percent}%
           </span>
         </div>
         <div className="mt-4 h-1 w-full bg-ink/10">
-          <div className="h-full bg-gold transition-all" style={{ width: `${percent}%` }} />
+          <div className="h-full bg-accent transition-all" style={{ width: `${percent}%` }} />
         </div>
       </div>
 
-      <ul className="divide-y divide-ink/10 border border-ink/10 bg-white">
+      <ul className="divide-y divide-border border border-border bg-white">
         {stages.map((stage, index) => (
           <li key={stage.id} className="grid gap-4 p-5 sm:grid-cols-[1fr_auto] sm:items-center">
             <div className="flex items-center gap-4">
-              <span className="brand text-xs text-gold-ink">{String(index + 1).padStart(2, "0")}</span>
+              <span className="brand text-xs text-accent">{String(index + 1).padStart(2, "0")}</span>
               <div className="flex-1">
                 <p>{stage.name_ar}</p>
                 <input
@@ -76,13 +76,13 @@ export function StagesEditor({
                   onBlur={(event) =>
                     persist(stage.id, progress[stage.id] ?? "not_started", event.target.value)
                   }
-                  className="mt-2 w-full border-b border-transparent bg-transparent py-1 text-xs text-ink/60 placeholder:text-ink/25 focus:border-gold-ink focus:outline-none"
+                  className="mt-2 w-full border-b border-transparent bg-transparent py-1 text-xs text-muted placeholder:text-muted focus:border-accent focus:outline-none"
                 />
               </div>
             </div>
 
             <div className="flex items-center gap-3">
-              {savingId === stage.id && <span className="text-xs text-ink/35">بيحفظ…</span>}
+              {savingId === stage.id && <span className="text-xs text-muted">بيحفظ…</span>}
               <select
                 value={progress[stage.id] ?? "not_started"}
                 onChange={(event) => {
@@ -90,7 +90,7 @@ export function StagesEditor({
                   setProgress((current) => ({ ...current, [stage.id]: status }));
                   persist(stage.id, status, notes[stage.id] ?? "");
                 }}
-                className="rounded-card border border-ink/15 bg-white px-3 py-2 text-sm focus:border-gold-ink focus:outline-none"
+                className="rounded-card border border-border bg-white px-3 py-2 text-sm focus:border-accent focus:outline-none"
               >
                 {OPTIONS.map((option) => (
                   <option key={option.value} value={option.value}>

@@ -22,21 +22,21 @@ export default async function AdminProjectsPage() {
       action={
         <Link
           href="/admin/projects/new"
-          className="rounded-pill bg-gold px-6 py-3 text-sm font-medium text-ink transition-opacity hover:opacity-90"
+          className="rounded-pill bg-ink px-6 py-3 text-sm font-medium text-white transition-opacity hover:opacity-90"
         >
           مشروع جديد
         </Link>
       }
     >
       {projects.length === 0 ? (
-        <p className="border border-dashed border-ink/15 px-6 py-16 text-center text-sm text-ink/40">
+        <p className="border border-dashed border-border px-6 py-16 text-center text-sm text-muted">
           لسه مفيش مشاريع.
         </p>
       ) : (
-        <div className="overflow-x-auto border border-ink/10 bg-white">
+        <div className="overflow-x-auto border border-border bg-white">
           <table className="w-full min-w-[760px] text-sm">
             <thead>
-              <tr className="bg-cream text-xs text-ink/50">
+              <tr className="bg-surface text-xs text-muted">
                 <th className="px-4 py-3 text-start font-normal">المشروع</th>
                 <th className="px-4 py-3 text-start font-normal">الكود</th>
                 <th className="px-4 py-3 text-start font-normal">العميل</th>
@@ -44,24 +44,24 @@ export default async function AdminProjectsPage() {
                 <th className="px-4 py-3 text-start font-normal">على الموقع</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-ink/5">
+            <tbody className="divide-y divide-border">
               {projects.map((project) => (
-                <tr key={project.id} className="transition-colors hover:bg-cream">
+                <tr key={project.id} className="transition-colors hover:bg-surface">
                   <td className="px-4 py-3">
-                    <Link href={`/admin/projects/${project.id}`} className="hover:text-gold-ink">
+                    <Link href={`/admin/projects/${project.id}`} className="hover:text-ink">
                       {project.title_ar}
                     </Link>
-                    <span className="block text-xs text-ink/35">{project.compound ?? "—"}</span>
+                    <span className="block text-xs text-muted">{project.compound ?? "—"}</span>
                   </td>
                   <td className="brand px-4 py-3 text-xs" dir="ltr">
                     {project.code}
                   </td>
                   {/* Read through the client_id relation, not duplicated here. */}
-                  <td className="px-4 py-3 text-ink/70">
+                  <td className="px-4 py-3 text-muted">
                     {project.clients ? (
                       <>
                         {project.clients.name}
-                        <span className="block text-xs text-ink/35" dir="ltr">
+                        <span className="block text-xs text-muted" dir="ltr">
                           {/^1\d{9}$/.test(project.clients.phone)
                             ? `0${project.clients.phone}`
                             : project.clients.phone}
@@ -71,14 +71,14 @@ export default async function AdminProjectsPage() {
                       "—"
                     )}
                   </td>
-                  <td className="px-4 py-3 text-ink/70">
+                  <td className="px-4 py-3 text-muted">
                     {STATUS_LABEL[project.status] ?? project.status}
                   </td>
                   <td className="px-4 py-3">
                     {project.is_public && project.publish_approved_at ? (
                       <span className="text-green-700">معروض</span>
                     ) : (
-                      <span className="text-ink/35">مخفي</span>
+                      <span className="text-muted">مخفي</span>
                     )}
                   </td>
                 </tr>

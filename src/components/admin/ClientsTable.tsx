@@ -47,22 +47,22 @@ export function ClientsTable({ clients }: { clients: AdminClient[] }) {
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="دوّر بالاسم أو الرقم…"
-          className="w-full max-w-md rounded-card border border-ink/15 bg-white px-4 py-2.5 text-sm focus:border-gold-ink focus:outline-none"
+          className="w-full max-w-md rounded-card border border-border bg-white px-4 py-2.5 text-sm focus:border-accent focus:outline-none"
         />
-        <p className="mt-2 text-xs text-ink/40">
+        <p className="mt-2 text-xs text-muted">
           {filtered.length} من {clients.length}
         </p>
       </div>
 
       {filtered.length === 0 ? (
-        <p className="border border-dashed border-ink/15 px-6 py-16 text-center text-sm text-ink/40">
+        <p className="border border-dashed border-border px-6 py-16 text-center text-sm text-muted">
           {clients.length === 0 ? "لسه مفيش عملاء." : "مفيش نتيجة للبحث ده."}
         </p>
       ) : (
-        <div className="overflow-x-auto border border-ink/10 bg-white">
+        <div className="overflow-x-auto border border-border bg-white">
           <table className="w-full min-w-[720px] text-sm">
             <thead>
-              <tr className="bg-cream text-xs text-ink/50">
+              <tr className="bg-surface text-xs text-muted">
                 <th className="px-4 py-3 text-start font-normal">الاسم</th>
                 <th className="px-4 py-3 text-start font-normal">الموبايل</th>
                 <th className="px-4 py-3 text-start font-normal">المشاريع</th>
@@ -70,7 +70,7 @@ export function ClientsTable({ clients }: { clients: AdminClient[] }) {
                 <th className="px-4 py-3 text-start font-normal" />
               </tr>
             </thead>
-            <tbody className="divide-y divide-ink/5">
+            <tbody className="divide-y divide-border">
               {filtered.map((client) => (
                 <ClientRow
                   key={client.id}
@@ -104,15 +104,15 @@ function ClientRow({
 
   if (isEditing) {
     return (
-      <tr className="bg-gold/[0.04]">
+      <tr className="bg-accent/[0.04]">
         <td colSpan={5} className="px-4 py-4">
           <form action={formAction} className="flex flex-wrap items-end gap-3">
             <label className="block">
-              <span className="block text-xs text-ink/50">الاسم</span>
+              <span className="block text-xs text-muted">الاسم</span>
               <input name="name" defaultValue={client.name} required className={input} />
             </label>
             <label className="block">
-              <span className="block text-xs text-ink/50">الموبايل</span>
+              <span className="block text-xs text-muted">الموبايل</span>
               <input
                 name="phone"
                 dir="ltr"
@@ -131,7 +131,7 @@ function ClientRow({
             <button
               type="button"
               onClick={onToggleEdit}
-              className="rounded-card border border-ink/20 px-5 py-2.5 text-sm"
+              className="rounded-card border border-border px-5 py-2.5 text-sm"
             >
               إلغاء
             </button>
@@ -150,7 +150,7 @@ function ClientRow({
   }
 
   return (
-    <tr className={`transition-colors hover:bg-cream ${archived ? "text-ink/40" : ""}`}>
+    <tr className={`transition-colors hover:bg-surface ${archived ? "text-muted" : ""}`}>
       <td className="px-4 py-3">{client.name}</td>
       <td className="px-4 py-3" dir="ltr">
         {displayPhone(client.phone)}
@@ -158,7 +158,7 @@ function ClientRow({
       <td className="px-4 py-3">{client.projectCount}</td>
       <td className="px-4 py-3">
         {archived ? (
-          <span className="text-ink/45">مؤرشف</span>
+          <span className="text-muted">مؤرشف</span>
         ) : (
           <span className="text-green-700">نشط</span>
         )}
@@ -168,7 +168,7 @@ function ClientRow({
           <button
             type="button"
             onClick={onToggleEdit}
-            className="rounded-card border border-ink/20 px-4 py-1.5 text-xs transition-colors hover:border-gold"
+            className="rounded-card border border-border px-4 py-1.5 text-xs transition-colors hover:border-ink"
           >
             تعديل
           </button>
@@ -176,7 +176,7 @@ function ClientRow({
             <form action={restoreClient.bind(null, client.id)}>
               <button
                 type="submit"
-                className="rounded-card border border-ink/20 px-4 py-1.5 text-xs transition-colors hover:border-gold"
+                className="rounded-card border border-border px-4 py-1.5 text-xs transition-colors hover:border-ink"
               >
                 إرجاع
               </button>
@@ -186,7 +186,7 @@ function ClientRow({
               <button
                 type="submit"
                 title="بيخفيه من القايمة بس — كل مشاريعه وبياناته بتفضل زي ما هي، ودخوله لبوابة المتابعة مابيتأثرش"
-                className="rounded-card border border-ink/20 px-4 py-1.5 text-xs transition-colors hover:border-gold"
+                className="rounded-card border border-border px-4 py-1.5 text-xs transition-colors hover:border-ink"
               >
                 أرشفة
               </button>
@@ -204,20 +204,20 @@ function AddClientForm() {
   return (
     <form
       action={formAction}
-      className="flex flex-wrap items-end gap-3 border border-ink/10 bg-white p-5"
+      className="flex flex-wrap items-end gap-3 border border-border bg-white p-5"
     >
       <label className="block">
-        <span className="block text-xs text-ink/50">الاسم</span>
+        <span className="block text-xs text-muted">الاسم</span>
         <input name="name" required placeholder="اسم العميل" className={input} />
       </label>
       <label className="block">
-        <span className="block text-xs text-ink/50">الموبايل</span>
+        <span className="block text-xs text-muted">الموبايل</span>
         <input name="phone" dir="ltr" required placeholder="01xxxxxxxxx" className={input} />
       </label>
       <button
         type="submit"
         disabled={pending}
-        className="rounded-pill bg-gold px-6 py-2.5 text-sm font-medium text-ink disabled:opacity-50"
+        className="rounded-pill bg-ink px-6 py-2.5 text-sm font-medium text-white disabled:opacity-50"
       >
         {pending ? "بيضيف…" : "أضف عميل"}
       </button>
@@ -232,4 +232,4 @@ function AddClientForm() {
 }
 
 const input =
-  "mt-1 rounded-card border border-ink/15 bg-white px-3 py-2 text-sm focus:border-gold-ink focus:outline-none";
+  "mt-1 rounded-card border border-border bg-white px-3 py-2 text-sm focus:border-accent focus:outline-none";

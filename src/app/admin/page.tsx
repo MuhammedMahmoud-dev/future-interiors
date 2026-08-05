@@ -20,21 +20,21 @@ export default async function AdminOverviewPage() {
       </div>
 
       <section className="mt-10">
-        <h2 className="mb-4 text-sm tracking-widest text-ink/50">آخر تحديث</h2>
+        <h2 className="mb-4 text-sm tracking-widest text-muted">آخر تحديث</h2>
         {overview.recent.length === 0 ? (
-          <p className="border border-dashed border-ink/15 px-6 py-12 text-center text-sm text-ink/40">
+          <p className="border border-dashed border-border px-6 py-12 text-center text-sm text-muted">
             لسه مفيش مشاريع. ابدأ بإضافة مشروع.
           </p>
         ) : (
-          <ul className="divide-y divide-ink/10 border-y border-ink/10 bg-white">
+          <ul className="divide-y divide-border border-y border-border bg-white">
             {overview.recent.map((project) => (
               <li key={project.id}>
                 <Link
                   href={`/admin/projects/${project.id}`}
-                  className="flex flex-wrap items-baseline justify-between gap-2 px-4 py-4 transition-colors hover:bg-cream"
+                  className="flex flex-wrap items-baseline justify-between gap-2 px-4 py-4 transition-colors hover:bg-surface"
                 >
                   <span>{project.title_ar}</span>
-                  <span className="brand text-xs text-ink/40" dir="ltr">
+                  <span className="brand text-xs text-muted" dir="ltr">
                     {project.code} · {project.lastActivity ?? "—"}
                   </span>
                 </Link>
@@ -58,8 +58,8 @@ export default async function AdminOverviewPage() {
 
 function Stat({ label, value }: { label: string; value: number }) {
   return (
-    <div className="border border-ink/10 bg-white p-6">
-      <p className="text-xs text-ink/45">{label}</p>
+    <div className="border border-border bg-white p-6">
+      <p className="text-xs text-muted">{label}</p>
       <p className="brand mt-3 text-3xl" dir="ltr">
         {value}
       </p>

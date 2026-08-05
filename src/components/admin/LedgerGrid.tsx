@@ -194,27 +194,27 @@ export function LedgerGrid({
   return (
     <div>
       <div className="mb-3 flex flex-wrap items-center justify-between gap-3 text-xs">
-        <p className="text-ink/45">
+        <p className="text-muted">
           Enter بيفتح سطر جديد · تقدر تلصق عمود كامل من إكسل · الحفظ تلقائي
         </p>
         <SaveIndicator state={state} message={message} />
       </div>
 
-      <div className="overflow-x-auto border border-ink/10 bg-white">
+      <div className="overflow-x-auto border border-border bg-white">
         <table className="w-full min-w-[720px] border-collapse text-sm">
           <thead>
-            <tr className="bg-cream text-start text-xs text-ink/50">
-              <th className="w-32 border-b border-ink/10 px-3 py-2 text-start font-normal">التاريخ</th>
-              <th className="border-b border-ink/10 px-3 py-2 text-start font-normal">
+            <tr className="bg-surface text-start text-xs text-muted">
+              <th className="w-32 border-b border-border px-3 py-2 text-start font-normal">التاريخ</th>
+              <th className="border-b border-border px-3 py-2 text-start font-normal">
                 {isExpenses ? "البند" : "الدفعة"}
               </th>
               {isExpenses && (
-                <th className="w-40 border-b border-ink/10 px-3 py-2 text-start font-normal">
+                <th className="w-40 border-b border-border px-3 py-2 text-start font-normal">
                   المرحلة
                 </th>
               )}
-              <th className="w-36 border-b border-ink/10 px-3 py-2 text-start font-normal">المبلغ</th>
-              <th className="w-10 border-b border-ink/10" />
+              <th className="w-36 border-b border-border px-3 py-2 text-start font-normal">المبلغ</th>
+              <th className="w-10 border-b border-border" />
             </tr>
           </thead>
 
@@ -223,7 +223,7 @@ export function LedgerGrid({
               const amount = parseAmount(row.amount);
               const invalid = row.amount.trim() !== "" && amount === null;
               return (
-                <tr key={row.key} className="border-b border-ink/5 last:border-0">
+                <tr key={row.key} className="border-b border-border last:border-0">
                   <td className="p-0">
                     <input
                       type="date"
@@ -232,7 +232,7 @@ export function LedgerGrid({
                       onChange={(event) => update(row.key, { date: event.target.value })}
                       onKeyDown={(event) => onKeyDown(event, row.key)}
                       onPaste={(event) => handlePaste(event, row.key)}
-                      className="w-full bg-transparent px-3 py-2 focus:bg-gold/5 focus:outline-none"
+                      className="w-full bg-transparent px-3 py-2 focus:bg-accent/5 focus:outline-none"
                     />
                   </td>
 
@@ -245,7 +245,7 @@ export function LedgerGrid({
                       onChange={(event) => update(row.key, { text: event.target.value })}
                       onKeyDown={(event) => onKeyDown(event, row.key)}
                       onPaste={(event) => handlePaste(event, row.key)}
-                      className="w-full bg-transparent px-3 py-2 placeholder:text-ink/25 focus:bg-gold/5 focus:outline-none"
+                      className="w-full bg-transparent px-3 py-2 placeholder:text-muted focus:bg-accent/5 focus:outline-none"
                     />
                   </td>
 
@@ -256,7 +256,7 @@ export function LedgerGrid({
                         onChange={(event) =>
                           update(row.key, { stageId: event.target.value || null })
                         }
-                        className="w-full bg-transparent px-3 py-2 text-ink/70 focus:bg-gold/5 focus:outline-none"
+                        className="w-full bg-transparent px-3 py-2 text-muted focus:bg-accent/5 focus:outline-none"
                       >
                         <option value="">—</option>
                         {stages.map((stage) => (
@@ -279,7 +279,7 @@ export function LedgerGrid({
                       onChange={(event) => update(row.key, { amount: event.target.value })}
                       onKeyDown={(event) => onKeyDown(event, row.key)}
                       onPaste={(event) => handlePaste(event, row.key)}
-                      className={`w-full bg-transparent px-3 py-2 text-end placeholder:text-ink/25 focus:bg-gold/5 focus:outline-none ${
+                      className={`w-full bg-transparent px-3 py-2 text-end placeholder:text-muted focus:bg-accent/5 focus:outline-none ${
                         invalid ? "text-red-600" : amount !== null && amount < 0 ? "text-green-700" : ""
                       }`}
                     />
@@ -290,7 +290,7 @@ export function LedgerGrid({
                       type="button"
                       onClick={() => removeRow(row)}
                       aria-label="حذف السطر"
-                      className="px-2 py-2 text-ink/30 transition-colors hover:text-red-600"
+                      className="px-2 py-2 text-muted transition-colors hover:text-red-600"
                     >
                       ×
                     </button>
@@ -301,8 +301,8 @@ export function LedgerGrid({
           </tbody>
 
           <tfoot>
-            <tr className="bg-cream">
-              <td colSpan={isExpenses ? 3 : 2} className="px-3 py-3 text-xs text-ink/50">
+            <tr className="bg-surface">
+              <td colSpan={isExpenses ? 3 : 2} className="px-3 py-3 text-xs text-muted">
                 {rows.filter((row) => row.text.trim()).length} سطر
               </td>
               <td className="px-3 py-3 text-end" dir="ltr">
@@ -317,7 +317,7 @@ export function LedgerGrid({
       <button
         type="button"
         onClick={() => addRow()}
-        className="mt-4 rounded-pill border border-ink/20 px-5 py-2.5 text-sm transition-colors hover:border-gold"
+        className="mt-4 rounded-pill border border-border px-5 py-2.5 text-sm transition-colors hover:border-ink"
       >
         + سطر جديد
       </button>
@@ -339,7 +339,7 @@ function SaveIndicator({
       </span>
     );
   }
-  if (state === "saving") return <span className="text-ink/40">بيحفظ…</span>;
+  if (state === "saving") return <span className="text-muted">بيحفظ…</span>;
   if (state === "saved") return <span className="text-green-700">اتحفظ</span>;
   return <span className="text-transparent">.</span>;
 }

@@ -31,7 +31,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
         subtitle={engineer ? pick(engineer, "title", locale) : undefined}
       />
 
-      <section className="bg-cream py-20">
+      <section className="bg-surface py-20">
         <div className="mx-auto max-w-4xl px-4 sm:px-6">
           {!engineer ? (
             <EmptyState message={t.about.empty} />
@@ -40,15 +40,15 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
               <div>
                 <h2 className="text-2xl">{pick(engineer, "name", locale)}</h2>
                 {pick(engineer, "bio", locale) && (
-                  <p className="mt-6 whitespace-pre-line text-sm leading-8 text-ink/65">
+                  <p className="mt-6 whitespace-pre-line text-sm leading-8 text-muted">
                     {pick(engineer, "bio", locale)}
                   </p>
                 )}
               </div>
 
               {engineer.syndicate_no && (
-                <div className="border-s border-gold ps-6">
-                  <p className="text-xs text-ink/40">{t.about.syndicate}</p>
+                <div className="border-s border-accent ps-6">
+                  <p className="text-xs text-muted">{t.about.syndicate}</p>
                   <p className="mt-1" dir="ltr">
                     {engineer.syndicate_no}
                   </p>
@@ -57,10 +57,10 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
 
               {credentials.length > 0 && (
                 <div>
-                  <h3 className="text-sm tracking-widest text-gold-ink">{t.about.credentials}</h3>
-                  <ul className="mt-6 divide-y divide-ink/10 border-y border-ink/10">
+                  <h3 className="text-sm tracking-widest text-accent">{t.about.credentials}</h3>
+                  <ul className="mt-6 divide-y divide-border border-y border-border">
                     {credentials.map((credential) => (
-                      <li key={credential} className="py-4 text-sm text-ink/70">
+                      <li key={credential} className="py-4 text-sm text-muted">
                         {credential}
                       </li>
                     ))}
@@ -71,21 +71,21 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
           )}
 
           {stats.length > 0 && (
-            <div className="mt-20 grid grid-cols-2 border-y border-ink/10 lg:grid-cols-4">
+            <div className="mt-20 grid grid-cols-2 border-y border-border lg:grid-cols-4">
               {stats.map((stat, index) => (
                 <div
                   key={stat.id}
                   className={`px-4 py-8 text-center ${
-                    index % 2 !== 0 ? "border-s border-ink/10" : ""
-                  } ${index >= 2 ? "border-t border-ink/10 lg:border-t-0" : ""}`}
+                    index % 2 !== 0 ? "border-s border-border" : ""
+                  } ${index >= 2 ? "border-t border-border lg:border-t-0" : ""}`}
                 >
-                  <p className="brand text-3xl text-gold-ink">
+                  <p className="brand text-3xl text-accent">
                     <Counter value={Number(stat.value)} />
                     {pick(stat, "suffix", locale) && (
                       <span className="ms-1 text-lg">{pick(stat, "suffix", locale)}</span>
                     )}
                   </p>
-                  <p className="mt-2 text-xs text-ink/50">{pick(stat, "label", locale)}</p>
+                  <p className="mt-2 text-xs text-muted">{pick(stat, "label", locale)}</p>
                 </div>
               ))}
             </div>
@@ -96,7 +96,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
               href={whatsappLink(whatsapp, t.whatsapp.book)}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-card bg-gold px-8 py-4 text-sm font-medium text-ink transition-opacity hover:opacity-90"
+              className="rounded-card bg-ink px-8 py-4 text-sm font-medium text-white transition-opacity hover:opacity-90"
             >
               {t.hero.ctaBook}
             </a>
