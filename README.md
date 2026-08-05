@@ -121,7 +121,7 @@ is presentable at any stage of filling it in.
 | Services · FAQs · Testimonials · Headline numbers · Engineer profile | `/admin/content/…` |
 | Manually logged enquiries | `/admin/leads` |
 
-The hero photograph is the one exception: it is a file, `public/hero.jpg`, not a
+The hero photograph is the one exception: it is a file, `public/hero.jpg` (or `.png`), not a
 database row.
 
 ### The ledger grid
@@ -137,7 +137,7 @@ client sees is never typed in by hand.
 
 | What | Where | Notes |
 | --- | --- | --- |
-| Hero photograph | `public/hero.jpg` | One real photo. A file, not a database row. |
+| Hero photograph | `public/hero.jpg` or `.png` | One real photo. A file, not a database row. |
 | The four headline numbers | `site_stats` | Section stays hidden until rows exist |
 | Projects | `projects` | `code` auto-generates. Set **both** `is_public` and `publish_approved_at` to publish |
 | Photos | `project_media` + `media` bucket | `url` is the object path inside the bucket; set `is_public` per photo |
