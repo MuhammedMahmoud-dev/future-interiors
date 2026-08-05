@@ -36,7 +36,7 @@ export function BeforeAfter({
         </div>
 
         <div
-          className="pointer-events-none absolute inset-y-0 w-px bg-gold"
+          className="pointer-events-none absolute inset-y-0 w-px bg-accent"
           style={{ insetInlineStart: `${position}%` }}
         />
 
@@ -57,7 +57,7 @@ export function BeforeAfter({
           className="absolute inset-0 h-full w-full cursor-ew-resize opacity-0"
         />
       </div>
-      <figcaption className="mt-3 text-center text-xs text-ink/40">{hint}</figcaption>
+      <figcaption className="mt-3 text-center text-xs text-muted">{hint}</figcaption>
     </figure>
   );
 }

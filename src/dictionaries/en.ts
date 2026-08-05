@@ -41,6 +41,34 @@ export const en: Dictionary = {
     pageSubtitle: "What each execution stage covers in detail",
   },
 
+  why: {
+    eyebrow: "Why us",
+    title: "Supervision, not contracting",
+    subtitle:
+      "The difference: we supervise the work and review every stage, while the contract with each supplier stays in your name.",
+    points: [
+      "Materials bought in your name, direct from suppliers",
+      "Every invoice reaches you, with its date and value",
+      "A private tracking portal for your project, open any time",
+      "Daily on-site supervision, not occasional visits",
+      "Each stage reviewed for quality before the next begins",
+    ],
+    cards: [
+      {
+        title: "Transparent from day one",
+        body: "Every line item and every payment is in front of you as it happens — not a statement handed over at the end.",
+      },
+      {
+        title: "The contract is yours",
+        body: "We choose and check the materials, but the invoice and the contract are between you and the supplier.",
+      },
+      {
+        title: "Delivered in stages",
+        body: "Each stage is closed, photographed and reviewed before the next one starts.",
+      },
+    ],
+  },
+
   works: {
     eyebrow: "Our work",
     title: "Our work",
@@ -217,12 +245,20 @@ export const en: Dictionary = {
     whatsapp: "Hello, I have a question about my project.",
   },
 
+  cta: {
+    eyebrow: "Ready when you are",
+    title: "Let's talk about your apartment",
+    text: "Message us on WhatsApp and we'll arrange a site visit at a time that suits you.",
+    button: "Message us on WhatsApp",
+  },
+
   footer: {
     blurb:
       "Apartment finishing under full engineering supervision, transparent on every line item and every invoice.",
     links: "Links",
     services: "Services",
     contact: "Contact",
+    social: "Follow us",
     rights: "© 2026 Future Interiors",
   },
 
@@ -239,5 +275,6 @@ export const en: Dictionary = {
     unavailable: "Content will appear here once it is added.",
     backHome: "Back to home",
     notFound: "Page not found",
+    readMore: "Read more",
   },
 };

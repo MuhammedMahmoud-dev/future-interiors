@@ -38,6 +38,11 @@ yarn-error.log*
 # vercel
 .vercel
 
+# local dev preview data — a development tool, never a migration (spec §14)
+/scripts/seed-dev-preview.mjs
+/scripts/.seed-dev-preview.json
+/public/hero.png
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

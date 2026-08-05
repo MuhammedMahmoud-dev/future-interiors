@@ -77,7 +77,7 @@ export function Navbar({
       >
         <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-4 text-[11px] tracking-wide text-white/70 sm:px-6">
           {phone ? (
-            <a href={`tel:${phone}`} className="transition-colors hover:text-gold">
+            <a href={`tel:${phone}`} className="transition-colors hover:text-white">
               {topbar.call} · <span dir="ltr">{phone}</span>
             </a>
           ) : (
@@ -87,7 +87,7 @@ export function Navbar({
             href={whatsappHref}
             target="_blank"
             rel="noopener noreferrer"
-            className="transition-colors hover:text-gold"
+            className="transition-colors hover:text-white"
           >
             {topbar.whatsapp}
           </a>
@@ -100,7 +100,7 @@ export function Navbar({
         }`}
       >
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
-          <Link href={href("/", locale)} className="brand text-lg text-white sm:text-xl">
+          <Link href={href("/", locale)} className="brand tracking-[0.18em] text-lg text-white sm:text-xl">
             Future Interiors
           </Link>
 
@@ -110,7 +110,7 @@ export function Navbar({
                 key={link.path}
                 href={href(link.path, locale)}
                 className={`text-sm transition-colors ${
-                  isActive(link.path) ? "text-gold" : "text-white/80 hover:text-gold"
+                  isActive(link.path) ? "text-accent" : "text-white/80 hover:text-white"
                 }`}
               >
                 {link.label}
@@ -121,14 +121,14 @@ export function Navbar({
           <div className="flex items-center gap-3">
             <Link
               href={switchLocalePath(pathname, locale === "ar" ? "en" : "ar")}
-              className="hidden text-xs tracking-wide text-white/70 transition-colors hover:text-gold sm:block"
+              className="hidden text-xs tracking-wide text-white/70 transition-colors hover:text-white sm:block"
             >
               {nav.switchLang}
             </Link>
 
             <Link
               href={href("/track", locale)}
-              className="hidden rounded-pill bg-gold px-6 py-2.5 text-sm font-medium text-ink transition-shadow duration-200 hover:shadow-lift sm:block"
+              className="hidden rounded-pill bg-paper px-6 py-2.5 text-sm font-medium text-ink transition-opacity duration-200 hover:opacity-90 sm:block"
             >
               {nav.track}
             </Link>
@@ -161,7 +161,7 @@ export function Navbar({
               tabIndex={menuOpen ? 0 : -1}
               onClick={closeMenu}
               className={`border-b border-white/10 py-4 text-lg ${
-                isActive(link.path) ? "text-gold" : "text-white"
+                isActive(link.path) ? "text-accent" : "text-white"
               }`}
             >
               {link.label}
@@ -172,7 +172,7 @@ export function Navbar({
             href={href("/track", locale)}
             tabIndex={menuOpen ? 0 : -1}
             onClick={closeMenu}
-            className="mt-6 rounded-pill bg-gold px-5 py-4 text-center font-medium text-ink"
+            className="mt-6 rounded-pill bg-paper px-5 py-4 text-center font-medium text-ink"
           >
             {nav.track}
           </Link>

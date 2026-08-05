@@ -1,18 +1,16 @@
 import { existsSync } from "node:fs";
 import path from "node:path";
 import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { Counter } from "@/components/Counter";
 import { FaqList } from "@/components/FaqList";
-import { HeroPlaceholder } from "@/components/HeroPlaceholder";
 import { JourneyScroller } from "@/components/JourneyScroller";
-import { Eyebrow, Fact, SectionHeading } from "@/components/Sections";
-import { ServiceCircle } from "@/components/ServiceCircle";
+import { Eyebrow, SectionHeading } from "@/components/Sections";
+import { ServiceIcon } from "@/components/ServiceIcon";
 import { TestimonialsSlider } from "@/components/TestimonialsSlider";
-import { BlueprintDecor } from "@/components/ui/BlueprintDecor";
 import { PillButton } from "@/components/ui/PillButton";
-import { WaveDivider } from "@/components/ui/WaveDivider";
 import { getDictionary } from "@/lib/dictionary";
 import { href, isLocale, pick, whatsappLink, type Locale } from "@/lib/i18n";
 import { durationMonths, locationLabel, yearOf } from "@/lib/format";
@@ -29,7 +27,8 @@ import {
 
 export const revalidate = 3600;
 
-const HERO_IMAGE = "/hero.jpg";
+/** The dev seed writes a .png; a real photograph will most likely be a .jpg. */
+const HERO_CANDIDATES = ["/hero.jpg", "/hero.png"];
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale: raw } = await params;
@@ -46,300 +45,282 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     getWhatsappNumber(),
   ]);
 
-  // Cover plus two supporting shots per featured project.
   const galleries = await Promise.all(projects.map((project) => getPublicProjectMedia(project.id)));
   const signedUrls = await signMedia([
     ...projects.map((project) => project.cover_image ?? ""),
     ...galleries.flat().map((media) => media.url),
   ]);
 
-  const heroExists = existsSync(path.join(process.cwd(), "public", "hero.jpg"));
+  const hero = HERO_CANDIDATES.find((file) =>
+    existsSync(path.join(process.cwd(), "public", file.slice(1))),
+  );
 
   const bookHref = whatsappLink(whatsapp, t.whatsapp.book);
   const askHref = whatsappLink(whatsapp, t.whatsapp.ask);
 
-  // The reference leads with one oversized figure. Rather than invent it, the
-  // first configured stat is promoted and the rest form the row beneath — so
-  // this stays driven entirely by site_stats.
-  const [leadStat, ...restStats] = stats;
+  // Supporting imagery for the sections that need a photograph. Falls back to
+  // an empty frame rather than to a placeholder — a blank half is honest, an
+  // invented image is not.
+  const supporting = galleries
+    .flat()
+    .map((media) => signedUrls.get(media.url))
+    .filter((url): url is string => Boolean(url));
 
   return (
     <>
       {/*
-        1 — Hero. Fills the viewport exactly, so nothing of the next section
-        shows before the first scroll — which is why the wave divider opens the
-        *next* section rather than closing this one.
+        2 — Hero (§8.2). Fills the viewport exactly, so nothing of the next
+        section shows before the first scroll.
 
         The top bar and nav are position:fixed, so pt-[100px] reserves their
         combined height. dvh, not vh, so mobile URL-bar chrome cannot push the
         following section into view.
       */}
-      <section className="relative flex min-h-[max(100dvh,520px)] flex-col overflow-hidden bg-ink pt-[100px]">
-        {heroExists ? (
+      <section className="relative flex min-h-[max(100dvh,560px)] flex-col overflow-hidden bg-ink pt-[100px]">
+        {hero && (
           <>
             <Image
-              src={HERO_IMAGE}
+              src={hero}
               alt=""
               fill
               priority
               sizes="100vw"
-              className="animate-hero-zoom object-cover opacity-70"
+              className="animate-hero-zoom object-cover"
             />
-            <div className="absolute inset-0 bg-ink/45" />
+            {/* Keeps the wordmark and headline legible over any photograph. */}
+            <div className="absolute inset-0 bg-ink/55" />
           </>
-        ) : (
-          <HeroPlaceholder />
         )}
 
-        <div className="relative flex flex-1 flex-col justify-center py-10">
+        {/*
+          Below lg the cards sit inside this section and add their own height, so
+          `flex-1` alone would squeeze the wordmark into whatever was left. The
+          explicit min-height keeps the first screen for the mark and headline
+          and pushes the cards just past the fold. At lg the cards are lifted out
+          of flow by the negative margin, so flex-1 fills the section on its own.
+        */}
+        <div className="relative flex min-h-[calc(100dvh-100px)] flex-1 flex-col justify-center lg:min-h-0">
           <div className="mx-auto w-full max-w-7xl px-4 sm:px-6">
+            {/*
+              The wordmark, oversized (§8.2). It stays Latin in both locales.
+
+              `dir="ltr"` sits on the spans, not on the paragraph: the full stop
+              in "FUTURE." is a neutral character, so inside an RTL paragraph it
+              would flip to the wrong side and render as ".FUTURE". Leaving the
+              paragraph itself in the page direction keeps the mark aligned with
+              the Arabic headline beneath it instead of stranded on the far side.
+            */}
+            <p className="hero-rise brand pointer-events-none select-none font-extrabold leading-[0.82] tracking-[-0.03em] text-white">
+              <span dir="ltr" className="block text-[22vw] sm:text-[19vw] lg:text-[15vw]">
+                FUTURE.
+              </span>
+              <span
+                dir="ltr"
+                className="mt-2 block text-[6.5vw] font-medium tracking-[0.3em] text-white/70 sm:text-[5vw] lg:text-[3.4vw]"
+              >
+                INTERIORS
+              </span>
+            </p>
+
             <h1
-              data-reveal
-              className="max-w-4xl font-serif text-4xl leading-tight text-white sm:text-5xl lg:text-6xl"
+              className="hero-rise mt-10 max-w-2xl text-2xl font-medium leading-snug text-white/90 sm:text-3xl"
+              style={{ animationDelay: "0.12s" }}
             >
               {t.hero.title}
             </h1>
 
-            <div data-reveal className="mt-12 flex flex-wrap gap-4">
-              <PillButton href={href("/works", locale)}>{t.hero.ctaWorks}</PillButton>
-              <PillButton href={bookHref} variant="outline" external>
+            <div className="hero-rise mt-9 flex flex-wrap gap-3" style={{ animationDelay: "0.24s" }}>
+              <PillButton href={href("/works", locale)} variant="light">
+                {t.hero.ctaWorks}
+              </PillButton>
+              <PillButton href={bookHref} variant="outline" external className="text-white">
                 {t.hero.ctaBook}
               </PillButton>
             </div>
           </div>
         </div>
+
+        {/*
+          3 — The four service cards (§8.3).
+
+          They overlap the hero's bottom edge on desktop only. Below lg they sit
+          under the hero in a 2×2 instead: four cards straddling the fold on a
+          phone would bury the headline, but hiding them outright would leave a
+          mobile visitor with no services on the homepage at all.
+        */}
+        {services.length > 0 && (
+          <div className="relative z-10 mx-auto w-full max-w-7xl px-4 pb-12 sm:px-6 lg:pb-0">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:-mb-14 lg:translate-y-14 lg:grid-cols-4">
+              {services.slice(0, 4).map((service) => (
+                <Link
+                  key={service.id}
+                  href={href("/services", locale)}
+                  className="group rounded-card border border-white/15 bg-ink/70 p-6 backdrop-blur transition-colors duration-200 hover:border-white/40"
+                >
+                  <span className="text-white/70">
+                    <ServiceIcon name={service.icon} />
+                  </span>
+                  <h2 className="mt-5 text-base font-semibold text-white">
+                    {pick(service, "title", locale)}
+                  </h2>
+                  <p className="mt-2 line-clamp-2 text-sm leading-6 text-white/50">
+                    {pick(service, "desc", locale)}
+                  </p>
+                  <Arrow className="mt-5 text-white/40 transition-colors group-hover:text-white" />
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
       </section>
 
-      {/* 2 — Featured projects. Only published, consented projects, and only
-             public fields — the filter lives in lib/data.ts and is untouched. */}
-      {projects.length > 0 && (
-        <>
-          <WaveDivider className="bg-ink" fill="var(--color-cream)" />
-          <section className="relative overflow-hidden bg-cream py-20 sm:py-24">
-            <BlueprintDecor corner="end" />
+      {/* 4 — Why choose us (§8.4). */}
+      <section className={`bg-surface py-20 sm:py-28 ${services.length > 0 ? "lg:pt-32" : ""}`}>
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <div className="grid items-start gap-12 lg:grid-cols-3 lg:gap-10">
+            <div>
+              <Eyebrow>{t.why.eyebrow}</Eyebrow>
+              <h2 className="text-4xl font-semibold text-ink sm:text-5xl">{t.why.title}</h2>
+              <p className="mt-5 text-base leading-8 text-muted">{t.why.subtitle}</p>
 
-            <div className="relative mx-auto max-w-7xl px-4 sm:px-6">
-              <SectionHeading
-                eyebrow={t.works.eyebrow}
-                title={t.works.title}
-                subtitle={t.works.subtitle}
-                align="center"
-              />
-
-              <div className="mt-16 space-y-20">
-                {projects.map((project, index) => {
-                  const media = galleries[index] ?? [];
-                  const cover = project.cover_image
-                    ? signedUrls.get(project.cover_image)
-                    : undefined;
-                  const supporting = media
-                    .filter((item) => item.url !== project.cover_image)
-                    .slice(0, 2)
-                    .map((item) => signedUrls.get(item.url))
-                    .filter((url): url is string => Boolean(url));
-                  const months = durationMonths(project.start_date, project.end_date);
-                  const year = yearOf(project.end_date ?? project.start_date);
-
-                  return (
-                    <article
-                      key={project.id}
-                      className={`grid items-center gap-10 lg:grid-cols-2 ${
-                        index % 2 === 1 ? "lg:[&>*:first-child]:order-2" : ""
-                      }`}
-                    >
-                      <div className="grid grid-cols-3 gap-3">
-                        <div
-                          data-wipe
-                          className="col-span-3 aspect-[4/3] overflow-hidden rounded-card bg-ink/5 shadow-soft"
-                        >
-                          {cover && (
-                            <Image
-                              src={cover}
-                              alt={pick(project, "title", locale)}
-                              width={1200}
-                              height={900}
-                              sizes="(max-width: 1024px) 100vw, 50vw"
-                              className="h-full w-full scale-105 object-cover"
-                              data-parallax="0.06"
-                            />
-                          )}
-                        </div>
-                        {supporting.map((url) => (
-                          <div
-                            key={url}
-                            data-wipe
-                            className="aspect-square overflow-hidden rounded-card bg-ink/5 shadow-soft"
-                          >
-                            <Image
-                              src={url}
-                              alt=""
-                              width={400}
-                              height={400}
-                              sizes="20vw"
-                              className="h-full w-full object-cover"
-                            />
-                          </div>
-                        ))}
-                      </div>
-
-                      <div className="lg:px-6">
-                        <h3 data-reveal className="font-serif text-2xl text-ink sm:text-3xl">
-                          {pick(project, "title", locale)}
-                        </h3>
-                        <p data-reveal className="mt-5 text-sm leading-8 text-body">
-                          {pick(project, "description", locale)}
-                        </p>
-
-                        <dl className="mt-8 grid grid-cols-2 gap-y-5 border-t border-ink/10 pt-6 text-sm">
-                          {project.area_m2 && (
-                            <Fact label={t.works.area} value={`${project.area_m2} ${t.works.sqm}`} />
-                          )}
-                          {locationLabel(project.compound, project.district, locale) && (
-                            <Fact
-                              label={t.works.location}
-                              value={locationLabel(project.compound, project.district, locale)}
-                            />
-                          )}
-                          {months && (
-                            <Fact label={t.works.duration} value={`${months} ${t.works.months}`} />
-                          )}
-                          {year && <Fact label={t.works.year} value={year} />}
-                        </dl>
-
-                        <div className="mt-8">
-                          <PillButton href={href(`/works/${project.slug}`, locale)} variant="ink">
-                            {t.works.title}
-                          </PillButton>
-                        </div>
-                      </div>
-                    </article>
-                  );
-                })}
-              </div>
-
-              <div className="mt-16 text-center">
-                <PillButton href={href("/works", locale)} variant="ink">
-                  {t.works.viewAll}
-                </PillButton>
-              </div>
-            </div>
-          </section>
-        </>
-      )}
-
-      {/* 3 — Experience. Hidden entirely until real figures exist; the numbers
-             are exactly the site_stats rows, nothing invented. */}
-      {stats.length > 0 && (
-        <>
-          <WaveDivider className="bg-cream" fill="var(--color-ink)" />
-          <section className="bg-ink py-20 text-white sm:py-24">
-            <div className="mx-auto max-w-7xl px-4 sm:px-6">
-              <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,340px)_1fr]">
-                {/* The lead figure, ringed like the reference's "15+ Years". */}
-                <div className="relative flex items-center justify-center">
-                  <span
-                    aria-hidden="true"
-                    className="absolute h-56 w-56 rounded-full border border-gold/20 sm:h-64 sm:w-64"
-                  />
-                  <p className="relative text-center">
-                    <span className="block font-serif text-6xl text-gold sm:text-7xl">
-                      <Counter value={Number(leadStat.value)} />
-                      {pick(leadStat, "suffix", locale) && (
-                        <span className="text-4xl">{pick(leadStat, "suffix", locale)}</span>
-                      )}
-                    </span>
-                    <span className="mt-2 block text-sm text-white/70">
-                      {pick(leadStat, "label", locale)}
-                    </span>
-                  </p>
-                </div>
-
-                <div>
-                  <Eyebrow>{t.stats.eyebrow}</Eyebrow>
-                  <h2 data-reveal className="font-serif text-3xl text-white sm:text-4xl">
-                    {t.stats.title}
-                  </h2>
-                  <div data-rule className="mt-6 h-px w-16 bg-gold" />
-
-                  {restStats.length > 0 && (
-                    <div className="mt-10 grid grid-cols-2 gap-x-6 gap-y-8 lg:grid-cols-3">
-                      {restStats.map((stat) => (
-                        <div key={stat.id} className="flex items-center gap-3">
-                          <span
-                            aria-hidden="true"
-                            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-gold/40"
-                          >
-                            <svg
-                              width="18"
-                              height="18"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="var(--color-gold)"
-                              strokeWidth="1.25"
-                            >
-                              <path d="M20 6 9 17l-5-5" />
-                            </svg>
-                          </span>
-                          <span>
-                            <span className="block text-lg text-gold">
-                              <Counter value={Number(stat.value)} />
-                              {pick(stat, "suffix", locale) && (
-                                <span className="ms-1 text-sm">{pick(stat, "suffix", locale)}</span>
-                              )}
-                            </span>
-                            <span className="block text-xs leading-5 text-white/60">
-                              {pick(stat, "label", locale)}
-                            </span>
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </section>
-        </>
-      )}
-
-      {/* 4 — Services: one ringed icon per service, from the database. */}
-      {services.length > 0 && (
-        <>
-          <WaveDivider className="bg-ink" fill="var(--color-cream)" />
-          <section className="relative overflow-hidden bg-cream py-20 sm:py-24">
-            <BlueprintDecor corner="start" />
-
-            <div className="relative mx-auto max-w-7xl px-4 sm:px-6">
-              <SectionHeading
-                eyebrow={t.services.eyebrow}
-                title={t.services.title}
-                subtitle={t.services.subtitle}
-                align="center"
-              />
-
-              <div className="mt-14 grid grid-cols-2 gap-y-12 sm:grid-cols-3 lg:grid-cols-6">
-                {services.slice(0, 6).map((service) => (
-                  <ServiceCircle
-                    key={service.id}
-                    title={pick(service, "title", locale)}
-                    description={pick(service, "desc", locale)}
-                    icon={service.icon}
-                  />
+              <ul className="mt-8 space-y-4">
+                {t.why.points.map((point) => (
+                  <li key={point} className="flex gap-3 text-base leading-7 text-body">
+                    <Check />
+                    {point}
+                  </li>
                 ))}
-              </div>
-
-              <div className="mt-14 text-center">
-                <PillButton href={href("/services", locale)} variant="ink">
-                  {t.services.viewAll}
-                </PillButton>
-              </div>
+              </ul>
             </div>
-          </section>
-        </>
+
+            {/* The middle column is the photograph the spec asks for. */}
+            <div className="overflow-hidden rounded-card border border-border bg-ink/5 lg:aspect-[3/4]">
+              {supporting[0] && (
+                // eslint-disable-next-line @next/next/no-img-element -- signed URL
+                <img
+                  src={supporting[0]}
+                  alt=""
+                  loading="lazy"
+                  className="h-full w-full object-cover"
+                />
+              )}
+            </div>
+
+            <div className="grid gap-4">
+              {t.why.cards.map((card) => (
+                <article key={card.title} className="rounded-card border border-border bg-paper p-6">
+                  <h3 className="text-lg font-semibold text-ink">{card.title}</h3>
+                  <p className="mt-2 text-base leading-7 text-muted">{card.body}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/*
+        5 — Featured projects (§8.5). Three cards, no price anywhere. The
+        is_public AND publish_approved_at consent gate lives in lib/data.ts.
+      */}
+      {projects.length > 0 && (
+        <section className="bg-paper py-20 sm:py-28">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6">
+            <SectionHeading
+              eyebrow={t.works.eyebrow}
+              title={t.works.title}
+              subtitle={t.works.subtitle}
+              align="center"
+            />
+
+            <div className="mt-14 grid gap-6 md:grid-cols-3">
+              {projects.map((project) => {
+                const cover = project.cover_image ? signedUrls.get(project.cover_image) : undefined;
+                const months = durationMonths(project.start_date, project.end_date);
+                const year = yearOf(project.end_date ?? project.start_date);
+                const location = locationLabel(project.compound, project.district, locale);
+
+                const facts = [
+                  project.area_m2 ? `${project.area_m2} ${t.works.sqm}` : null,
+                  months ? `${months} ${t.works.months}` : null,
+                  year,
+                  location || null,
+                ].filter(Boolean);
+
+                return (
+                  <Link
+                    key={project.id}
+                    href={href(`/works/${project.slug}`, locale)}
+                    className="group flex flex-col overflow-hidden rounded-card border border-border bg-paper transition-colors duration-200 hover:border-ink/30"
+                  >
+                    <div className="aspect-[4/3] overflow-hidden bg-ink/5">
+                      {cover && (
+                        // eslint-disable-next-line @next/next/no-img-element -- signed URL
+                        <img
+                          src={cover}
+                          alt={pick(project, "title", locale)}
+                          loading="lazy"
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                      )}
+                    </div>
+
+                    <div className="flex flex-1 flex-col border-t border-border p-6">
+                      <h3 className="text-lg font-semibold text-ink">
+                        {pick(project, "title", locale)}
+                      </h3>
+                      <p className="mt-3 flex-1 text-sm leading-6 text-muted">{facts.join(" · ")}</p>
+                      <Arrow className="mt-6 text-muted transition-colors group-hover:text-ink" />
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+
+            <div className="mt-14 text-center">
+              <PillButton href={href("/works", locale)} variant="ink">
+                {t.works.viewAll}
+              </PillButton>
+            </div>
+          </div>
+        </section>
       )}
 
-      {/* 5 — Client journey. All five steps visible at once. */}
-      <section className="bg-paper py-20 sm:py-24">
+      {/*
+        6 — The numbers strip (§8.6). Hidden entirely until real figures exist;
+        these are exactly the site_stats rows, nothing invented.
+      */}
+      {stats.length > 0 && (
+        <section className="bg-ink py-16 text-white sm:py-20">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6">
+            <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-0">
+              {stats.slice(0, 4).map((stat, index) => (
+                <div
+                  key={stat.id}
+                  className={`flex items-center gap-4 lg:justify-center lg:px-6 ${
+                    index > 0 ? "lg:border-s lg:border-white/15" : ""
+                  }`}
+                >
+                  <StatIcon index={index} />
+                  <div>
+                    <p className="brand text-3xl font-semibold text-white sm:text-4xl">
+                      <Counter value={Number(stat.value)} />
+                      {pick(stat, "suffix", locale) && (
+                        <span className="ms-1 text-xl">{pick(stat, "suffix", locale)}</span>
+                      )}
+                    </p>
+                    <p className="mt-1 text-sm leading-6 text-white/50">
+                      {pick(stat, "label", locale)}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 7 — Client journey (§8.7). */}
+      <section className="bg-surface py-20 sm:py-28">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <SectionHeading
             eyebrow={t.journey.eyebrow}
@@ -353,65 +334,236 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         </div>
       </section>
 
-      {/* 6 — Testimonials. Renders nothing until real, consented quotes exist. */}
+      {/* 8 — Two mirrored split sections (§8.8). */}
+      <Split
+        eyebrow={t.workSystem.eyebrow}
+        title={t.workSystem.title}
+        body={t.workSystem.subtitle}
+        points={t.workSystem.steps.slice(0, 3).map((step) => step.title)}
+        linkHref={href("/work-system", locale)}
+        linkLabel={t.common.readMore}
+        image={supporting[1]}
+      />
+      <Split
+        eyebrow={t.about.eyebrow}
+        title={t.about.title}
+        body={t.why.subtitle}
+        points={t.why.points.slice(0, 3)}
+        linkHref={href("/about", locale)}
+        linkLabel={t.common.readMore}
+        image={supporting[2]}
+        reversed
+      />
+
+      {/* 9 — Testimonials (§8.9). Nothing renders until real, consented quotes exist. */}
       {testimonials.length > 0 && (
-        <>
-          <WaveDivider className="bg-paper" fill="var(--color-ink)" />
-          <section className="bg-ink py-20 text-white sm:py-24">
-            <div className="mx-auto max-w-4xl px-4 text-center sm:px-6">
-              <Eyebrow>{t.testimonials.eyebrow}</Eyebrow>
-              <span aria-hidden="true" className="block font-serif text-7xl leading-none text-gold">
-                &ldquo;
-              </span>
-              <div className="mt-6 text-start">
-                <TestimonialsSlider
-                  items={testimonials.map((testimonial) => ({
-                    id: testimonial.id,
-                    quote: pick(testimonial, "quote", locale),
-                    attribution:
-                      testimonial.show_name && testimonial.client_name
-                        ? [testimonial.client_name, testimonial.compound].filter(Boolean).join(" — ")
-                        : [t.testimonials.anonymous, testimonial.compound]
-                            .filter(Boolean)
-                            .join(" — "),
-                  }))}
-                />
-              </div>
+        <section className="bg-ink py-20 text-white sm:py-28">
+          <div className="mx-auto max-w-4xl px-4 sm:px-6">
+            <div className="text-center">
+              <Eyebrow tone="dark">{t.testimonials.eyebrow}</Eyebrow>
             </div>
-          </section>
-        </>
+            <TestimonialsSlider
+              items={testimonials.map((testimonial) => ({
+                id: testimonial.id,
+                quote: pick(testimonial, "quote", locale),
+                attribution:
+                  testimonial.show_name && testimonial.client_name
+                    ? [testimonial.client_name, testimonial.compound].filter(Boolean).join(" — ")
+                    : [t.testimonials.anonymous, testimonial.compound].filter(Boolean).join(" — "),
+              }))}
+            />
+          </div>
+        </section>
       )}
 
-      {/* 7 — FAQ */}
+      {/* 10 — FAQ (§8.10). Multiple answers may be open at once. */}
       {faqs.length > 0 && (
-        <>
-          <WaveDivider className="bg-ink" fill="var(--color-cream)" />
-          <section className="bg-cream py-20 sm:py-24">
-            <div className="mx-auto max-w-4xl px-4 sm:px-6">
-              <SectionHeading
-                eyebrow={t.faq.eyebrow}
-                title={t.faq.title}
-                subtitle={t.faq.subtitle}
-                align="center"
+        <section className="bg-surface py-20 sm:py-28">
+          <div className="mx-auto max-w-4xl px-4 sm:px-6">
+            <SectionHeading
+              eyebrow={t.faq.eyebrow}
+              title={t.faq.title}
+              subtitle={t.faq.subtitle}
+              align="center"
+            />
+            <div className="mt-12">
+              <FaqList
+                items={faqs.map((faq) => ({
+                  id: faq.id,
+                  question: pick(faq, "question", locale),
+                  answer: pick(faq, "answer", locale),
+                }))}
               />
-              <div className="mt-12">
-                <FaqList
-                  items={faqs.map((faq) => ({
-                    id: faq.id,
-                    question: pick(faq, "question", locale),
-                    answer: pick(faq, "answer", locale),
-                  }))}
-                />
-              </div>
-              <div className="mt-12 text-center">
-                <PillButton href={askHref} external>
-                  {t.faq.cta}
-                </PillButton>
-              </div>
             </div>
-          </section>
-        </>
+            <div className="mt-12 text-center">
+              <PillButton href={askHref} variant="ink" external>
+                {t.faq.cta}
+              </PillButton>
+            </div>
+          </div>
+        </section>
       )}
+
+      {/*
+        11 — Dark CTA strip (§8.11). The reference has a form here; the spec
+        replaces it with WhatsApp, which is the only contact channel on the site.
+      */}
+      <section className="bg-ink text-white">
+        <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-20 sm:px-6 lg:grid-cols-2 lg:py-24">
+          <div>
+            <Eyebrow tone="dark">{t.cta.eyebrow}</Eyebrow>
+            <h2 className="text-4xl font-semibold sm:text-5xl">{t.cta.title}</h2>
+            <p className="mt-5 max-w-md text-base leading-8 text-white/60">{t.cta.text}</p>
+
+            <div className="mt-9">
+              <PillButton href={bookHref} variant="light" external>
+                {t.cta.button}
+              </PillButton>
+            </div>
+          </div>
+
+          <div className="overflow-hidden rounded-card border border-white/10 bg-white/5 lg:aspect-[4/3]">
+            {supporting[3] && (
+              // eslint-disable-next-line @next/next/no-img-element -- signed URL
+              <img
+                src={supporting[3]}
+                alt=""
+                loading="lazy"
+                className="h-full w-full object-cover"
+              />
+            )}
+          </div>
+        </div>
+      </section>
     </>
+  );
+}
+
+/**
+ * One of the two mirrored halves in §8.8: copy and a short list on one side,
+ * a photograph on the other, reversed for the second instance.
+ */
+function Split({
+  eyebrow,
+  title,
+  body,
+  points,
+  linkHref,
+  linkLabel,
+  image,
+  reversed = false,
+}: {
+  eyebrow: string;
+  title: string;
+  body: string;
+  points: string[];
+  linkHref: string;
+  linkLabel: string;
+  image?: string;
+  reversed?: boolean;
+}) {
+  return (
+    <section className="bg-paper py-20 sm:py-24">
+      <div className="mx-auto grid max-w-7xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-2">
+        <div className={reversed ? "lg:order-2" : ""}>
+          <Eyebrow>{eyebrow}</Eyebrow>
+          <h2 className="text-4xl font-semibold text-ink sm:text-5xl">{title}</h2>
+          <p className="mt-5 text-base leading-8 text-muted">{body}</p>
+
+          <ul className="mt-7 space-y-3">
+            {points.map((point) => (
+              <li key={point} className="flex gap-3 text-base leading-7 text-body">
+                <Check />
+                {point}
+              </li>
+            ))}
+          </ul>
+
+          <div className="mt-9">
+            <PillButton href={linkHref} variant="ink">
+              {linkLabel}
+            </PillButton>
+          </div>
+        </div>
+
+        <div className="aspect-[4/3] overflow-hidden rounded-card border border-border bg-ink/5">
+          {image && (
+            // eslint-disable-next-line @next/next/no-img-element -- signed URL
+            <img src={image} alt="" loading="lazy" className="h-full w-full object-cover" />
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Check() {
+  return (
+    <svg
+      aria-hidden="true"
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="mt-1 shrink-0 text-accent"
+    >
+      <path d="M20 6 9 17l-5-5" />
+    </svg>
+  );
+}
+
+function Arrow({ className = "" }: { className?: string }) {
+  return (
+    <span
+      aria-hidden="true"
+      className={`flex h-9 w-9 items-center justify-center rounded-full border border-current ${className}`}
+    >
+      <svg
+        width="14"
+        height="14"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        className="rtl:-scale-x-100"
+      >
+        <path d="M5 12h13M12 5l7 7-7 7" />
+      </svg>
+    </span>
+  );
+}
+
+/** Four line glyphs for the numbers strip — no icon library, four inline paths. */
+function StatIcon({ index }: { index: number }) {
+  const paths = [
+    "M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z", // apartments delivered
+    "M12 3a9 9 0 1 0 9 9M12 7v5l3 2", // years of experience
+    "M4 4h7v7H4zM13 13h7v7h-7zM4 15h5v5H4zM15 4h5v5h-5z", // total area
+    "M3 17l6-6 4 4 8-8M15 7h6v6", // costs executed
+  ];
+
+  return (
+    <span
+      aria-hidden="true"
+      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/20"
+    >
+      <svg
+        width="19"
+        height="19"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="text-white/70"
+      >
+        <path d={paths[index % paths.length]} />
+      </svg>
+    </span>
   );
 }

@@ -1,16 +1,20 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { IBM_Plex_Sans_Arabic, Jost, Noto_Naskh_Arabic, Playfair_Display } from "next/font/google";
+import { IBM_Plex_Sans_Arabic, Manrope } from "next/font/google";
 import "../globals.css";
 
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { WhatsAppFab } from "@/components/WhatsAppFab";
-import { ScrollMotion } from "@/components/motion/ScrollMotion";
 import { getDictionary } from "@/lib/dictionary";
 import { dir, isLocale, locales, pick, whatsappLink, type Locale } from "@/lib/i18n";
 import { getEngineer, getServices, getWhatsappNumber } from "@/lib/data";
 
+/**
+ * Two faces, one per script (§7). There is deliberately no third heading face:
+ * headings use these at heavier weights and tighter tracking, which is what
+ * keeps the page monochrome rather than decorated.
+ */
 const plexArabic = IBM_Plex_Sans_Arabic({
   subsets: ["arabic", "latin"],
   weight: ["400", "500", "600", "700"],
@@ -18,27 +22,10 @@ const plexArabic = IBM_Plex_Sans_Arabic({
   display: "swap",
 });
 
-const jost = Jost({
+const manrope = Manrope({
   subsets: ["latin"],
-  variable: "--font-jost",
-  display: "swap",
-});
-
-/**
- * Heading faces. Only one of the two is ever referenced by CSS on a given page —
- * globals.css picks Playfair under [dir=ltr] and Noto Serif Arabic otherwise —
- * so a reader downloads one serif, not both.
- */
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  variable: "--font-playfair",
-  display: "swap",
-});
-
-const notoNaskhArabic = Noto_Naskh_Arabic({
-  subsets: ["arabic"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-serif-ar",
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-manrope",
   display: "swap",
 });
 
@@ -84,7 +71,7 @@ export default async function LocaleLayout({
     <html
       lang={locale}
       dir={dir(locale)}
-      className={`${plexArabic.variable} ${jost.variable} ${playfair.variable} ${notoNaskhArabic.variable} h-full antialiased`}
+      className={`${plexArabic.variable} ${manrope.variable} h-full antialiased`}
     >
       {/* type-scale-public enlarges the whole reading scale; /admin has its own
           root layout and deliberately keeps Tailwind's denser default. */}
@@ -96,9 +83,6 @@ export default async function LocaleLayout({
           phone={phone}
           whatsappHref={bookHref}
         />
-        {/* Scroll motion is public-site only — it is never mounted on the
-            client portal or the admin, where people are working, not reading. */}
-        <ScrollMotion />
         <main className="flex-1">{children}</main>
         <Footer
           locale={locale}

@@ -1,4 +1,4 @@
-/** Thin gold line icons, 1.25px stroke per spec. Keys match services.icon. */
+/** Thin accent line icons, 1.25px stroke per spec. Keys match services.icon. */
 const PATHS: Record<string, string> = {
   "rough-in": "M4 20V8l8-4 8 4v12M9 20v-6h6v6M12 4v4",
   plaster: "M3 6h18v12H3zM3 12h18M9 6v6M15 12v6",
@@ -16,7 +16,7 @@ export function ServiceIcon({ name }: { name: string | null }) {
       height="36"
       viewBox="0 0 24 24"
       fill="none"
-      stroke="var(--color-gold)"
+      stroke="var(--color-accent)"
       strokeWidth="1.25"
       strokeLinecap="square"
       aria-hidden="true"

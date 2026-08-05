@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Sans_Arabic, Noto_Naskh_Arabic, Playfair_Display } from "next/font/google";
+import { IBM_Plex_Sans_Arabic, Manrope } from "next/font/google";
 import "../globals.css";
 
 /**
@@ -7,8 +7,9 @@ import "../globals.css";
  * internal tool, always Arabic, and never localised. The public site's navbar,
  * footer and WhatsApp button deliberately do not appear here.
  *
- * The serif is loaded for page titles and the wordmark only. Everything the
- * engineer actually works in — tables, the ledger grid, forms — stays sans.
+ * Same two faces as the public site (§7). Manrope is loaded for the wordmark,
+ * project codes and every money column; the ledger grid keeps Tailwind's denser
+ * default scale, since the engineer works in it a hundred rows at a time.
  */
 
 const plexArabic = IBM_Plex_Sans_Arabic({
@@ -18,18 +19,10 @@ const plexArabic = IBM_Plex_Sans_Arabic({
   display: "swap",
 });
 
-const notoNaskhArabic = Noto_Naskh_Arabic({
-  subsets: ["arabic"],
-  weight: ["500", "600"],
-  variable: "--font-serif-ar",
-  display: "swap",
-});
-
-// Latin only, for the wordmark in the admin header.
-const playfair = Playfair_Display({
+const manrope = Manrope({
   subsets: ["latin"],
-  weight: ["500"],
-  variable: "--font-playfair",
+  weight: ["400", "500", "600"],
+  variable: "--font-manrope",
   display: "swap",
 });
 
@@ -43,9 +36,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <html
       lang="ar"
       dir="rtl"
-      className={`${plexArabic.variable} ${notoNaskhArabic.variable} ${playfair.variable} h-full antialiased`}
+      className={`${plexArabic.variable} ${manrope.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-cream font-sans text-ink">{children}</body>
+      <body className="min-h-full bg-surface font-sans text-ink">{children}</body>
     </html>
   );
 }

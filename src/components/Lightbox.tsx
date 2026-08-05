@@ -87,7 +87,7 @@ export function Lightbox({ images, closeLabel }: { images: GalleryImage[]; close
                 type="button"
                 onClick={() => step(-1)}
                 aria-label="‹"
-                className="absolute inset-y-0 start-0 px-4 text-4xl text-white/70 hover:text-gold"
+                className="absolute inset-y-0 start-0 px-4 text-4xl text-white/70 hover:text-white"
               >
                 ‹
               </button>
@@ -95,7 +95,7 @@ export function Lightbox({ images, closeLabel }: { images: GalleryImage[]; close
                 type="button"
                 onClick={() => step(1)}
                 aria-label="›"
-                className="absolute inset-y-0 end-0 px-4 text-4xl text-white/70 hover:text-gold"
+                className="absolute inset-y-0 end-0 px-4 text-4xl text-white/70 hover:text-white"
               >
                 ›
               </button>

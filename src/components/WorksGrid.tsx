@@ -70,7 +70,7 @@ export function WorksGrid({
           <Link
             key={item.id}
             href={`${hrefFor}/${item.slug}`}
-            className="group block overflow-hidden rounded-card border border-ink/10 bg-paper shadow-soft transition-shadow duration-200 hover:shadow-lift"
+            className="group block overflow-hidden rounded-card border border-border bg-paper transition-colors duration-200 hover:border-ink/30"
           >
             <div className="aspect-[4/3] overflow-hidden bg-ink/5">
               {item.cover && (
@@ -84,8 +84,8 @@ export function WorksGrid({
               )}
             </div>
             {/* White body below the image, per the reference's card anatomy. */}
-            <div className="border-t border-ink/10 p-5">
-              <h3 className="font-serif text-lg text-ink transition-colors group-hover:text-gold">
+            <div className="border-t border-border p-5">
+              <h3 className="text-lg font-semibold text-ink">
                 {item.title}
               </h3>
               <p className="mt-2 text-sm text-muted">{item.meta}</p>
@@ -99,7 +99,7 @@ export function WorksGrid({
           <button
             type="button"
             onClick={() => setVisible((count) => count + PAGE_SIZE)}
-            className="rounded-pill border border-ink px-8 py-3.5 text-sm transition-colors hover:border-gold hover:text-gold"
+            className="rounded-pill border border-ink px-8 py-3.5 text-sm transition-opacity duration-200 hover:opacity-70"
           >
             {loadMoreLabel}
           </button>
@@ -123,7 +123,7 @@ function FilterChip({
       type="button"
       onClick={onClick}
       className={`rounded-pill border px-5 py-2 text-sm transition-colors ${
-        active ? "border-gold bg-gold text-ink" : "border-ink/15 text-body hover:border-gold"
+        active ? "border-ink bg-ink text-white" : "border-border text-body hover:border-ink"
       }`}
     >
       {children}

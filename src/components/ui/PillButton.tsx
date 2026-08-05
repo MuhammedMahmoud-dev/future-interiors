@@ -1,27 +1,35 @@
 import Link from "next/link";
 
 /**
- * The site's primary call to action: a gold pill with the label, then the arrow
- * riding in its own small circle.
+ * The site's call to action (§7): a fully rounded pill with the label, then the
+ * arrow riding in its own small circle.
  *
- * The arrow points along the reading direction — it means "onward", so it must
- * flip in Arabic rather than always pointing right.
+ * No variant is gold. §7 reserves the accent for "very small touches only — the
+ * active link, the monogram", and a filled gold button on every section would
+ * make the accent the loudest thing on the page. Primary buttons are therefore
+ * monochrome, and pick their contrast from the ground they sit on.
+ *
+ * The arrow points along the reading direction — it means "onward", so it flips
+ * in Arabic rather than always pointing right.
  */
 
-type Variant = "gold" | "outline" | "ink";
+type Variant = "light" | "ink" | "outline";
 
 const VARIANTS: Record<Variant, { shell: string; puck: string }> = {
-  gold: {
-    shell: "bg-gold text-ink hover:shadow-lift",
-    puck: "bg-ink/15 text-ink",
+  /** On a dark ground. */
+  light: {
+    shell: "bg-paper text-ink hover:opacity-90",
+    puck: "bg-ink/10 text-ink",
   },
-  outline: {
-    shell: "border border-white/70 text-white hover:border-gold hover:text-gold",
-    puck: "border border-current",
-  },
+  /** On a light ground. */
   ink: {
-    shell: "bg-ink text-white hover:shadow-lift",
+    shell: "bg-ink text-white hover:opacity-90",
     puck: "bg-white/15 text-white",
+  },
+  /** Secondary, either ground — inherits the current text colour. */
+  outline: {
+    shell: "border border-current text-current hover:opacity-70",
+    puck: "border border-current",
   },
 };
 
@@ -50,12 +58,12 @@ function Inner({ children, variant }: { children: React.ReactNode; variant: Vari
 }
 
 const base =
-  "group inline-flex items-center gap-3 rounded-pill ps-7 pe-2 py-2 text-sm font-medium transition-shadow duration-200";
+  "inline-flex items-center gap-3 rounded-pill py-2 ps-7 pe-2 text-sm font-medium transition-opacity duration-200";
 
 export function PillButton({
   href,
   children,
-  variant = "gold",
+  variant = "ink",
   external = false,
   className = "",
 }: {
