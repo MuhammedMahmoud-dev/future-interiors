@@ -42,6 +42,12 @@ yarn-error.log*
 /scripts/seed-dev-preview.mjs
 /scripts/.seed-dev-preview.json
 /public/hero.png
+/public/hero.jpeg
+/public/hero.webp
+/public/hero.jpg
+
+# source photography handed over for the preview seed — working files, not content
+/photos-source/
 
 # typescript
 *.tsbuildinfo

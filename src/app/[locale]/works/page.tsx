@@ -1,51 +1,64 @@
 import { notFound } from "next/navigation";
 
 import { EmptyState, PageHeader } from "@/components/Sections";
-import { WorksGrid, type WorkItem } from "@/components/WorksGrid";
+import { Lightbox, type GalleryImage } from "@/components/Lightbox";
 import { getDictionary } from "@/lib/dictionary";
-import { href, isLocale, pick, type Locale } from "@/lib/i18n";
-import { locationLabel, yearOf } from "@/lib/format";
+import { isLocale, type Locale } from "@/lib/i18n";
 import { signMedia } from "@/lib/media";
-import { getPublishedProjects } from "@/lib/data";
+import { getPublicProjectMedia, getPublishedProjects } from "@/lib/data";
 
 export const revalidate = 3600;
 
+/**
+ * The portfolio is photographs and nothing else.
+ *
+ * It used to be project cards carrying a title, area, duration, year and
+ * location, each linking to a detail page. The engineer asked for the images on
+ * their own — no compound names anywhere, and no surrounding data — so the page
+ * is now one gallery of every published photo, opening in a lightbox.
+ */
 export default async function WorksPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale: raw } = await params;
   if (!isLocale(raw)) notFound();
   const locale: Locale = raw;
   const t = getDictionary(locale);
 
-  // Completed projects only — nothing still in progress appears in the grid.
+  // Completed projects only — nothing still in progress appears here.
   const projects = await getPublishedProjects({ completedOnly: true });
-  const covers = await signMedia(projects.map((project) => project.cover_image ?? ""));
+  const galleries = await Promise.all(projects.map((project) => getPublicProjectMedia(project.id)));
 
-  const items: WorkItem[] = projects.map((project) => ({
-    id: project.id,
-    slug: project.slug,
-    title: pick(project, "title", locale),
-    meta: [
-      project.area_m2 ? `${project.area_m2} ${t.works.sqm}` : null,
-      locationLabel(project.compound, project.district, locale) || null,
-      yearOf(project.end_date ?? project.start_date),
-    ]
-      .filter(Boolean)
-      .join(" · "),
-    compound: project.compound,
-    cover: project.cover_image ? (covers.get(project.cover_image) ?? null) : null,
-  }));
+  const covers = projects.map((project) => project.cover_image).filter(Boolean) as string[];
+  const shots = galleries.flat();
+  const signed = await signMedia([...covers, ...shots.map((shot) => shot.url)]);
+
+  // Cover first for each project, then its remaining photos, so the strongest
+  // frame of each apartment leads rather than whatever happened to sort first.
+  const images: GalleryImage[] = projects.flatMap((project, index) => {
+    const cover = project.cover_image;
+    const ordered = [
+      ...(cover ? [{ id: `${project.id}-cover`, url: cover }] : []),
+      ...(galleries[index] ?? [])
+        .filter((shot) => shot.url !== cover)
+        .map((shot) => ({ id: shot.id, url: shot.url })),
+    ];
+
+    return ordered
+      .map((item) => ({ id: item.id, url: signed.get(item.url), caption: "" }))
+      .filter((item): item is GalleryImage => Boolean(item.url));
+  });
 
   return (
     <>
       <PageHeader eyebrow={t.works.eyebrow} title={t.works.title} subtitle={t.works.pageSubtitle} />
+
       <section className="bg-surface py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          {items.length > 0 ? (
-            <WorksGrid
-              items={items}
-              hrefFor={href("/works", locale)}
-              allLabel={t.works.filterAll}
-              loadMoreLabel={t.works.loadMore}
+          {images.length > 0 ? (
+            <Lightbox
+              images={images}
+              alt={t.works.photoAlt}
+              closeLabel={t.works.closeGallery}
+              columns={2}
             />
           ) : (
             <EmptyState message={t.works.empty} />

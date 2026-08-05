@@ -10,6 +10,14 @@
  * test runner.
  */
 
+/**
+ * `compound` and `district` were here. Nothing on the public site renders a
+ * location any more, so they come off the allowlist too — a column that cannot
+ * be selected cannot be leaked back onto a page by a later edit.
+ *
+ * They remain in the database, in the admin, and in the client's own portal,
+ * which has its own `select` in lib/portal.ts.
+ */
 export const PUBLIC_PROJECT_COLUMNS = [
   "id",
   "slug",
@@ -17,8 +25,6 @@ export const PUBLIC_PROJECT_COLUMNS = [
   "title_en",
   "description_ar",
   "description_en",
-  "compound",
-  "district",
   "area_m2",
   "start_date",
   "end_date",

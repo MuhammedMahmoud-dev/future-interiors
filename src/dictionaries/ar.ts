@@ -77,6 +77,11 @@ export const ar = {
     ],
   },
 
+  /**
+   * The portfolio is photographs only — no title, area, duration, year or
+   * location on a card, and no project detail page. The keys that labelled
+   * those went with them, and so did the whole `project` block.
+   */
   works: {
     eyebrow: "أعمالنا",
     title: "أعمالنا",
@@ -84,32 +89,9 @@ export const ar = {
     pageSubtitle: "مشاريع مكتملة، معروضة بموافقة أصحابها",
     viewAll: "كل الأعمال",
     empty: "الأعمال هتتعرض هنا أول ما تتضاف.",
-    filterAll: "الكل",
-    loadMore: "تحميل المزيد",
-    area: "المساحة",
-    location: "الموقع",
-    duration: "مدة التنفيذ",
-    year: "سنة التنفيذ",
-    months: "شهر",
-    sqm: "م²",
-  },
-
-  project: {
-    about: "عن المشروع",
-    beforeAfter: "قبل وبعد",
-    dragHint: "اسحب للمقارنة",
-    before: "قبل",
-    after: "بعد",
-    timeline: "مراحل التنفيذ",
-    gallery: "معرض الصور",
-    ctaTitle: "عايز نتيجة زي دي؟",
-    ctaText: "ابعتلنا على واتساب واحجز معاينة لشقتك.",
-    ctaButton: "احجز معاينة",
-    related: "مشاريع تانية تهمك",
+    // Every photo needs an accessible description; this one names no location.
+    photoAlt: "من أعمالنا",
     closeGallery: "اقفل",
-    stageDone: "تم",
-    stageInProgress: "جاري التنفيذ",
-    stageNotStarted: "لسه ما بدأش",
   },
 
   journey: {

@@ -39,6 +39,14 @@ const PROBE = {
   supervision_rate: 0.1337,
 };
 
+// The location is not private in the security sense — it is simply never to be
+// published. Distinctive values so the sweep proves that rule instead of
+// trusting it, the same way it proves the private columns.
+const PROBE_LOCATION = {
+  compound: "COMPOUND-ZZ9",
+  district: "DISTRICT-ZZ9",
+};
+
 // The client's name and number moved to their own table; they must stay just as
 // absent from public HTML as when they were columns on the project.
 const PROBE_CLIENT = {
@@ -113,9 +121,9 @@ try {
     headers: { Prefer: "return=representation" },
     body: JSON.stringify({
       ...PROBE,
+      ...PROBE_LOCATION,
       client_id: probeClientId,
       status: "completed",
-      compound: "ZZ Compound",
       area_m2: 200,
       start_date: "2025-01-01",
       end_date: "2025-06-01",
@@ -144,9 +152,14 @@ try {
       const needles = [
         PROBE.unit_no, PROBE.building_no,
         PROBE_CLIENT.name, PROBE_CLIENT.phone, `0${PROBE_CLIENT.phone}`,
+        PROBE_LOCATION.compound, PROBE_LOCATION.district,
         "0.1337", "1337", "supervision_rate", "unit_no", "building_no", "client_id",
+        "compound", "district",
       ];
-      const paths = ["/ar", "/en", "/ar/works", "/en/works", `/ar/works/${PROBE.slug}`, `/en/works/${PROBE.slug}`];
+
+      // The per-project detail route is gone — the portfolio is a lightbox
+      // gallery now, so these are every page that renders project data.
+      const paths = ["/ar", "/en", "/ar/works", "/en/works"];
 
       for (const path of paths) {
         const res = await fetch(site + path);
@@ -156,6 +169,12 @@ try {
         else if (hits.length) fail(path, `leaked: ${hits.join(", ")}`);
         else ok(`${path} (${html.length} bytes, clean)`);
       }
+
+      // The route was deleted; if it ever answers again, project detail is back
+      // on the public site and this sweep would silently stop covering it.
+      const gone = await fetch(`${site}/ar/works/${PROBE.slug}`);
+      if (gone.status === 404) ok("project detail route stays removed (404)");
+      else fail("project detail route", `expected 404, got ${gone.status}`);
     }
   }
 } finally {

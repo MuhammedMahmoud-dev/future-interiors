@@ -7,13 +7,13 @@ import { notFound } from "next/navigation";
 import { Counter } from "@/components/Counter";
 import { FaqList } from "@/components/FaqList";
 import { JourneyScroller } from "@/components/JourneyScroller";
+import { Lightbox, type GalleryImage } from "@/components/Lightbox";
 import { Eyebrow, SectionHeading } from "@/components/Sections";
 import { ServiceIcon } from "@/components/ServiceIcon";
 import { TestimonialsSlider } from "@/components/TestimonialsSlider";
 import { PillButton } from "@/components/ui/PillButton";
 import { getDictionary } from "@/lib/dictionary";
 import { href, isLocale, pick, whatsappLink, type Locale } from "@/lib/i18n";
-import { durationMonths, locationLabel, yearOf } from "@/lib/format";
 import { signMedia } from "@/lib/media";
 import {
   getFaqs,
@@ -27,8 +27,11 @@ import {
 
 export const revalidate = 3600;
 
-/** The dev seed writes a .png; a real photograph will most likely be a .jpg. */
-const HERO_CANDIDATES = ["/hero.jpg", "/hero.png"];
+/**
+ * The hero photograph is a file, not a database row. Whichever format it was
+ * supplied in is kept, so all four are resolved rather than forcing a rename.
+ */
+const HERO_CANDIDATES = ["/hero.jpg", "/hero.jpeg", "/hero.png", "/hero.webp"];
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale: raw } = await params;
@@ -66,6 +69,15 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     .map((media) => signedUrls.get(media.url))
     .filter((url): url is string => Boolean(url));
 
+  // The featured row: one cover per published project, photographs only.
+  const featured: GalleryImage[] = projects
+    .map((project) => ({
+      id: project.id,
+      url: project.cover_image ? signedUrls.get(project.cover_image) : undefined,
+      caption: "",
+    }))
+    .filter((item): item is GalleryImage => Boolean(item.url));
+
   return (
     <>
       {/*
@@ -76,9 +88,15 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         combined height. dvh, not vh, so mobile URL-bar chrome cannot push the
         following section into view.
       */}
-      <section className="relative flex min-h-[max(100dvh,560px)] flex-col overflow-hidden bg-ink pt-[100px]">
+      <section className="relative flex min-h-[max(100dvh,560px)] flex-col bg-ink pt-[100px]">
+        {/*
+          `overflow-hidden` belongs to the image, not to the section. It is here
+          to contain the slow zoom — but on the section it also clipped the
+          service cards below, which deliberately overhang the bottom edge, and
+          sliced their text mid-sentence.
+        */}
         {hero && (
-          <>
+          <div className="absolute inset-0 overflow-hidden">
             <Image
               src={hero}
               alt=""
@@ -89,7 +107,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             />
             {/* Keeps the wordmark and headline legible over any photograph. */}
             <div className="absolute inset-0 bg-ink/55" />
-          </>
+          </div>
         )}
 
         {/*
@@ -104,21 +122,22 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             {/*
               The wordmark, oversized (§8.2). It stays Latin in both locales.
 
-              `dir="ltr"` sits on the spans, not on the paragraph: the full stop
-              in "FUTURE." is a neutral character, so inside an RTL paragraph it
-              would flip to the wrong side and render as ".FUTURE". Leaving the
-              paragraph itself in the page direction keeps the mark aligned with
-              the Arabic headline beneath it instead of stranded on the far side.
+              The direction sits on an inline <bdi>, never on the block. A block
+              element carrying dir="ltr" resolves its own `text-align: start` to
+              LEFT, which stranded the mark on the opposite side from the Arabic
+              headline. The blocks now inherit the page direction — so they align
+              with the headline — while <bdi> isolates the Latin run and keeps the
+              full stop at the end of "FUTURE." rather than flipping it to ".FUTURE".
+
+              The size is capped: 15vw is 288px at 1920 and simply grows from
+              there, which is oversized past the point of being a wordmark.
             */}
             <p className="hero-rise brand pointer-events-none select-none font-extrabold leading-[0.82] tracking-[-0.03em] text-white">
-              <span dir="ltr" className="block text-[22vw] sm:text-[19vw] lg:text-[15vw]">
-                FUTURE.
+              <span className="block text-[22vw] sm:text-[19vw] lg:text-[min(15vw,260px)]">
+                <bdi dir="ltr">FUTURE.</bdi>
               </span>
-              <span
-                dir="ltr"
-                className="mt-2 block text-[6.5vw] font-medium tracking-[0.3em] text-white/70 sm:text-[5vw] lg:text-[3.4vw]"
-              >
-                INTERIORS
+              <span className="mt-2 block text-[6.5vw] font-medium tracking-[0.3em] text-white/70 sm:text-[5vw] lg:text-[min(3.4vw,58px)]">
+                <bdi dir="ltr">INTERIORS</bdi>
               </span>
             </p>
 
@@ -222,7 +241,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         5 — Featured projects (§8.5). Three cards, no price anywhere. The
         is_public AND publish_approved_at consent gate lives in lib/data.ts.
       */}
-      {projects.length > 0 && (
+      {featured.length > 0 && (
         <section className="bg-paper py-20 sm:py-28">
           <div className="mx-auto max-w-7xl px-4 sm:px-6">
             <SectionHeading
@@ -232,48 +251,14 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               align="center"
             />
 
-            <div className="mt-14 grid gap-6 md:grid-cols-3">
-              {projects.map((project) => {
-                const cover = project.cover_image ? signedUrls.get(project.cover_image) : undefined;
-                const months = durationMonths(project.start_date, project.end_date);
-                const year = yearOf(project.end_date ?? project.start_date);
-                const location = locationLabel(project.compound, project.district, locale);
-
-                const facts = [
-                  project.area_m2 ? `${project.area_m2} ${t.works.sqm}` : null,
-                  months ? `${months} ${t.works.months}` : null,
-                  year,
-                  location || null,
-                ].filter(Boolean);
-
-                return (
-                  <Link
-                    key={project.id}
-                    href={href(`/works/${project.slug}`, locale)}
-                    className="group flex flex-col overflow-hidden rounded-card border border-border bg-paper transition-colors duration-200 hover:border-ink/30"
-                  >
-                    <div className="aspect-[4/3] overflow-hidden bg-ink/5">
-                      {cover && (
-                        // eslint-disable-next-line @next/next/no-img-element -- signed URL
-                        <img
-                          src={cover}
-                          alt={pick(project, "title", locale)}
-                          loading="lazy"
-                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                        />
-                      )}
-                    </div>
-
-                    <div className="flex flex-1 flex-col border-t border-border p-6">
-                      <h3 className="text-lg font-semibold text-ink">
-                        {pick(project, "title", locale)}
-                      </h3>
-                      <p className="mt-3 flex-1 text-sm leading-6 text-muted">{facts.join(" · ")}</p>
-                      <Arrow className="mt-6 text-muted transition-colors group-hover:text-ink" />
-                    </div>
-                  </Link>
-                );
-              })}
+            {/* Photographs only — no title, area, year or location (see works/page.tsx). */}
+            <div className="mt-14">
+              <Lightbox
+                images={featured}
+                alt={t.works.photoAlt}
+                closeLabel={t.works.closeGallery}
+                columns={3}
+              />
             </div>
 
             <div className="mt-14 text-center">
@@ -366,10 +351,13 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               items={testimonials.map((testimonial) => ({
                 id: testimonial.id,
                 quote: pick(testimonial, "quote", locale),
+                // The compound used to be appended here. It names the location,
+                // so it is gone from the public site entirely — a consented name
+                // on its own, or the anonymous label.
                 attribution:
                   testimonial.show_name && testimonial.client_name
-                    ? [testimonial.client_name, testimonial.compound].filter(Boolean).join(" — ")
-                    : [t.testimonials.anonymous, testimonial.compound].filter(Boolean).join(" — "),
+                    ? testimonial.client_name
+                    : t.testimonials.anonymous,
               }))}
             />
           </div>

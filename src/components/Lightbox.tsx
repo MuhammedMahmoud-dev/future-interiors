@@ -4,8 +4,27 @@ import { useEffect, useRef, useState } from "react";
 
 export type GalleryImage = { id: string; url: string; caption: string };
 
-/** Gallery grid backed by a native <dialog> — no modal library, Esc closes for free. */
-export function Lightbox({ images, closeLabel }: { images: GalleryImage[]; closeLabel: string }) {
+/**
+ * Gallery grid backed by a native <dialog> — no modal library, Esc closes for free.
+ *
+ * This is the whole portfolio now: the works page and the homepage row are both
+ * this component. Projects are shown as photographs with no title, area, year or
+ * location, so `caption` is usually empty; `alt` is passed separately and always
+ * carries something, because an empty alt on a content image is not a caption
+ * decision, it is a missing one.
+ */
+export function Lightbox({
+  images,
+  closeLabel,
+  alt,
+  columns = 3,
+}: {
+  images: GalleryImage[];
+  closeLabel: string;
+  /** Non-identifying description for every tile, e.g. "من أعمالنا". */
+  alt: string;
+  columns?: 2 | 3;
+}) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [index, setIndex] = useState(0);
 
@@ -34,18 +53,22 @@ export function Lightbox({ images, closeLabel }: { images: GalleryImage[]; close
 
   return (
     <>
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
+      <div
+        className={`grid gap-4 ${
+          columns === 2 ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-2 md:grid-cols-3"
+        }`}
+      >
         {images.map((image, position) => (
           <button
             key={image.id}
             type="button"
             onClick={() => open(position)}
-            className="group aspect-[4/3] overflow-hidden bg-ink/5"
+            className="group aspect-[4/3] overflow-hidden rounded-card border border-border bg-ink/5"
           >
             {/* eslint-disable-next-line @next/next/no-img-element -- signed URLs */}
             <img
               src={image.url}
-              alt={image.caption}
+              alt={image.caption || alt}
               loading="lazy"
               className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
@@ -64,7 +87,7 @@ export function Lightbox({ images, closeLabel }: { images: GalleryImage[]; close
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={current.url}
-            alt={current.caption}
+            alt={current.caption || alt}
             className="max-h-[80vh] w-full object-contain"
           />
 

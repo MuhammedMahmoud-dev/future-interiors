@@ -14,6 +14,7 @@ import { PUBLIC_PROJECT_COLUMNS, PUBLIC_MEDIA_COLUMNS } from "./publicFields";
  * site builds and renders its empty states before the keys exist.
  */
 
+/** Mirrors PUBLIC_PROJECT_COLUMNS — no location, so none can reach a page. */
 export type ProjectRow = {
   id: string;
   slug: string;
@@ -21,8 +22,6 @@ export type ProjectRow = {
   title_en: string | null;
   description_ar: string | null;
   description_en: string | null;
-  compound: string | null;
-  district: string | null;
   area_m2: number | string | null;
   start_date: string | null;
   end_date: string | null;

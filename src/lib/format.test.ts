@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { parseDateInput, durationMonths, yearOf, locationLabel } from "./format.ts";
+import { parseDateInput } from "./format.ts";
 
 test("iso dates pass through", () => {
   assert.equal(parseDateInput("2026-08-03"), "2026-08-03");
@@ -32,17 +32,5 @@ test("impossible dates are rejected rather than rolled over", () => {
   }
 });
 
-test("duration is whole months, never below one", () => {
-  assert.equal(durationMonths("2025-01-01", "2025-07-01"), 6);
-  assert.equal(durationMonths("2025-01-01", "2025-01-05"), 1);
-  assert.equal(durationMonths("2025-07-01", "2025-01-01"), null);
-  assert.equal(durationMonths(null, "2025-01-01"), null);
-});
-
-test("year and location helpers degrade quietly", () => {
-  assert.equal(yearOf("2025-06-01"), "2025");
-  assert.equal(yearOf(null), null);
-  assert.equal(locationLabel("كالما", "الشيخ زايد", "ar"), "كالما، الشيخ زايد");
-  assert.equal(locationLabel("Kalma", null, "en"), "Kalma");
-  assert.equal(locationLabel(null, null, "ar"), "");
-});
+// The duration, year and location helpers were deleted with the project detail
+// page; their cases went with them rather than being left to pass vacuously.
