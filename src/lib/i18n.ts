@@ -16,6 +16,24 @@ export function dir(locale: Locale): "rtl" | "ltr" {
   return locale === "ar" ? "rtl" : "ltr";
 }
 
+/**
+ * Absolute origin, needed by anything that has to emit a full URL rather than a
+ * path: canonical links, hreflang alternates, Open Graph, the sitemap.
+ *
+ * Vercel exposes the production host without a scheme, hence the prefix. The
+ * localhost fallback keeps `next build` working before the variable is set —
+ * metadataBase throws on a relative value.
+ */
+export function siteUrl(): string {
+  const explicit = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+  if (explicit) return explicit.replace(/\/$/, "");
+
+  const vercel = process.env.VERCEL_PROJECT_PRODUCTION_URL?.trim();
+  if (vercel) return `https://${vercel}`;
+
+  return "http://localhost:3000";
+}
+
 /** Prefix a path with the active locale: href("/works", "en") -> "/en/works" */
 export function href(path: string, locale: Locale): string {
   return `/${locale}${path === "/" ? "" : path}`;

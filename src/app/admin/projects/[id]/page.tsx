@@ -60,7 +60,7 @@ export default async function AdminProjectPage({
       title={project.title_ar}
       action={
         <div className="flex items-center gap-3 text-xs">
-          <span className="text-muted">كود المتابعة</span>
+          <span className="text-muted-ink">كود المتابعة</span>
           <code className="brand bg-ink px-3 py-2 text-white" dir="ltr">
             {project.code}
           </code>
@@ -83,7 +83,7 @@ export default async function AdminProjectPage({
             className={`-mb-px border-b-2 px-5 py-3 text-sm transition-colors ${
               tab === entry.key
                 ? "border-accent text-ink"
-                : "border-transparent text-muted hover:text-ink"
+                : "border-transparent text-muted-ink hover:text-ink"
             }`}
           >
             {entry.label}
@@ -182,7 +182,7 @@ function Total({
   const tone = highlight ? (value >= 0 ? "text-green-700" : "text-red-600") : "";
   return (
     <div className="border border-border bg-white p-4">
-      <p className="text-xs text-muted">{label}</p>
+      <p className="text-xs text-muted-ink">{label}</p>
       <p className={`brand mt-2 text-lg ${tone}`} dir="ltr">
         {formatMoney(value)}
       </p>

@@ -30,7 +30,12 @@ export const revalidate = 3600;
  * The hero photograph is a file, not a database row. Whichever format it was
  * supplied in is kept, so all four are resolved rather than forcing a rename.
  */
-const HERO_CANDIDATES = ["/hero.jpg", "/hero.jpeg", "/hero.png", "/hero.webp"];
+const HERO_EXTS = [".jpg", ".jpeg", ".png", ".webp"];
+
+const findPublic = (stem: string) =>
+  HERO_EXTS.map((ext) => `/${stem}${ext}`).find((file) =>
+    existsSync(path.join(process.cwd(), "public", file.slice(1))),
+  );
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale: raw } = await params;
@@ -53,9 +58,14 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     ...galleries.flat().map((media) => media.url),
   ]);
 
-  const hero = HERO_CANDIDATES.find((file) =>
-    existsSync(path.join(process.cwd(), "public", file.slice(1))),
-  );
+  const hero = findPublic("hero");
+  /*
+   * A landscape hero loses about three quarters of its width to `object-cover`
+   * on a portrait phone, so whatever is interesting in the frame is usually
+   * cropped away. A portrait source fixes that properly; `object-position` only
+   * changes which quarter survives. Falls back to the landscape when absent.
+   */
+  const heroMobile = findPublic("hero-mobile") ?? hero;
 
   const bookHref = whatsappLink(whatsapp, t.whatsapp.book);
   const askHref = whatsappLink(whatsapp, t.whatsapp.ask);
@@ -96,13 +106,27 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         */}
         {hero && (
           <div className="absolute inset-0 overflow-hidden">
+            {/*
+              Two sources rather than one: art direction, which `sizes` alone
+              cannot do — it picks a resolution, not a crop. Both are rendered
+              and one is hidden per breakpoint, so each still gets `priority`
+              only where it is the one on screen.
+            */}
+            <Image
+              src={heroMobile!}
+              alt=""
+              fill
+              priority
+              sizes="100vw"
+              className="animate-hero-zoom object-cover md:hidden"
+            />
             <Image
               src={hero}
               alt=""
               fill
               priority
               sizes="100vw"
-              className="animate-hero-zoom object-cover"
+              className="animate-hero-zoom hidden object-cover md:block"
             />
             {/* Keeps the wordmark and headline legible over any photograph. */}
             <div className="absolute inset-0 bg-ink/55" />
@@ -199,7 +223,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             <div>
               <Eyebrow>{t.why.eyebrow}</Eyebrow>
               <h2 className="text-4xl font-semibold text-ink sm:text-5xl">{t.why.title}</h2>
-              <p className="mt-5 text-base leading-8 text-muted">{t.why.subtitle}</p>
+              <p className="mt-5 text-base leading-8 text-muted-ink">{t.why.subtitle}</p>
 
               <ul className="mt-8 space-y-4">
                 {t.why.points.map((point) => (
@@ -212,14 +236,14 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             </div>
 
             {/* The middle column is the photograph the spec asks for. */}
-            <div className="overflow-hidden rounded-card border border-border bg-ink/5 lg:aspect-[3/4]">
+            <div className="relative aspect-[3/4] overflow-hidden rounded-card border border-border bg-ink/5">
               {supporting[0] && (
-                // eslint-disable-next-line @next/next/no-img-element -- signed URL
-                <img
+                <Image
                   src={supporting[0]}
                   alt=""
-                  loading="lazy"
-                  className="h-full w-full object-cover"
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 400px"
+                  className="object-cover"
                 />
               )}
             </div>
@@ -228,7 +252,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               {t.why.cards.map((card) => (
                 <article key={card.title} className="rounded-card border border-border bg-paper p-6">
                   <h3 className="text-lg font-semibold text-ink">{card.title}</h3>
-                  <p className="mt-2 text-base leading-7 text-muted">{card.body}</p>
+                  <p className="mt-2 text-base leading-7 text-muted-ink">{card.body}</p>
                 </article>
               ))}
             </div>
@@ -409,14 +433,14 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             </div>
           </div>
 
-          <div className="overflow-hidden rounded-card border border-white/10 bg-white/5 lg:aspect-[4/3]">
+          <div className="relative aspect-[4/3] overflow-hidden rounded-card border border-white/10 bg-white/5">
             {supporting[3] && (
-              // eslint-disable-next-line @next/next/no-img-element -- signed URL
-              <img
+              <Image
                 src={supporting[3]}
                 alt=""
-                loading="lazy"
-                className="h-full w-full object-cover"
+                fill
+                sizes="(max-width: 1024px) 100vw, 620px"
+                className="object-cover"
               />
             )}
           </div>
@@ -455,7 +479,7 @@ function Split({
         <div className={reversed ? "lg:order-2" : ""}>
           <Eyebrow>{eyebrow}</Eyebrow>
           <h2 className="text-4xl font-semibold text-ink sm:text-5xl">{title}</h2>
-          <p className="mt-5 text-base leading-8 text-muted">{body}</p>
+          <p className="mt-5 text-base leading-8 text-muted-ink">{body}</p>
 
           <ul className="mt-7 space-y-3">
             {points.map((point) => (
@@ -473,10 +497,15 @@ function Split({
           </div>
         </div>
 
-        <div className="aspect-[4/3] overflow-hidden rounded-card border border-border bg-ink/5">
+        <div className="relative aspect-[4/3] overflow-hidden rounded-card border border-border bg-ink/5">
           {image && (
-            // eslint-disable-next-line @next/next/no-img-element -- signed URL
-            <img src={image} alt="" loading="lazy" className="h-full w-full object-cover" />
+            <Image
+              src={image}
+              alt=""
+              fill
+              sizes="(max-width: 1024px) 100vw, 620px"
+              className="object-cover"
+            />
           )}
         </div>
       </div>

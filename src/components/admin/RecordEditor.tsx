@@ -29,7 +29,7 @@ export function RecordEditor({
 
   return (
     <div>
-      <p className="mb-6 text-sm text-muted">{spec.description}</p>
+      <p className="mb-6 text-sm text-muted-ink">{spec.description}</p>
 
       <div className="space-y-5">
         {rows.map((record, index) => (
@@ -56,7 +56,7 @@ export function RecordEditor({
       )}
 
       {rows.length === 0 && (
-        <p className="border border-dashed border-border px-6 py-16 text-center text-sm text-muted">
+        <p className="border border-dashed border-border px-6 py-16 text-center text-sm text-muted-ink">
           لسه مفيش محتوى هنا.
         </p>
       )}
@@ -134,7 +134,7 @@ function RecordCard({
             type="button"
             onClick={remove}
             disabled={busy}
-            className="text-sm text-muted transition-colors hover:text-red-600"
+            className="text-sm text-muted-ink transition-colors hover:text-red-600"
           >
             حذف
           </button>
@@ -178,7 +178,7 @@ function Field({
   onChange: (next: string | boolean) => void;
 }) {
   const base =
-    "w-full rounded-card border border-border bg-white px-3 py-2.5 text-sm focus:border-accent focus:outline-none";
+    "w-full rounded-card border border-border bg-white px-3 py-2.5 text-sm focus:border-accent";
   const wide = field.type === "textarea" || field.type === "list";
 
   if (field.type === "boolean") {
@@ -197,9 +197,9 @@ function Field({
 
   return (
     <label className={`block ${wide ? "sm:col-span-2" : ""}`}>
-      <span className="block text-xs text-muted">
+      <span className="block text-xs text-muted-ink">
         {field.label}
-        {field.required && <span className="text-accent"> *</span>}
+        {field.required && <span className="text-accent-ink"> *</span>}
       </span>
       <div className="mt-2">
         {field.type === "textarea" || field.type === "list" ? (

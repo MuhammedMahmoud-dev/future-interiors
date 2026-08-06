@@ -33,7 +33,7 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
 
           {engineer?.phone && (
             <div className="mt-14 border-t border-border pt-10">
-              <p className="text-xs text-muted">{t.contact.phone}</p>
+              <p className="text-xs text-muted-ink">{t.contact.phone}</p>
               <a
                 href={`tel:${engineer.phone}`}
                 dir="ltr"

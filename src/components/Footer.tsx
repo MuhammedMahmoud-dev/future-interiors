@@ -38,7 +38,7 @@ export function Footer({
             <p className="brand text-xl tracking-[0.18em]">Future Interiors</p>
             <p className="mt-5 max-w-xs text-sm leading-7 text-white/50">{t.footer.blurb}</p>
 
-            <p className="mt-8 text-xs tracking-[0.22em] text-white/40 ltr:uppercase">
+            <p className="mt-8 text-xs tracking-[0.22em] text-white/60 ltr:uppercase">
               {t.footer.social}
             </p>
             {/* Reserved, not active — there are no accounts to link to yet. */}
@@ -51,7 +51,7 @@ export function Footer({
 
           {/* 2 — Links */}
           <nav>
-            <h2 className="mb-5 text-xs tracking-[0.22em] text-white/40 ltr:uppercase">
+            <h2 className="mb-5 text-xs tracking-[0.22em] text-white/60 ltr:uppercase">
               {t.footer.links}
             </h2>
             <ul className="space-y-3 text-sm text-white/70">
@@ -67,7 +67,7 @@ export function Footer({
 
           {/* 3 — Services */}
           <div>
-            <h2 className="mb-5 text-xs tracking-[0.22em] text-white/40 ltr:uppercase">
+            <h2 className="mb-5 text-xs tracking-[0.22em] text-white/60 ltr:uppercase">
               {t.footer.services}
             </h2>
             {services.length > 0 ? (
@@ -77,13 +77,13 @@ export function Footer({
                 ))}
               </ul>
             ) : (
-              <p className="text-sm text-white/40">{t.common.unavailable}</p>
+              <p className="text-sm text-white/60">{t.common.unavailable}</p>
             )}
           </div>
 
           {/* 4 — Contact */}
           <div>
-            <h2 className="mb-5 text-xs tracking-[0.22em] text-white/40 ltr:uppercase">
+            <h2 className="mb-5 text-xs tracking-[0.22em] text-white/60 ltr:uppercase">
               {t.footer.contact}
             </h2>
             <ul className="space-y-4 text-sm">
@@ -122,7 +122,7 @@ export function Footer({
       </div>
 
       <div className="border-t border-white/10">
-        <div className="mx-auto max-w-7xl px-4 py-6 text-center text-xs text-white/40 sm:px-6">
+        <div className="mx-auto max-w-7xl px-4 py-6 text-center text-xs text-white/60 sm:px-6">
           {t.footer.rights}
         </div>
       </div>

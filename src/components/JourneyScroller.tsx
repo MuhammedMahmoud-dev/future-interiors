@@ -43,18 +43,18 @@ export function JourneyScroller({ steps }: { steps: JourneyStep[] }) {
             className="flex min-w-[78%] shrink-0 snap-center items-stretch sm:min-w-[52%] lg:min-w-0"
           >
             <div className="flex-1 rounded-card border border-border bg-paper p-6">
-              <span className="brand block text-sm text-accent">
+              <span className="brand block text-sm text-accent-ink">
                 {String(index + 1).padStart(2, "0")}
               </span>
               <h3 className="mt-4 text-lg font-semibold text-ink">{step.title}</h3>
-              <p className="mt-2 text-sm leading-6 text-muted">{step.duration}</p>
+              <p className="mt-2 text-sm leading-6 text-muted-ink">{step.duration}</p>
             </div>
 
             {/* The connector between cards — never after the last one. */}
             {index < steps.length - 1 && (
               <span
                 aria-hidden="true"
-                className="hidden shrink-0 items-center px-2 text-muted lg:flex"
+                className="hidden shrink-0 items-center px-2 text-muted-ink lg:flex"
               >
                 <svg
                   width="16"

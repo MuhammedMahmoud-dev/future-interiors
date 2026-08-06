@@ -21,6 +21,25 @@
   --color-border: #e2e2df;
   --color-accent: #c6a664; /* very small touches only: active link, monogram */
 
+  /*
+   * Text-safe counterparts, measured rather than eyeballed.
+   *
+   * §7's palette is right for what it was drawn for — fills, hairlines, icons —
+   * but neither value survives as TEXT on a light ground. On --color-surface,
+   * --color-muted measures 2.99:1 and --color-accent 2.07:1, against the 4.5:1
+   * that AA asks of body copy. They carry the eyebrows, the section subtitles
+   * and every numeral, so that is most of the small text on the site.
+   *
+   * The two below are the same hues darkened until they clear the bar:
+   *   --color-muted-ink   4.59 on surface, 5.15 on paper
+   *   --color-accent-ink  4.65 on surface, 5.21 on paper
+   *
+   * The spec values stay exactly as written and keep every non-text job,
+   * including accent text on ink, which already measures 7.31:1.
+   */
+  --color-muted-ink: #6b6e6c;
+  --color-accent-ink: #856914;
+
   /* Body face. Arabic is the default; the Latin swap happens per direction below. */
   --font-sans: var(--font-plex-arabic), system-ui, sans-serif;
 
@@ -93,6 +112,24 @@
 body {
   background: var(--color-paper);
   color: var(--color-body);
+}
+
+/*
+ * Keyboard focus, stated once for the whole site.
+ *
+ * The browser default was doing this job, which meant it changed shape between
+ * engines and all but vanished against the dark sections. `:focus-visible`
+ * rather than `:focus`, so a mouse click never draws a ring — only keyboard and
+ * other non-pointer input does.
+ *
+ * The offset is what makes it legible on both grounds: the ring sits clear of
+ * the element rather than on its edge, so it reads against ink and against
+ * paper without needing a per-section variant.
+ */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+  border-radius: 2px;
 }
 
 /* Arabic is the default face; Latin text swaps to Manrope per direction. */

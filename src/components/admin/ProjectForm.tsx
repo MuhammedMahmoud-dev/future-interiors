@@ -184,7 +184,7 @@ export function ProjectForm({
 }
 
 const input =
-  "w-full rounded-card border border-border bg-white px-3 py-2.5 text-sm focus:border-accent focus:outline-none";
+  "w-full rounded-card border border-border bg-white px-3 py-2.5 text-sm focus:border-accent";
 
 function Section({
   title,
@@ -201,8 +201,8 @@ function Section({
     <section
       className={`border p-6 ${isPrivate ? "border-accent/50 bg-accent/[0.04]" : "border-border bg-white"}`}
     >
-      <h2 className="text-sm tracking-widest text-muted">{title}</h2>
-      {note && <p className="mt-1 text-xs text-muted">{note}</p>}
+      <h2 className="text-sm tracking-widest text-muted-ink">{title}</h2>
+      {note && <p className="mt-1 text-xs text-muted-ink">{note}</p>}
       <div className="mt-6 grid gap-5 sm:grid-cols-2">{children}</div>
     </section>
   );
@@ -223,12 +223,12 @@ function Field({
 }) {
   return (
     <label className={`block ${wide ? "sm:col-span-2" : ""}`}>
-      <span className="block text-xs text-muted">
+      <span className="block text-xs text-muted-ink">
         {label}
-        {required && <span className="text-accent"> *</span>}
+        {required && <span className="text-accent-ink"> *</span>}
       </span>
       <div className="mt-2">{children}</div>
-      {note && <span className="mt-1 block text-xs text-muted">{note}</span>}
+      {note && <span className="mt-1 block text-xs text-muted-ink">{note}</span>}
     </label>
   );
 }

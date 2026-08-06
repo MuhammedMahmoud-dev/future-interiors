@@ -40,7 +40,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
               <div>
                 <h2 className="text-2xl">{pick(engineer, "name", locale)}</h2>
                 {pick(engineer, "bio", locale) && (
-                  <p className="mt-6 whitespace-pre-line text-sm leading-8 text-muted">
+                  <p className="mt-6 whitespace-pre-line text-sm leading-8 text-muted-ink">
                     {pick(engineer, "bio", locale)}
                   </p>
                 )}
@@ -48,7 +48,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
 
               {engineer.syndicate_no && (
                 <div className="border-s border-accent ps-6">
-                  <p className="text-xs text-muted">{t.about.syndicate}</p>
+                  <p className="text-xs text-muted-ink">{t.about.syndicate}</p>
                   <p className="mt-1" dir="ltr">
                     {engineer.syndicate_no}
                   </p>
@@ -57,10 +57,10 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
 
               {credentials.length > 0 && (
                 <div>
-                  <h3 className="text-sm tracking-widest text-accent">{t.about.credentials}</h3>
+                  <h3 className="text-sm tracking-widest text-accent-ink">{t.about.credentials}</h3>
                   <ul className="mt-6 divide-y divide-border border-y border-border">
                     {credentials.map((credential) => (
-                      <li key={credential} className="py-4 text-sm text-muted">
+                      <li key={credential} className="py-4 text-sm text-muted-ink">
                         {credential}
                       </li>
                     ))}
@@ -79,13 +79,13 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
                     index % 2 !== 0 ? "border-s border-border" : ""
                   } ${index >= 2 ? "border-t border-border lg:border-t-0" : ""}`}
                 >
-                  <p className="brand text-3xl text-accent">
+                  <p className="brand text-3xl text-accent-ink">
                     <Counter value={Number(stat.value)} />
                     {pick(stat, "suffix", locale) && (
                       <span className="ms-1 text-lg">{pick(stat, "suffix", locale)}</span>
                     )}
                   </p>
-                  <p className="mt-2 text-xs text-muted">{pick(stat, "label", locale)}</p>
+                  <p className="mt-2 text-xs text-muted-ink">{pick(stat, "label", locale)}</p>
                 </div>
               ))}
             </div>

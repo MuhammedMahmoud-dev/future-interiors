@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 
 export type GalleryImage = { id: string; url: string; caption: string };
 
@@ -63,14 +64,22 @@ export function Lightbox({
             key={image.id}
             type="button"
             onClick={() => open(position)}
-            className="group aspect-[4/3] overflow-hidden rounded-card border border-border bg-ink/5"
+            className="group relative aspect-[4/3] overflow-hidden rounded-card border border-border bg-ink/5"
           >
-            {/* eslint-disable-next-line @next/next/no-img-element -- signed URLs */}
-            <img
+            {/*
+              Through the optimiser rather than served raw: the gallery was
+              shipping about a megabyte of full-size photographs per visit, none
+              of them resized for the box they render in.
+
+              `sizes` is what makes it work — without it Next assumes 100vw and
+              serves a desktop-width file to a phone anyway.
+            */}
+            <Image
               src={image.url}
               alt={image.caption || alt}
-              loading="lazy"
-              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 620px"
+              className="object-cover transition-transform duration-500 group-hover:scale-105"
             />
           </button>
         ))}

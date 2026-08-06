@@ -14,7 +14,7 @@ export function FaqList({ items }: { items: { id: string; question: string; answ
             {item.question}
             <span
               aria-hidden="true"
-              className="shrink-0 text-2xl leading-none text-accent transition-transform duration-200 group-open:rotate-45"
+              className="shrink-0 text-2xl leading-none text-accent-ink transition-transform duration-200 group-open:rotate-45"
             >
               +
             </span>

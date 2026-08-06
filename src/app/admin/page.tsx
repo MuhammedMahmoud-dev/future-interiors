@@ -20,9 +20,9 @@ export default async function AdminOverviewPage() {
       </div>
 
       <section className="mt-10">
-        <h2 className="mb-4 text-sm tracking-widest text-muted">آخر تحديث</h2>
+        <h2 className="mb-4 text-sm tracking-widest text-muted-ink">آخر تحديث</h2>
         {overview.recent.length === 0 ? (
-          <p className="border border-dashed border-border px-6 py-12 text-center text-sm text-muted">
+          <p className="border border-dashed border-border px-6 py-12 text-center text-sm text-muted-ink">
             لسه مفيش مشاريع. ابدأ بإضافة مشروع.
           </p>
         ) : (
@@ -34,7 +34,7 @@ export default async function AdminOverviewPage() {
                   className="flex flex-wrap items-baseline justify-between gap-2 px-4 py-4 transition-colors hover:bg-surface"
                 >
                   <span>{project.title_ar}</span>
-                  <span className="brand text-xs text-muted" dir="ltr">
+                  <span className="brand text-xs text-muted-ink" dir="ltr">
                     {project.code} · {project.lastActivity ?? "—"}
                   </span>
                 </Link>
@@ -59,7 +59,7 @@ export default async function AdminOverviewPage() {
 function Stat({ label, value }: { label: string; value: number }) {
   return (
     <div className="border border-border bg-white p-6">
-      <p className="text-xs text-muted">{label}</p>
+      <p className="text-xs text-muted-ink">{label}</p>
       <p className="brand mt-3 text-3xl" dir="ltr">
         {value}
       </p>

@@ -75,7 +75,7 @@ export function StatementTabs({
             className={`-mb-px border-b-2 px-6 py-4 text-sm transition-colors ${
               tab === item.key
                 ? "border-accent text-ink"
-                : "border-transparent text-muted hover:text-ink"
+                : "border-transparent text-muted-ink hover:text-ink"
             }`}
           >
             {item.label}
@@ -96,26 +96,26 @@ export function StatementTabs({
                   onChange={(event) => setQuery(event.target.value)}
                   placeholder={t.search}
                   aria-label={t.search}
-                  className="rounded-card border border-border px-4 py-2.5 text-sm focus:border-accent focus:outline-none"
+                  className="rounded-card border border-border px-4 py-2.5 text-sm focus:border-accent"
                 />
                 <input
                   type="date"
                   value={from}
                   onChange={(event) => setFrom(event.target.value)}
                   aria-label={t.dateFrom}
-                  className="rounded-card border border-border px-4 py-2.5 text-sm focus:border-accent focus:outline-none"
+                  className="rounded-card border border-border px-4 py-2.5 text-sm focus:border-accent"
                 />
                 <input
                   type="date"
                   value={to}
                   onChange={(event) => setTo(event.target.value)}
                   aria-label={t.dateTo}
-                  className="rounded-card border border-border px-4 py-2.5 text-sm focus:border-accent focus:outline-none"
+                  className="rounded-card border border-border px-4 py-2.5 text-sm focus:border-accent"
                 />
               </div>
 
               <div className="mt-6 flex flex-wrap items-baseline justify-between gap-2 border-y border-border py-3 text-sm">
-                <span className="text-muted">
+                <span className="text-muted-ink">
                   {filtered.length} {t.showing}
                 </span>
                 <span>
@@ -123,7 +123,7 @@ export function StatementTabs({
                   <strong className="brand" dir="ltr">
                     {formatMoney(subtotal)}
                   </strong>{" "}
-                  <span className="text-muted">{t.currency}</span>
+                  <span className="text-muted-ink">{t.currency}</span>
                 </span>
               </div>
 
@@ -132,7 +132,7 @@ export function StatementTabs({
               ) : (
                 <table className="mt-2 w-full text-sm">
                   <thead>
-                    <tr className="text-start text-xs text-muted">
+                    <tr className="text-start text-xs text-muted-ink">
                       <th className="py-3 text-start font-normal">{t.columns.date}</th>
                       <th className="py-3 text-start font-normal">{t.columns.item}</th>
                       <th className="py-3 text-end font-normal">{t.columns.amount}</th>
@@ -141,7 +141,7 @@ export function StatementTabs({
                   <tbody className="divide-y divide-border">
                     {filtered.map((row) => (
                       <tr key={row.id}>
-                        <td className="py-3 whitespace-nowrap text-muted" dir="ltr">
+                        <td className="py-3 whitespace-nowrap text-muted-ink" dir="ltr">
                           {row.date}
                         </td>
                         <td className="py-3">{row.item}</td>
@@ -171,7 +171,7 @@ export function StatementTabs({
           ) : (
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-xs text-muted">
+                <tr className="text-xs text-muted-ink">
                   <th className="py-3 text-start font-normal">{t.columns.date}</th>
                   <th className="py-3 text-start font-normal">{t.columns.label}</th>
                   <th className="py-3 text-end font-normal">{t.columns.amount}</th>
@@ -180,7 +180,7 @@ export function StatementTabs({
               <tbody className="divide-y divide-border">
                 {payments.map((row) => (
                   <tr key={row.id}>
-                    <td className="py-3 whitespace-nowrap text-muted" dir="ltr">
+                    <td className="py-3 whitespace-nowrap text-muted-ink" dir="ltr">
                       {row.date}
                     </td>
                     <td className="py-3">{row.label}</td>
@@ -235,7 +235,7 @@ export function StatementTabs({
 
 function Empty({ message }: { message: string }) {
   return (
-    <p className="border border-dashed border-border px-6 py-16 text-center text-sm text-muted">
+    <p className="border border-dashed border-border px-6 py-16 text-center text-sm text-muted-ink">
       {message}
     </p>
   );

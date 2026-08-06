@@ -29,14 +29,14 @@ export default async function AdminProjectsPage() {
       }
     >
       {projects.length === 0 ? (
-        <p className="border border-dashed border-border px-6 py-16 text-center text-sm text-muted">
+        <p className="border border-dashed border-border px-6 py-16 text-center text-sm text-muted-ink">
           لسه مفيش مشاريع.
         </p>
       ) : (
         <div className="overflow-x-auto border border-border bg-white">
           <table className="w-full min-w-[760px] text-sm">
             <thead>
-              <tr className="bg-surface text-xs text-muted">
+              <tr className="bg-surface text-xs text-muted-ink">
                 <th className="px-4 py-3 text-start font-normal">المشروع</th>
                 <th className="px-4 py-3 text-start font-normal">الكود</th>
                 <th className="px-4 py-3 text-start font-normal">العميل</th>
@@ -51,17 +51,17 @@ export default async function AdminProjectsPage() {
                     <Link href={`/admin/projects/${project.id}`} className="hover:text-ink">
                       {project.title_ar}
                     </Link>
-                    <span className="block text-xs text-muted">{project.compound ?? "—"}</span>
+                    <span className="block text-xs text-muted-ink">{project.compound ?? "—"}</span>
                   </td>
                   <td className="brand px-4 py-3 text-xs" dir="ltr">
                     {project.code}
                   </td>
                   {/* Read through the client_id relation, not duplicated here. */}
-                  <td className="px-4 py-3 text-muted">
+                  <td className="px-4 py-3 text-muted-ink">
                     {project.clients ? (
                       <>
                         {project.clients.name}
-                        <span className="block text-xs text-muted" dir="ltr">
+                        <span className="block text-xs text-muted-ink" dir="ltr">
                           {/^1\d{9}$/.test(project.clients.phone)
                             ? `0${project.clients.phone}`
                             : project.clients.phone}
@@ -71,14 +71,14 @@ export default async function AdminProjectsPage() {
                       "—"
                     )}
                   </td>
-                  <td className="px-4 py-3 text-muted">
+                  <td className="px-4 py-3 text-muted-ink">
                     {STATUS_LABEL[project.status] ?? project.status}
                   </td>
                   <td className="px-4 py-3">
                     {project.is_public && project.publish_approved_at ? (
                       <span className="text-green-700">معروض</span>
                     ) : (
-                      <span className="text-muted">مخفي</span>
+                      <span className="text-muted-ink">مخفي</span>
                     )}
                   </td>
                 </tr>

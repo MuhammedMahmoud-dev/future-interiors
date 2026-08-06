@@ -194,7 +194,7 @@ export function LedgerGrid({
   return (
     <div>
       <div className="mb-3 flex flex-wrap items-center justify-between gap-3 text-xs">
-        <p className="text-muted">
+        <p className="text-muted-ink">
           Enter بيفتح سطر جديد · تقدر تلصق عمود كامل من إكسل · الحفظ تلقائي
         </p>
         <SaveIndicator state={state} message={message} />
@@ -203,7 +203,7 @@ export function LedgerGrid({
       <div className="overflow-x-auto border border-border bg-white">
         <table className="w-full min-w-[720px] border-collapse text-sm">
           <thead>
-            <tr className="bg-surface text-start text-xs text-muted">
+            <tr className="bg-surface text-start text-xs text-muted-ink">
               <th className="w-32 border-b border-border px-3 py-2 text-start font-normal">التاريخ</th>
               <th className="border-b border-border px-3 py-2 text-start font-normal">
                 {isExpenses ? "البند" : "الدفعة"}
@@ -232,7 +232,7 @@ export function LedgerGrid({
                       onChange={(event) => update(row.key, { date: event.target.value })}
                       onKeyDown={(event) => onKeyDown(event, row.key)}
                       onPaste={(event) => handlePaste(event, row.key)}
-                      className="w-full bg-transparent px-3 py-2 focus:bg-accent/5 focus:outline-none"
+                      className="w-full bg-transparent px-3 py-2 focus:bg-accent/5"
                     />
                   </td>
 
@@ -245,7 +245,7 @@ export function LedgerGrid({
                       onChange={(event) => update(row.key, { text: event.target.value })}
                       onKeyDown={(event) => onKeyDown(event, row.key)}
                       onPaste={(event) => handlePaste(event, row.key)}
-                      className="w-full bg-transparent px-3 py-2 placeholder:text-muted focus:bg-accent/5 focus:outline-none"
+                      className="w-full bg-transparent px-3 py-2 placeholder:text-muted-ink focus:bg-accent/5"
                     />
                   </td>
 
@@ -256,7 +256,7 @@ export function LedgerGrid({
                         onChange={(event) =>
                           update(row.key, { stageId: event.target.value || null })
                         }
-                        className="w-full bg-transparent px-3 py-2 text-muted focus:bg-accent/5 focus:outline-none"
+                        className="w-full bg-transparent px-3 py-2 text-muted-ink focus:bg-accent/5"
                       >
                         <option value="">—</option>
                         {stages.map((stage) => (
@@ -279,7 +279,7 @@ export function LedgerGrid({
                       onChange={(event) => update(row.key, { amount: event.target.value })}
                       onKeyDown={(event) => onKeyDown(event, row.key)}
                       onPaste={(event) => handlePaste(event, row.key)}
-                      className={`w-full bg-transparent px-3 py-2 text-end placeholder:text-muted focus:bg-accent/5 focus:outline-none ${
+                      className={`w-full bg-transparent px-3 py-2 text-end placeholder:text-muted-ink focus:bg-accent/5 ${
                         invalid ? "text-red-600" : amount !== null && amount < 0 ? "text-green-700" : ""
                       }`}
                     />
@@ -290,7 +290,7 @@ export function LedgerGrid({
                       type="button"
                       onClick={() => removeRow(row)}
                       aria-label="حذف السطر"
-                      className="px-2 py-2 text-muted transition-colors hover:text-red-600"
+                      className="px-2 py-2 text-muted-ink transition-colors hover:text-red-600"
                     >
                       ×
                     </button>
@@ -302,7 +302,7 @@ export function LedgerGrid({
 
           <tfoot>
             <tr className="bg-surface">
-              <td colSpan={isExpenses ? 3 : 2} className="px-3 py-3 text-xs text-muted">
+              <td colSpan={isExpenses ? 3 : 2} className="px-3 py-3 text-xs text-muted-ink">
                 {rows.filter((row) => row.text.trim()).length} سطر
               </td>
               <td className="px-3 py-3 text-end" dir="ltr">
@@ -339,7 +339,7 @@ function SaveIndicator({
       </span>
     );
   }
-  if (state === "saving") return <span className="text-muted">بيحفظ…</span>;
+  if (state === "saving") return <span className="text-muted-ink">بيحفظ…</span>;
   if (state === "saved") return <span className="text-green-700">اتحفظ</span>;
   return <span className="text-transparent">.</span>;
 }

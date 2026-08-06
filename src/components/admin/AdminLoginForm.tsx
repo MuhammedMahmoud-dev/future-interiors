@@ -33,7 +33,7 @@ export function AdminLoginForm() {
           dir="ltr"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
-          className="mt-2 w-full rounded-card border border-white/20 bg-transparent px-4 py-3 text-white focus:border-accent focus:outline-none"
+          className="mt-2 w-full rounded-card border border-white/20 bg-transparent px-4 py-3 text-white focus:border-accent"
         />
       </div>
 
@@ -48,7 +48,7 @@ export function AdminLoginForm() {
           required
           autoComplete="current-password"
           dir="ltr"
-          className="mt-2 w-full rounded-card border border-white/20 bg-transparent px-4 py-3 text-white focus:border-accent focus:outline-none"
+          className="mt-2 w-full rounded-card border border-white/20 bg-transparent px-4 py-3 text-white focus:border-accent"
         />
       </div>
 

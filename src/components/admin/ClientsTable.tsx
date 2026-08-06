@@ -47,22 +47,22 @@ export function ClientsTable({ clients }: { clients: AdminClient[] }) {
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="دوّر بالاسم أو الرقم…"
-          className="w-full max-w-md rounded-card border border-border bg-white px-4 py-2.5 text-sm focus:border-accent focus:outline-none"
+          className="w-full max-w-md rounded-card border border-border bg-white px-4 py-2.5 text-sm focus:border-accent"
         />
-        <p className="mt-2 text-xs text-muted">
+        <p className="mt-2 text-xs text-muted-ink">
           {filtered.length} من {clients.length}
         </p>
       </div>
 
       {filtered.length === 0 ? (
-        <p className="border border-dashed border-border px-6 py-16 text-center text-sm text-muted">
+        <p className="border border-dashed border-border px-6 py-16 text-center text-sm text-muted-ink">
           {clients.length === 0 ? "لسه مفيش عملاء." : "مفيش نتيجة للبحث ده."}
         </p>
       ) : (
         <div className="overflow-x-auto border border-border bg-white">
           <table className="w-full min-w-[720px] text-sm">
             <thead>
-              <tr className="bg-surface text-xs text-muted">
+              <tr className="bg-surface text-xs text-muted-ink">
                 <th className="px-4 py-3 text-start font-normal">الاسم</th>
                 <th className="px-4 py-3 text-start font-normal">الموبايل</th>
                 <th className="px-4 py-3 text-start font-normal">المشاريع</th>
@@ -108,11 +108,11 @@ function ClientRow({
         <td colSpan={5} className="px-4 py-4">
           <form action={formAction} className="flex flex-wrap items-end gap-3">
             <label className="block">
-              <span className="block text-xs text-muted">الاسم</span>
+              <span className="block text-xs text-muted-ink">الاسم</span>
               <input name="name" defaultValue={client.name} required className={input} />
             </label>
             <label className="block">
-              <span className="block text-xs text-muted">الموبايل</span>
+              <span className="block text-xs text-muted-ink">الموبايل</span>
               <input
                 name="phone"
                 dir="ltr"
@@ -150,7 +150,7 @@ function ClientRow({
   }
 
   return (
-    <tr className={`transition-colors hover:bg-surface ${archived ? "text-muted" : ""}`}>
+    <tr className={`transition-colors hover:bg-surface ${archived ? "text-muted-ink" : ""}`}>
       <td className="px-4 py-3">{client.name}</td>
       <td className="px-4 py-3" dir="ltr">
         {displayPhone(client.phone)}
@@ -158,7 +158,7 @@ function ClientRow({
       <td className="px-4 py-3">{client.projectCount}</td>
       <td className="px-4 py-3">
         {archived ? (
-          <span className="text-muted">مؤرشف</span>
+          <span className="text-muted-ink">مؤرشف</span>
         ) : (
           <span className="text-green-700">نشط</span>
         )}
@@ -207,11 +207,11 @@ function AddClientForm() {
       className="flex flex-wrap items-end gap-3 border border-border bg-white p-5"
     >
       <label className="block">
-        <span className="block text-xs text-muted">الاسم</span>
+        <span className="block text-xs text-muted-ink">الاسم</span>
         <input name="name" required placeholder="اسم العميل" className={input} />
       </label>
       <label className="block">
-        <span className="block text-xs text-muted">الموبايل</span>
+        <span className="block text-xs text-muted-ink">الموبايل</span>
         <input name="phone" dir="ltr" required placeholder="01xxxxxxxxx" className={input} />
       </label>
       <button
@@ -232,4 +232,4 @@ function AddClientForm() {
 }
 
 const input =
-  "mt-1 rounded-card border border-border bg-white px-3 py-2 text-sm focus:border-accent focus:outline-none";
+  "mt-1 rounded-card border border-border bg-white px-3 py-2 text-sm focus:border-accent";

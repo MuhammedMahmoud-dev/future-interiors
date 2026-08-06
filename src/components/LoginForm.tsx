@@ -54,7 +54,7 @@ export function LoginForm({ locale, t }: { locale: Locale; t: Strings }) {
           value={code}
           onChange={(event) => setCode(event.target.value)}
           placeholder={t.codePlaceholder}
-          className="mt-2 w-full rounded-card border border-white/20 bg-transparent px-4 py-3 text-white placeholder:text-white/25 focus:border-accent focus:outline-none"
+          className="mt-2 w-full rounded-card border border-white/20 bg-transparent px-4 py-3 text-white placeholder:text-white/25 focus:border-accent"
         />
       </div>
 
@@ -73,7 +73,7 @@ export function LoginForm({ locale, t }: { locale: Locale; t: Strings }) {
           value={phone}
           onChange={(event) => setPhone(event.target.value)}
           placeholder={t.phonePlaceholder}
-          className="mt-2 w-full rounded-card border border-white/20 bg-transparent px-4 py-3 text-white placeholder:text-white/25 focus:border-accent focus:outline-none"
+          className="mt-2 w-full rounded-card border border-white/20 bg-transparent px-4 py-3 text-white placeholder:text-white/25 focus:border-accent"
         />
       </div>
 

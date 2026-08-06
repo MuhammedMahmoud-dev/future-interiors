@@ -73,7 +73,7 @@ export function ClientPicker({
           />
 
           {clients.length === 0 ? (
-            <p className="mt-3 text-xs text-muted">
+            <p className="mt-3 text-xs text-muted-ink">
               مفيش عملاء نشطين لسه — استخدم &quot;عميل جديد&quot;.
             </p>
           ) : (
@@ -88,19 +88,19 @@ export function ClientPicker({
                     }`}
                   >
                     <span>{client.name}</span>
-                    <span className="text-xs text-muted" dir="ltr">
+                    <span className="text-xs text-muted-ink" dir="ltr">
                       {displayPhone(client.phone)}
                     </span>
                   </button>
                 </li>
               ))}
               {filtered.length === 0 && (
-                <li className="px-4 py-3 text-xs text-muted">مفيش نتيجة.</li>
+                <li className="px-4 py-3 text-xs text-muted-ink">مفيش نتيجة.</li>
               )}
             </ul>
           )}
 
-          <p className="mt-2 text-xs text-muted">
+          <p className="mt-2 text-xs text-muted-ink">
             {chosen
               ? `المختار: ${chosen.name}`
               : currentClientLabel
@@ -111,14 +111,14 @@ export function ClientPicker({
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="block">
-            <span className="block text-xs text-muted">اسم العميل</span>
+            <span className="block text-xs text-muted-ink">اسم العميل</span>
             <input name="new_client_name" placeholder="الاسم بالكامل" className={input} />
           </label>
           <label className="block">
-            <span className="block text-xs text-muted">موبايل العميل</span>
+            <span className="block text-xs text-muted-ink">موبايل العميل</span>
             <input name="new_client_phone" dir="ltr" placeholder="01xxxxxxxxx" className={input} />
           </label>
-          <p className="text-xs text-muted sm:col-span-2">
+          <p className="text-xs text-muted-ink sm:col-span-2">
             لو الرقم ده مسجّل لعميل موجود، المشروع هيتربط بيه بدل ما يتعمل عميل مكرر.
           </p>
         </div>
@@ -141,7 +141,7 @@ function ModeButton({
       type="button"
       onClick={onClick}
       className={`rounded-card border px-5 py-2 text-sm transition-colors ${
-        active ? "border-ink bg-ink text-white" : "border-border text-muted hover:border-ink"
+        active ? "border-ink bg-ink text-white" : "border-border text-muted-ink hover:border-ink"
       }`}
     >
       {children}
@@ -150,4 +150,4 @@ function ModeButton({
 }
 
 const input =
-  "mt-1 w-full rounded-card border border-border bg-white px-3 py-2.5 text-sm focus:border-accent focus:outline-none";
+  "mt-1 w-full rounded-card border border-border bg-white px-3 py-2.5 text-sm focus:border-accent";

@@ -69,7 +69,7 @@ export function MediaManager({
     <div>
       <form ref={formRef} action={onUpload} className="border border-border bg-white p-6">
         <label className="block text-sm">
-          <span className="text-muted">ارفع صور</span>
+          <span className="text-muted-ink">ارفع صور</span>
           <input
             type="file"
             name="files"
@@ -78,7 +78,7 @@ export function MediaManager({
             className="mt-3 block w-full text-sm file:me-4 file:rounded-card file:border-0 file:bg-ink file:px-5 file:py-2.5 file:text-sm file:text-white"
           />
         </label>
-        <p className="mt-2 text-xs text-muted">
+        <p className="mt-2 text-xs text-muted-ink">
           JPG أو PNG أو WebP، الحد 15 ميجا للصورة. الصور بتترفع مخفية لحد ما توافق على نشرها.
         </p>
         <button
@@ -96,7 +96,7 @@ export function MediaManager({
       </form>
 
       {items.length === 0 ? (
-        <p className="mt-8 border border-dashed border-border px-6 py-16 text-center text-sm text-muted">
+        <p className="mt-8 border border-dashed border-border px-6 py-16 text-center text-sm text-muted-ink">
           لسه مفيش صور للمشروع ده.
         </p>
       ) : (
@@ -125,14 +125,14 @@ export function MediaManager({
                   defaultValue={item.caption_ar ?? ""}
                   placeholder="وصف الصورة"
                   onBlur={(event) => patch(item.id, { caption_ar: event.target.value })}
-                  className="w-full border-b border-border bg-transparent py-1 text-xs placeholder:text-muted focus:border-accent focus:outline-none"
+                  className="w-full border-b border-border bg-transparent py-1 text-xs placeholder:text-muted-ink focus:border-accent"
                 />
 
                 <div className="grid grid-cols-2 gap-2">
                   <select
                     defaultValue={item.stage_id ?? ""}
                     onChange={(event) => patch(item.id, { stage_id: event.target.value || null })}
-                    className="rounded-card border border-border px-2 py-1.5 text-xs focus:border-accent focus:outline-none"
+                    className="rounded-card border border-border px-2 py-1.5 text-xs focus:border-accent"
                   >
                     <option value="">المرحلة —</option>
                     {stages.map((stage) => (
@@ -145,7 +145,7 @@ export function MediaManager({
                   <select
                     defaultValue={item.phase ?? ""}
                     onChange={(event) => patch(item.id, { phase: event.target.value || null })}
-                    className="rounded-card border border-border px-2 py-1.5 text-xs focus:border-accent focus:outline-none"
+                    className="rounded-card border border-border px-2 py-1.5 text-xs focus:border-accent"
                   >
                     {PHASES.map((phase) => (
                       <option key={phase.value} value={phase.value}>
@@ -173,7 +173,7 @@ export function MediaManager({
                         await setCover(projectId, item.url);
                       })
                     }
-                    className="text-muted transition-colors hover:text-ink"
+                    className="text-muted-ink transition-colors hover:text-ink"
                   >
                     اجعلها الغلاف
                   </button>
@@ -184,7 +184,7 @@ export function MediaManager({
                         await deleteMedia(item.id, projectId, item.url);
                       })
                     }
-                    className="text-muted transition-colors hover:text-red-600"
+                    className="text-muted-ink transition-colors hover:text-red-600"
                   >
                     حذف
                   </button>

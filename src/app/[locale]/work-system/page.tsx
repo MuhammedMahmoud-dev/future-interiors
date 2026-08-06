@@ -27,12 +27,12 @@ export default async function WorkSystemPage({ params }: { params: Promise<{ loc
           <ol className="space-y-14">
             {t.workSystem.steps.map((step, index) => (
               <li key={step.title} className="grid gap-6 sm:grid-cols-[auto_1fr]">
-                <span className="brand text-2xl text-accent">
+                <span className="brand text-2xl text-accent-ink">
                   {String(index + 1).padStart(2, "0")}
                 </span>
                 <div className="border-s border-accent/30 ps-6">
                   <h2 className="text-xl">{step.title}</h2>
-                  <p className="mt-3 text-sm leading-8 text-muted">{step.body}</p>
+                  <p className="mt-3 text-sm leading-8 text-muted-ink">{step.body}</p>
                 </div>
               </li>
             ))}

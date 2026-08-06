@@ -31,7 +31,7 @@ export default async function TrackPage({ params }: { params: Promise<{ locale: 
 
         <LoginForm locale={locale} t={t.track} />
 
-        <p className="mt-8 border-t border-white/10 pt-6 text-center text-xs text-white/40">
+        <p className="mt-8 border-t border-white/10 pt-6 text-center text-xs text-white/60">
           {t.track.help}{" "}
           <a
             href={whatsappLink(whatsapp, t.whatsapp.trackHelp)}

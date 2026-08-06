@@ -31,7 +31,7 @@ export default async function ServicesPage({ params }: { params: Promise<{ local
                 return (
                   <article key={service.id} className="grid gap-8 py-14 md:grid-cols-[auto_1fr]">
                     <div className="flex items-start gap-5">
-                      <span className="brand text-sm text-accent">
+                      <span className="brand text-sm text-accent-ink">
                         {String(index + 1).padStart(2, "0")}
                       </span>
                       <ServiceIcon name={service.icon} />
@@ -39,7 +39,7 @@ export default async function ServicesPage({ params }: { params: Promise<{ local
 
                     <div>
                       <h2 className="text-2xl">{pick(service, "title", locale)}</h2>
-                      <p className="mt-4 text-sm leading-8 text-muted">
+                      <p className="mt-4 text-sm leading-8 text-muted-ink">
                         {pick(service, "desc", locale)}
                       </p>
 
@@ -48,7 +48,7 @@ export default async function ServicesPage({ params }: { params: Promise<{ local
                           {bullets.map((bullet) => (
                             <li
                               key={bullet}
-                              className="flex gap-3 border-s border-accent/40 ps-4 text-sm text-muted"
+                              className="flex gap-3 border-s border-accent/40 ps-4 text-sm text-muted-ink"
                             >
                               {bullet}
                             </li>

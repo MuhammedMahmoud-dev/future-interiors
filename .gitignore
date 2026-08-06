@@ -45,6 +45,10 @@ yarn-error.log*
 /public/hero.jpeg
 /public/hero.webp
 /public/hero.jpg
+/public/hero-mobile.jpg
+/public/hero-mobile.jpeg
+/public/hero-mobile.png
+/public/hero-mobile.webp
 
 # source photography handed over for the preview seed — working files, not content
 /photos-source/

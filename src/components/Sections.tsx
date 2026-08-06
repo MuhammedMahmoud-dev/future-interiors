@@ -20,7 +20,7 @@ export function Eyebrow({
   return (
     <span
       className={`mb-4 block text-xs tracking-[0.22em] ltr:uppercase ${
-        tone === "dark" ? "text-white/50" : "text-muted"
+        tone === "dark" ? "text-white/50" : "text-muted-ink"
       }`}
     >
       {children}
@@ -54,7 +54,7 @@ export function SectionHeading({
 
       {subtitle && (
         <p
-          className={`mt-5 max-w-2xl text-base leading-8 ${dark ? "text-white/60" : "text-muted"} ${
+          className={`mt-5 max-w-2xl text-base leading-8 ${dark ? "text-white/60" : "text-muted-ink"} ${
             centered ? "mx-auto" : ""
           }`}
         >
@@ -82,7 +82,7 @@ export function PageHeader({
 
         <h1 className="text-4xl font-semibold text-ink sm:text-5xl">{title}</h1>
 
-        {subtitle && <p className="mt-5 max-w-2xl text-base leading-8 text-muted">{subtitle}</p>}
+        {subtitle && <p className="mt-5 max-w-2xl text-base leading-8 text-muted-ink">{subtitle}</p>}
       </div>
     </div>
   );
@@ -91,7 +91,7 @@ export function PageHeader({
 export function Fact({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <dt className="text-xs text-muted">{label}</dt>
+      <dt className="text-xs text-muted-ink">{label}</dt>
       <dd className="mt-1 text-ink">{value}</dd>
     </div>
   );
@@ -99,7 +99,7 @@ export function Fact({ label, value }: { label: string; value: string }) {
 
 export function EmptyState({ message }: { message: string }) {
   return (
-    <div className="rounded-card border border-dashed border-border px-6 py-20 text-center text-sm text-muted">
+    <div className="rounded-card border border-dashed border-border px-6 py-20 text-center text-sm text-muted-ink">
       {message}
     </div>
   );

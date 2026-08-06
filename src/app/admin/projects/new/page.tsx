@@ -13,7 +13,7 @@ export default async function NewProjectPage() {
 
   return (
     <AdminShell title="مشروع جديد">
-      <p className="mb-8 text-sm text-muted">
+      <p className="mb-8 text-sm text-muted-ink">
         كود المتابعة بيتولد أوتوماتيك بعد الحفظ — هتلاقيه في صفحة المشروع وتبعته للعميل على واتساب.
       </p>
       <ProjectForm action={createProject} submitLabel="إنشاء المشروع" clients={clients} />

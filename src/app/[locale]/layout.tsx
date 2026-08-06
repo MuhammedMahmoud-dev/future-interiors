@@ -7,7 +7,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { WhatsAppFab } from "@/components/WhatsAppFab";
 import { getDictionary } from "@/lib/dictionary";
-import { dir, isLocale, locales, pick, whatsappLink, type Locale } from "@/lib/i18n";
+import { dir, isLocale, locales, pick, siteUrl, whatsappLink, type Locale } from "@/lib/i18n";
 import { getEngineer, getServices, getWhatsappNumber } from "@/lib/data";
 
 /**
@@ -38,11 +38,47 @@ export async function generateMetadata({
 }: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
-  const { locale } = await params;
-  const t = getDictionary(isLocale(locale) ? locale : "ar");
+  const { locale: raw } = await params;
+  const locale = isLocale(raw) ? raw : "ar";
+  const t = getDictionary(locale);
+
   return {
+    metadataBase: new URL(siteUrl()),
     title: t.meta.title,
     description: t.meta.description,
+
+    /*
+     * Two locales serving the same content need to say so, or they compete with
+     * each other in search rather than being understood as one site in two
+     * languages. x-default points at Arabic, which is the default locale.
+     */
+    alternates: {
+      canonical: `/${locale}`,
+      languages: {
+        ar: "/ar",
+        en: "/en",
+        "x-default": "/ar",
+      },
+    },
+
+    /*
+     * Not cosmetic here: every call to action on this site opens WhatsApp, so
+     * the link gets pasted into WhatsApp constantly. Without these it previews
+     * as a bare URL with no title, no description and no image.
+     */
+    openGraph: {
+      type: "website",
+      siteName: t.meta.siteName,
+      title: t.meta.title,
+      description: t.meta.description,
+      url: `/${locale}`,
+      locale: locale === "ar" ? "ar_EG" : "en_US",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: t.meta.title,
+      description: t.meta.description,
+    },
   };
 }
 

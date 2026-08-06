@@ -77,7 +77,7 @@ export default async function DashboardPage({
             <div>
               <p className="text-xs tracking-widest text-accent">{statusLabel}</p>
               <h1 className="mt-3 text-2xl sm:text-3xl">{pick(project, "title", locale)}</h1>
-              <p className="brand mt-2 text-xs text-white/40" dir="ltr">
+              <p className="brand mt-2 text-xs text-white/60" dir="ltr">
                 {project.code}
               </p>
             </div>
@@ -142,14 +142,14 @@ export default async function DashboardPage({
             currency={t.portal.currency}
           />
           <div className="px-3 py-2">
-            <p className="text-xs text-muted">{t.portal.balance}</p>
+            <p className="text-xs text-muted-ink">{t.portal.balance}</p>
             <p
               className={`brand mt-2 text-xl ${inCredit ? "text-green-600" : "text-red-600"}`}
               dir="ltr"
             >
               {formatMoney(Math.abs(statement.balance))}
             </p>
-            <p className="mt-1 text-xs text-muted">
+            <p className="mt-1 text-xs text-muted-ink">
               {inCredit ? t.portal.balanceCredit : t.portal.balanceDue}
             </p>
           </div>
@@ -200,11 +200,11 @@ export default async function DashboardPage({
 function Figure({ label, value, currency }: { label: string; value: number; currency: string }) {
   return (
     <div className="px-3 py-2">
-      <p className="text-xs text-muted">{label}</p>
+      <p className="text-xs text-muted-ink">{label}</p>
       <p className="brand mt-2 text-xl" dir="ltr">
         {formatMoney(value)}
       </p>
-      <p className="mt-1 text-xs text-muted">{currency}</p>
+      <p className="mt-1 text-xs text-muted-ink">{currency}</p>
     </div>
   );
 }
