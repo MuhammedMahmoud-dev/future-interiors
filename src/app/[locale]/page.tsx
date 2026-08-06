@@ -1,15 +1,14 @@
 import { existsSync } from "node:fs";
 import path from "node:path";
 import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { Counter } from "@/components/Counter";
 import { FaqList } from "@/components/FaqList";
+import { HeroServices } from "@/components/HeroServices";
 import { JourneyScroller } from "@/components/JourneyScroller";
 import { Lightbox, type GalleryImage } from "@/components/Lightbox";
 import { Eyebrow, SectionHeading } from "@/components/Sections";
-import { ServiceIcon } from "@/components/ServiceIcon";
 import { TestimonialsSlider } from "@/components/TestimonialsSlider";
 import { PillButton } from "@/components/ui/PillButton";
 import { getDictionary } from "@/lib/dictionary";
@@ -111,13 +110,13 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         )}
 
         {/*
-          Below lg the cards sit inside this section and add their own height, so
-          `flex-1` alone would squeeze the wordmark into whatever was left. The
-          explicit min-height keeps the first screen for the mark and headline
-          and pushes the cards just past the fold. At lg the cards are lifted out
-          of flow by the negative margin, so flex-1 fills the section on its own.
+          `flex-1` fills whatever the cards leave, so the mark and headline stay
+          centred in the remaining space at every width. It cannot be squeezed
+          below its own content — a column flex item defaults to
+          `min-height: auto` — and the section's min-height means it grows
+          instead when the two together need more than a screen.
         */}
-        <div className="relative flex min-h-[calc(100dvh-100px)] flex-1 flex-col justify-center lg:min-h-0">
+        <div className="relative flex flex-1 flex-col justify-center">
           <div className="mx-auto w-full max-w-7xl px-4 sm:px-6">
             {/*
               The wordmark, oversized (§8.2). It stays Latin in both locales.
@@ -160,41 +159,41 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         </div>
 
         {/*
-          3 — The four service cards (§8.3).
+          3 — The four service cards, straddling the hero's bottom edge (§8.3).
 
-          They overlap the hero's bottom edge on desktop only. Below lg they sit
-          under the hero in a 2×2 instead: four cards straddling the fold on a
-          phone would bury the headline, but hiding them outright would leave a
-          mobile visitor with no services on the homepage at all.
+          The negative bottom margin alone produces the straddle: it lifts the
+          hero's bottom edge by the overlap while the row keeps its place, so
+          exactly that much of each card is left hanging below. A translate on
+          top of it would double-count and drop the row clear of the edge.
+
+          Flow, not absolute positioning: an element placed after the headline
+          cannot cover it however the viewport resizes, and the hero's
+          min-height lets the section grow rather than squeeze the text when
+          space runs short.
         */}
         {services.length > 0 && (
-          <div className="relative z-10 mx-auto w-full max-w-7xl px-4 pb-12 sm:px-6 lg:pb-0">
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:-mb-14 lg:translate-y-14 lg:grid-cols-4">
-              {services.slice(0, 4).map((service) => (
-                <Link
-                  key={service.id}
-                  href={href("/services", locale)}
-                  className="group rounded-card border border-white/15 bg-ink/70 p-6 backdrop-blur transition-colors duration-200 hover:border-white/40"
-                >
-                  <span className="text-white/70">
-                    <ServiceIcon name={service.icon} />
-                  </span>
-                  <h2 className="mt-5 text-base font-semibold text-white">
-                    {pick(service, "title", locale)}
-                  </h2>
-                  <p className="mt-2 line-clamp-2 text-sm leading-6 text-white/50">
-                    {pick(service, "desc", locale)}
-                  </p>
-                  <Arrow className="mt-5 text-white/40 transition-colors group-hover:text-white" />
-                </Link>
-              ))}
-            </div>
+          <div className="relative z-10 mx-auto mb-[calc(var(--hero-cards-overlap)*-1)] mt-12 w-full max-w-7xl px-4 sm:px-6">
+            <HeroServices
+              href={href("/services", locale)}
+              services={services.slice(0, 4).map((service) => ({
+                id: service.id,
+                title: pick(service, "title", locale),
+                description: pick(service, "desc", locale),
+                icon: service.icon,
+              }))}
+            />
           </div>
         )}
       </section>
 
-      {/* 4 — Why choose us (§8.4). */}
-      <section className={`bg-surface py-20 sm:py-28 ${services.length > 0 ? "lg:pt-32" : ""}`}>
+      {/* 4 — Why choose us (§8.4). Clears the card overhang above it. */}
+      <section
+        className={`bg-surface pb-20 sm:pb-28 ${
+          services.length > 0
+            ? "pt-[calc(var(--hero-cards-overlap)+5rem)]"
+            : "pt-20 sm:pt-28"
+        }`}
+      >
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <div className="grid items-start gap-12 lg:grid-cols-3 lg:gap-10">
             <div>
@@ -504,26 +503,8 @@ function Check() {
   );
 }
 
-function Arrow({ className = "" }: { className?: string }) {
-  return (
-    <span
-      aria-hidden="true"
-      className={`flex h-9 w-9 items-center justify-center rounded-full border border-current ${className}`}
-    >
-      <svg
-        width="14"
-        height="14"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.75"
-        className="rtl:-scale-x-100"
-      >
-        <path d="M5 12h13M12 5l7 7-7 7" />
-      </svg>
-    </span>
-  );
-}
+// The circled arrow moved into HeroServices with the cards; the project cards
+// that used the other copy are a lightbox gallery now and carry no chrome.
 
 /** Four line glyphs for the numbers strip — no icon library, four inline paths. */
 function StatIcon({ index }: { index: number }) {
