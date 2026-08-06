@@ -33,7 +33,7 @@ export default async function WorksPage({ params }: { params: Promise<{ locale: 
 
   // Cover first for each project, then its remaining photos, so the strongest
   // frame of each apartment leads rather than whatever happened to sort first.
-  const images: GalleryImage[] = projects.flatMap((project, index) => {
+  const collected: GalleryImage[] = projects.flatMap((project, index) => {
     const cover = project.cover_image;
     const ordered = [
       ...(cover ? [{ id: `${project.id}-cover`, url: cover }] : []),
@@ -46,6 +46,12 @@ export default async function WorksPage({ params }: { params: Promise<{ locale: 
       .map((item) => ({ id: item.id, url: signed.get(item.url), caption: "" }))
       .filter((item): item is GalleryImage => Boolean(item.url));
   });
+
+  // A project whose cover is also one of its own media rows would otherwise
+  // render the same photograph twice. This cannot catch the same picture stored
+  // under two object paths — the seed is what guarantees that — but it is one
+  // line against a mistake the admin makes easily.
+  const images = [...new Map(collected.map((image) => [image.url, image])).values()];
 
   return (
     <>
