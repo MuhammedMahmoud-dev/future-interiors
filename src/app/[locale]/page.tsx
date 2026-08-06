@@ -90,19 +90,21 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   return (
     <>
       {/*
-        2 — Hero (§8.2). Fills the viewport exactly, so nothing of the next
-        section shows before the first scroll.
+        2 — Hero (§8.2). A self-contained dark block: wordmark, headline,
+        buttons and the four service cards, closing with its own padding.
 
-        The top bar and nav are position:fixed, so pt-[100px] reserves their
-        combined height. dvh, not vh, so mobile URL-bar chrome cannot push the
-        following section into view.
+        `min-h` rather than a fixed height — it fills the screen when the
+        content is shorter and grows when it is taller, which is what keeps the
+        type at full size instead of being compressed to fit. dvh, not vh, so
+        mobile URL-bar chrome does not change the reckoning.
+
+        The top bar and nav are position:fixed, so pt-[100px] reserves them.
       */}
-      <section className="relative flex min-h-[max(100dvh,560px)] flex-col bg-ink pt-[100px]">
+      <section className="relative flex min-h-[max(100dvh,560px)] flex-col bg-ink pb-16 pt-[100px] sm:pb-20">
         {/*
-          `overflow-hidden` belongs to the image, not to the section. It is here
-          to contain the slow zoom — but on the section it also clipped the
-          service cards below, which deliberately overhang the bottom edge, and
-          sliced their text mid-sentence.
+          `overflow-hidden` belongs to the image, not to the section: it is here
+          to contain the slow zoom, and on the section it would clip anything
+          that reached the edge.
         */}
         {hero && (
           <div className="absolute inset-0 overflow-hidden">
@@ -183,20 +185,18 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         </div>
 
         {/*
-          3 — The four service cards, straddling the hero's bottom edge (§8.3).
+          3 — The four service cards (§8.3), wholly inside the hero.
 
-          The negative bottom margin alone produces the straddle: it lifts the
-          hero's bottom edge by the overlap while the row keeps its place, so
-          exactly that much of each card is left hanging below. A translate on
-          top of it would double-count and drop the row clear of the edge.
+          They used to hang past the bottom edge by a negative margin. They no
+          longer do: the row is simply the last thing in the section, `mt-12`
+          clear of the buttons, with the section's own bottom padding below it.
 
-          Flow, not absolute positioning: an element placed after the headline
-          cannot cover it however the viewport resizes, and the hero's
-          min-height lets the section grow rather than squeeze the text when
-          space runs short.
+          `relative` is load-bearing — the photograph above is `absolute`, and a
+          positioned element paints over a static sibling regardless of source
+          order, so without it the cards would sit behind the image.
         */}
         {services.length > 0 && (
-          <div className="relative z-10 mx-auto mb-[calc(var(--hero-cards-overlap)*-1)] mt-12 w-full max-w-7xl px-4 sm:px-6">
+          <div className="relative z-10 mx-auto mt-12 w-full max-w-7xl px-4 sm:px-6">
             <HeroServices
               href={href("/services", locale)}
               services={services.slice(0, 4).map((service) => ({
@@ -210,14 +210,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         )}
       </section>
 
-      {/* 4 — Why choose us (§8.4). Clears the card overhang above it. */}
-      <section
-        className={`bg-surface pb-20 sm:pb-28 ${
-          services.length > 0
-            ? "pt-[calc(var(--hero-cards-overlap)+5rem)]"
-            : "pt-20 sm:pt-28"
-        }`}
-      >
+      {/* 4 — Why choose us (§8.4). Nothing overhangs from the hero now, so it
+          starts on its own padding like every other section. */}
+      <section className="bg-surface py-20 sm:py-28">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <div className="grid items-start gap-12 lg:grid-cols-3 lg:gap-10">
             <div>

@@ -85,30 +85,6 @@
   animation: rise 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/*
- * How far the hero's service cards hang past the bottom of the hero (§8.3).
- *
- * Two places have to agree on this number: the card row pulls itself down by
- * it, and the section underneath pads itself by it to clear the overhang. When
- * both were hard-coded they drifted — the row moved 56px and the section
- * reserved 128px. One variable, stepped with the card height at each breakpoint.
- */
-:root {
-  --hero-cards-overlap: 5rem;
-}
-
-@media (min-width: 768px) {
-  :root {
-    --hero-cards-overlap: 6rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  :root {
-    --hero-cards-overlap: 7rem;
-  }
-}
-
 body {
   background: var(--color-paper);
   color: var(--color-body);

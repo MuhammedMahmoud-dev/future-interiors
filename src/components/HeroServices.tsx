@@ -12,13 +12,11 @@ export type HeroService = {
 };
 
 /**
- * The four service cards that straddle the hero's bottom edge (§8.3).
+ * The four service cards that close the hero (§8.3).
  *
- * The row is positioned by its caller — it sits in normal flow at the end of the
- * hero and is pulled down by `--hero-cards-overlap`, so half of each card is
- * over the photograph and half over the section beneath. Flow rather than
- * absolute positioning on purpose: an element placed after the headline cannot
- * cover it, whatever the viewport does.
+ * The row is positioned by its caller: it is the last element inside the hero,
+ * fully within it, with the section's padding below. It used to overhang the
+ * bottom edge; that is gone.
  *
  * Four columns only survive on a desktop. Tablet gets 2 × 2, and a phone gets a
  * swipeable track with position dots — four columns squeezed onto 375px would be
