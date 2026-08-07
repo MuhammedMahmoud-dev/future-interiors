@@ -247,6 +247,23 @@ try {
   if (closedLookup === project.id) ok("credentials still resolve — the refusal is the flag, not the archive");
   else fail("credentials still resolve", String(closedLookup));
 
+  /*
+   * Regression guard for a real bug.
+   *
+   * The dashboard sends a revoked client to /track, and /track used to send any
+   * session holder straight back to the dashboard. Closing a portal therefore
+   * bounced a live session between the two until the browser gave up with
+   * ERR_TOO_MANY_REDIRECTS. Following the redirects here — rather than checking
+   * one hop with redirect:"manual" — is what catches it.
+   */
+  const followed = await fetch(`${site}/ar/track/dashboard`, {
+    headers: { cookie: portalCookie(project.id) },
+    redirect: "follow",
+  }).catch((error) => ({ status: 0, error }));
+
+  if (followed.status === 200) ok("a revoked session settles on the login page, no redirect loop");
+  else fail("a revoked session settles on the login page", `status ${followed.status}`);
+
   await setAccess(true);
 
   const reopenedDash = await dashboardReachable(project.id);

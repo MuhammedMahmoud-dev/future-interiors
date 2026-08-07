@@ -19,7 +19,20 @@ type Strings = {
 
 const initial: LoginState = { error: null };
 
-export function LoginForm({ locale, t }: { locale: Locale; t: Strings }) {
+export function LoginForm({
+  locale,
+  t,
+  notice = null,
+}: {
+  locale: Locale;
+  t: Strings;
+  /**
+   * Shown before the client has typed anything — used when they arrive holding a
+   * session for a project whose portal has since been closed. Without it they
+   * land on a blank form with no idea why they were signed out.
+   */
+  notice?: string | null;
+}) {
   const [state, formAction, pending] = useActionState(login, initial);
 
   // Controlled on purpose: React resets an uncontrolled form after a form
@@ -37,7 +50,8 @@ export function LoginForm({ locale, t }: { locale: Locale; t: Strings }) {
           ? t.disabled
           : state.error
             ? t.error
-            : null;
+            : // Nothing submitted yet, so anything shown here came with the page.
+              notice;
 
   return (
     <form action={formAction} className="mt-8 space-y-5 text-start">

@@ -69,6 +69,32 @@ export async function verifyCredentials(code: string, phone: string): Promise<Cr
   return { ok: true, projectId: data.id as string };
 }
 
+/**
+ * Is this project's portal still open?
+ *
+ * Exists to break a redirect loop. /track sends an already-signed-in visitor
+ * straight to the dashboard, and the dashboard sends anyone whose access has
+ * been revoked back to /track — so once the engineer closed a portal, a client
+ * holding a live cookie bounced between the two until the browser gave up with
+ * ERR_TOO_MANY_REDIRECTS. /track now asks this first and shows the login form,
+ * with the reason, instead of bouncing.
+ *
+ * Deliberately its own narrow query rather than reusing getPortalData: this runs
+ * on a page that does not otherwise need a statement, and it should not pull one.
+ */
+export async function hasPortalAccess(projectId: string): Promise<boolean> {
+  const supabase = getSupabase();
+  if (!supabase) return false;
+
+  const { data } = await supabase
+    .from("projects")
+    .select("portal_access_enabled")
+    .eq("id", projectId)
+    .maybeSingle();
+
+  return data?.portal_access_enabled !== false;
+}
+
 // ------------------------------------------------------------------ session
 
 export async function getSessionProjectId(): Promise<string | null> {

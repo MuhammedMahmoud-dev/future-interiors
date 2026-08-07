@@ -4,7 +4,7 @@ import { LoginForm } from "@/components/LoginForm";
 import { getDictionary } from "@/lib/dictionary";
 import { isLocale, whatsappLink, type Locale } from "@/lib/i18n";
 import { getWhatsappNumber } from "@/lib/data";
-import { getSessionProjectId } from "@/lib/portal";
+import { getSessionProjectId, hasPortalAccess } from "@/lib/portal";
 import { localeMetadata } from "@/lib/pageMeta";
 
 // Reads cookies, so it must never be statically cached.
@@ -21,8 +21,17 @@ export default async function TrackPage({ params }: { params: Promise<{ locale: 
   const locale: Locale = raw;
   const t = getDictionary(locale);
 
-  // Already signed in — skip the form.
-  if (await getSessionProjectId()) redirect(`/${locale}/track/dashboard`);
+  /*
+   * Already signed in — skip the form, but only if the portal is still open.
+   *
+   * Without that second condition this page and the dashboard bounce off each
+   * other: the dashboard sends a revoked client here, and here would send them
+   * straight back. They land on the form instead, with the reason, and their
+   * stale cookie grants nothing because every portal page re-checks.
+   */
+  const sessionProjectId = await getSessionProjectId();
+  const accessRevoked = sessionProjectId !== null && !(await hasPortalAccess(sessionProjectId));
+  if (sessionProjectId && !accessRevoked) redirect(`/${locale}/track/dashboard`);
 
   const whatsapp = await getWhatsappNumber();
 
@@ -35,7 +44,11 @@ export default async function TrackPage({ params }: { params: Promise<{ locale: 
           <p className="mt-6 text-sm leading-7 text-white/55">{t.track.subtitle}</p>
         </div>
 
-        <LoginForm locale={locale} t={t.track} />
+        <LoginForm
+          locale={locale}
+          t={t.track}
+          notice={accessRevoked ? t.track.disabled : null}
+        />
 
         <p className="mt-8 border-t border-white/10 pt-6 text-center text-xs text-white/60">
           {t.track.help}{" "}
