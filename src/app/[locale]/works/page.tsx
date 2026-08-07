@@ -6,8 +6,14 @@ import { getDictionary } from "@/lib/dictionary";
 import { isLocale, type Locale } from "@/lib/i18n";
 import { signMedia } from "@/lib/media";
 import { getPublicProjectMedia, getPublishedProjects } from "@/lib/data";
+import { localeMetadata } from "@/lib/pageMeta";
 
 export const revalidate = 3600;
+
+/** Canonical and hreflang for this page — never inherited from the layout. */
+export function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  return localeMetadata("/works", params);
+}
 
 /**
  * The portfolio is photographs and nothing else.

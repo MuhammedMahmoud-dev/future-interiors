@@ -54,6 +54,47 @@ test("no public data path embeds the clients relation", () => {
   );
 });
 
+/*
+ * portal_access_enabled is the engineer's explicit per-project decision. It is a
+ * different thing from archiving a client, and the two must stay unrelated:
+ * archiving must never close the portal, and closing the portal must never be
+ * expressed in terms of the archive flag.
+ */
+
+test("the access check is a separate condition from anything about archiving", () => {
+  const body = verifyCredentialsBody();
+  assert.equal(/portal_access_enabled/.test(body), true, "expected the access flag to be checked");
+
+  // Guard the absence above from being satisfied by an expression that mixes
+  // the two, e.g. `!archived_at && portal_access_enabled`.
+  const mixed = /portal_access_enabled[^;\n]*archiv|archiv[^;\n]*portal_access_enabled/i;
+  assert.equal(mixed.test(body), false, "the two must never appear in one expression");
+});
+
+test("access is only checked after the phone has matched", () => {
+  const body = verifyCredentialsBody();
+  const phoneCompared = body.indexOf("given !== stored");
+  const accessChecked = body.indexOf("portal_access_enabled === false");
+
+  assert.notEqual(phoneCompared, -1, "phone comparison not found");
+  assert.notEqual(accessChecked, -1, "access check not found");
+
+  // Order is a security property. Refusing on the flag before the credentials
+  // match would let anyone holding a bare code learn that the code is real,
+  // because the distinct "disabled" message would answer differently from the
+  // generic one.
+  assert.ok(
+    phoneCompared < accessChecked,
+    "portal_access_enabled must be checked AFTER the phone matches, or the distinct message becomes an oracle for probing codes",
+  );
+});
+
+test("a closed portal is reported distinctly, not as bad credentials", () => {
+  const body = verifyCredentialsBody();
+  assert.equal(/reason:\s*"disabled"/.test(body), true, "expected a distinct disabled reason");
+  assert.equal(/reason:\s*"invalid"/.test(body), true, "expected the generic invalid reason");
+});
+
 test("the phone used to sign in is unaffected by archiving", () => {
   // Archiving writes only archived_at. The lookup key is the normalised phone,
   // which is a different column and is not touched, so every input format that

@@ -14,6 +14,7 @@ import { PillButton } from "@/components/ui/PillButton";
 import { getDictionary } from "@/lib/dictionary";
 import { href, isLocale, pick, whatsappLink, type Locale } from "@/lib/i18n";
 import { signMedia } from "@/lib/media";
+import { localeMetadata } from "@/lib/pageMeta";
 import {
   getFaqs,
   getPublicProjectMedia,
@@ -36,6 +37,11 @@ const findPublic = (stem: string) =>
   HERO_EXTS.map((ext) => `/${stem}${ext}`).find((file) =>
     existsSync(path.join(process.cwd(), "public", file.slice(1))),
   );
+
+/** Canonical and hreflang for this page — never inherited from the layout. */
+export function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  return localeMetadata("/", params);
+}
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale: raw } = await params;

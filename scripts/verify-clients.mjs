@@ -1,8 +1,11 @@
 /**
- * Proves the one guarantee that the clients table must not break:
+ * Proves two things that must never be wired together:
  *
- *   Archiving a client hides them from the admin list and NOTHING else.
- *   They can still open their own project statement with their code and phone.
+ *   1. Archiving a client hides them from the admin list and NOTHING else.
+ *      They can still open their own project statement with code and phone.
+ *   2. projects.portal_access_enabled is the engineer's separate, explicit
+ *      decision. Closing it locks even an existing session out at once;
+ *      reopening it works while the client stays archived.
  *
  *   npm run verify:clients        (dev server must be running)
  *
@@ -210,7 +213,50 @@ try {
     );
   }
 
-  // ---------------------------------------------------- 5. data intact
+  // ------------------- 5. portal access, a separate decision from archiving
+  //
+  // The client is STILL ARCHIVED here, which is the point: closing the portal
+  // must refuse for its own reason, and reopening it must work again without
+  // touching the archive flag. If the two were ever wired together, one of
+  // these three would fail.
+  //
+  // The dashboard is the evidence because it runs the app's real code path
+  // (getPortalData). That the login reports "disabled" *distinctly* from bad
+  // credentials, and only after the phone matches, is asserted at source level
+  // in src/lib/portalAccess.test.ts.
+  console.log("\nportal access — independent of archiving");
+
+  const setAccess = (enabled) =>
+    api(`projects?id=eq.${project.id}`, {
+      method: "PATCH",
+      body: JSON.stringify({ portal_access_enabled: enabled }),
+    });
+
+  await setAccess(false);
+
+  const closedDash = await dashboardReachable(project.id);
+  if (closedDash.status !== 200 || !closedDash.showsProject) {
+    ok("closing the portal locks an EXISTING session out immediately");
+  } else {
+    fail("closing the portal locks an EXISTING session out immediately", "dashboard still rendered");
+  }
+
+  // Archived and closed: the credential pair still resolves, so any refusal is
+  // the access flag talking, never the archive.
+  const closedLookup = await credentialLookup(project.code, PHONE_TYPED);
+  if (closedLookup === project.id) ok("credentials still resolve — the refusal is the flag, not the archive");
+  else fail("credentials still resolve", String(closedLookup));
+
+  await setAccess(true);
+
+  const reopenedDash = await dashboardReachable(project.id);
+  if (reopenedDash.status === 200 && reopenedDash.showsProject) {
+    ok("reopening restores access while the client stays archived");
+  } else {
+    fail("reopening restores access while the client stays archived", `status ${reopenedDash.status}`);
+  }
+
+  // ---------------------------------------------------- 6. data intact
   console.log("\nproject data intact");
 
   const expenses = await (await api(`expenses?project_id=eq.${project.id}&select=amount`)).json();
@@ -227,7 +273,7 @@ try {
   if (linked?.client_id === clientId && linkedClient?.name === NAME) ok("project still linked");
   else fail("project still linked", JSON.stringify(linked));
 
-  // ---------------------------------------------------------- 6. restore
+  // ---------------------------------------------------------- 7. restore
   console.log("\nrestore");
 
   await api(`clients?id=eq.${clientId}`, {

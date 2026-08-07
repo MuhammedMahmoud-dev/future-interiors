@@ -9,6 +9,7 @@ import {
   isRateLimited,
   recordAttempt,
   verifyCredentials,
+  type CredentialCheck,
 } from "@/lib/portal";
 import {
   SESSION_COOKIE,
@@ -18,7 +19,9 @@ import {
 } from "@/lib/session";
 import { defaultLocale, isLocale } from "@/lib/i18n";
 
-export type LoginState = { error: "invalid" | "rateLimited" | "unavailable" | null };
+export type LoginState = {
+  error: "invalid" | "disabled" | "rateLimited" | "unavailable" | null;
+};
 
 /**
  * Server Actions are reachable by direct POST, not only through the form, so
@@ -39,16 +42,23 @@ export async function login(_previous: LoginState, formData: FormData): Promise<
   // Recorded before verifying, so a mid-verify crash still counts the attempt.
   await recordAttempt(ip, code);
 
-  let projectId: string | null;
+  let check: CredentialCheck;
   try {
-    projectId = await verifyCredentials(code, phone);
+    check = await verifyCredentials(code, phone);
   } catch (error) {
     console.error("[track] verification failed", error);
     return { error: "unavailable" };
   }
 
-  // One generic outcome, regardless of which field was wrong.
-  if (!projectId) return { error: "invalid" };
+  /*
+   * `invalid` is one generic outcome regardless of which field was wrong.
+   * `disabled` is deliberately distinct: it is only ever returned once both
+   * credentials have matched, so it tells a real client why their own portal
+   * will not open rather than leaving them to guess at a typo.
+   */
+  if (!check.ok) return { error: check.reason };
+
+  const projectId = check.projectId;
 
   await clearAttempts(ip, code);
 

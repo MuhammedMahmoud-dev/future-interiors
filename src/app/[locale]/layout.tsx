@@ -48,30 +48,26 @@ export async function generateMetadata({
     description: t.meta.description,
 
     /*
-     * Two locales serving the same content need to say so, or they compete with
-     * each other in search rather than being understood as one site in two
-     * languages. x-default points at Arabic, which is the default locale.
-     */
-    alternates: {
-      canonical: `/${locale}`,
-      languages: {
-        ar: "/ar",
-        en: "/en",
-        "x-default": "/ar",
-      },
-    },
-
-    /*
-     * Not cosmetic here: every call to action on this site opens WhatsApp, so
-     * the link gets pasted into WhatsApp constantly. Without these it previews
-     * as a bare URL with no title, no description and no image.
+     * `alternates` and `openGraph.url` are deliberately absent here.
+     *
+     * Metadata merges down the tree, so anything path-specific declared in a
+     * layout is inherited by every page beneath it. Both of those are
+     * path-specific, and stating them once here made every inner page claim to
+     * be the locale homepage. They now come from each page via
+     * `pageAlternates()`; a page that forgets them has no canonical, which is
+     * recoverable, rather than a wrong one, which is not.
+     *
+     * The rest is genuinely shared and stays.
+     *
+     * Open Graph is not cosmetic on this site: every call to action opens
+     * WhatsApp, so the link gets pasted into WhatsApp constantly. Without these
+     * it previews as a bare URL with no title, description or image.
      */
     openGraph: {
       type: "website",
       siteName: t.meta.siteName,
       title: t.meta.title,
       description: t.meta.description,
-      url: `/${locale}`,
       locale: locale === "ar" ? "ar_EG" : "en_US",
     },
     twitter: {

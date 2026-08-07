@@ -18,8 +18,16 @@ export { getClientIp, isRateLimited, recordAttempt, clearAttempts } from "./rate
 // ------------------------------------------------------------------ credentials
 
 /**
- * Returns the project id when both the code and the phone match, otherwise null.
- * The caller shows one generic message either way — never which field was wrong.
+ * Two different failures, so a single `null` will not do: wrong credentials get
+ * one generic message, while a project whose portal the engineer has closed gets
+ * a distinct one. `invalid` never says which field was wrong.
+ */
+export type CredentialCheck =
+  | { ok: true; projectId: string }
+  | { ok: false; reason: "invalid" | "disabled" };
+
+/**
+ * Resolves a code and phone to a project id.
  *
  * The phone is read through the clients relation rather than off the project.
  *
@@ -27,18 +35,25 @@ export { getClientIp, isRateLimited, recordAttempt, clearAttempts } from "./rate
  * never be one. Archiving is a housekeeping flag for the admin's own list; it
  * does not revoke a client's access to the statement for work they paid for.
  * scripts/verify-clients.mjs signs in before and after archiving to prove it.
+ *
+ * `portal_access_enabled` is a separate, explicit decision by the engineer and
+ * is checked independently of that. THE ORDER MATTERS: it is tested only after
+ * the phone has already matched. Checking it earlier would turn the distinct
+ * "disabled" message into an oracle — anyone holding a bare code could learn
+ * whether it was real. As written, `disabled` is reachable only by someone who
+ * already has both correct credentials, which is the client themselves.
  */
-export async function verifyCredentials(code: string, phone: string): Promise<string | null> {
+export async function verifyCredentials(code: string, phone: string): Promise<CredentialCheck> {
   const supabase = getSupabase();
-  if (!supabase) return null;
+  if (!supabase) return { ok: false, reason: "invalid" };
 
   const { data, error } = await supabase
     .from("projects")
-    .select("id,clients(phone)")
+    .select("id,portal_access_enabled,clients(phone)")
     .eq("code", code.trim().toUpperCase())
     .maybeSingle();
 
-  if (error || !data) return null;
+  if (error || !data) return { ok: false, reason: "invalid" };
 
   // PostgREST returns an embedded to-one relation as an object, but older
   // versions and some shapes hand back a single-element array.
@@ -46,9 +61,12 @@ export async function verifyCredentials(code: string, phone: string): Promise<st
 
   const given = normalizePhone(phone);
   const stored = normalizePhone(client?.phone ?? "");
-  if (!given || !stored || given !== stored) return null;
+  if (!given || !stored || given !== stored) return { ok: false, reason: "invalid" };
 
-  return data.id as string;
+  // Only now, with both credentials confirmed, is the access flag consulted.
+  if (data.portal_access_enabled === false) return { ok: false, reason: "disabled" };
+
+  return { ok: true, projectId: data.id as string };
 }
 
 // ------------------------------------------------------------------ session
@@ -121,11 +139,22 @@ export async function getPortalData(projectId: string): Promise<PortalData | nul
   // supervision_rate is selected here and deliberately never leaves this function.
   const { data: project, error } = await supabase
     .from("projects")
-    .select("id,code,title_ar,title_en,status,compound,district,supervision_rate")
+    .select("id,code,title_ar,title_en,status,compound,district,supervision_rate,portal_access_enabled")
     .eq("id", projectId)
     .maybeSingle();
 
   if (error || !project) return null;
+
+  /*
+   * Access is re-checked on every portal page, not only at login.
+   *
+   * A session cookie lasts eight hours. If the flag were read only when signing
+   * in, closing a project's portal would leave whoever was already inside able
+   * to keep reading it for the rest of that window. Returning null here makes
+   * the pages redirect to /track on the client's very next request, and it costs
+   * nothing — the row was being fetched anyway.
+   */
+  if (project.portal_access_enabled === false) return null;
 
   const [expensesRes, paymentsRes, stagesRes, projectStagesRes, mediaRes] = await Promise.all([
     supabase

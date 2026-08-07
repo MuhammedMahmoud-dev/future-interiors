@@ -163,6 +163,27 @@ export function ProjectForm({
         </label>
       </Section>
 
+      {/*
+        Its own section, not folded into "النشر": publishing is about the public
+        gallery, this is about whether the client can still open their own
+        statement. Defaults to on for a new project, and has nothing to do with
+        archiving the client — an archived client with this on still signs in.
+      */}
+      <Section
+        title="وصول العميل للبوابة"
+        note="لو قفلته، العميل مش هيقدر يفتح متابعة المشروع — حتى لو كان داخل دلوقتي. الأرشفة حاجة تانية خالص ومابتقفلش الوصول."
+      >
+        <label className="flex items-center gap-3 text-sm">
+          <input
+            type="checkbox"
+            name="portal_access_enabled"
+            defaultChecked={project?.portal_access_enabled ?? true}
+            className="h-4 w-4 accent-[#c9a227]"
+          />
+          العميل يقدر يتابع المشروع من البوابة
+        </label>
+      </Section>
+
       {state.error && (
         <p role="alert" className="border-s-2 border-red-500 bg-red-50 px-4 py-3 text-sm text-red-700">
           {state.error}

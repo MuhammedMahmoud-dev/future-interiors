@@ -6,6 +6,10 @@ import { getDictionary } from "@/lib/dictionary";
 import { isLocale, pick, type Locale } from "@/lib/i18n";
 import { formatMoney } from "@/lib/finance";
 import { getPortalData, getSessionProjectId } from "@/lib/portal";
+import { privateMetadata } from "@/lib/pageMeta";
+
+/** One client's figures behind a session — never indexed, never canonical. */
+export const metadata = privateMetadata;
 
 export const dynamic = "force-dynamic";
 

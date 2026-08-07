@@ -5,9 +5,15 @@ import { getDictionary } from "@/lib/dictionary";
 import { isLocale, whatsappLink, type Locale } from "@/lib/i18n";
 import { getWhatsappNumber } from "@/lib/data";
 import { getSessionProjectId } from "@/lib/portal";
+import { localeMetadata } from "@/lib/pageMeta";
 
 // Reads cookies, so it must never be statically cached.
 export const dynamic = "force-dynamic";
+
+/** Canonical and hreflang for this page — never inherited from the layout. */
+export function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  return localeMetadata("/track", params);
+}
 
 export default async function TrackPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale: raw } = await params;

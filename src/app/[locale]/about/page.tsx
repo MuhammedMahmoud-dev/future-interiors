@@ -5,8 +5,14 @@ import { EmptyState, PageHeader } from "@/components/Sections";
 import { getDictionary } from "@/lib/dictionary";
 import { isLocale, pick, pickList, whatsappLink, type Locale } from "@/lib/i18n";
 import { getEngineer, getStats, getWhatsappNumber } from "@/lib/data";
+import { localeMetadata } from "@/lib/pageMeta";
 
 export const revalidate = 3600;
+
+/** Canonical and hreflang for this page — never inherited from the layout. */
+export function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  return localeMetadata("/about", params);
+}
 
 /** No portrait for now, per spec — credentials and record carry the page. */
 export default async function AboutPage({ params }: { params: Promise<{ locale: string }> }) {

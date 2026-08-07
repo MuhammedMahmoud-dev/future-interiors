@@ -39,6 +39,30 @@ export function href(path: string, locale: Locale): string {
   return `/${locale}${path === "/" ? "" : path}`;
 }
 
+/**
+ * The canonical and hreflang block for one page.
+ *
+ * This belongs to the PAGE, never to the layout. Next merges metadata down the
+ * tree, so `alternates` declared once in the [locale] layout was inherited by
+ * every route beneath it — /ar/works announced its canonical as /ar, telling
+ * search engines the works page was a duplicate of the homepage and inviting it
+ * to be dropped from the index.
+ *
+ * Computing it from the pathname in one place would need `headers()` inside
+ * generateMetadata, which opts every route out of static generation. Passing the
+ * path per page keeps all of them static.
+ */
+export function pageAlternates(path: string, locale: Locale) {
+  return {
+    canonical: href(path, locale),
+    languages: {
+      ar: href(path, "ar"),
+      en: href(path, "en"),
+      "x-default": href(path, defaultLocale),
+    },
+  };
+}
+
 /** Swap the locale segment of a current pathname: "/ar/works" -> "/en/works" */
 export function switchLocalePath(pathname: string, target: Locale): string {
   const segments = pathname.split("/");

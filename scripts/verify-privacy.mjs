@@ -175,6 +175,38 @@ try {
       const gone = await fetch(`${site}/ar/works/${PROBE.slug}`);
       if (gone.status === 404) ok("project detail route stays removed (404)");
       else fail("project detail route", `expected 404, got ${gone.status}`);
+
+      /*
+       * Every public page must point its canonical and og:url at ITSELF.
+       *
+       * Both were once declared in the [locale] layout, and because metadata
+       * merges downward every inner page inherited the homepage's value and
+       * announced itself a duplicate of it — enough for search engines to drop
+       * the inner pages. They now come from each page, which means a new page
+       * that forgets them regresses silently. This is what catches that.
+       */
+      console.log("\nevery public page is self-canonical");
+      const canonicalPaths = [
+        "/ar", "/en",
+        "/ar/works", "/en/works",
+        "/ar/services", "/en/services",
+        "/ar/work-system", "/en/work-system",
+        "/ar/about", "/en/about",
+        "/ar/contact", "/en/contact",
+        "/ar/track", "/en/track",
+      ];
+
+      const strip = (value) => (value ?? "").replace(/^https?:\/\/[^/]+/, "");
+
+      for (const path of canonicalPaths) {
+        const html = await (await fetch(site + path)).text();
+        const canonical = strip(html.match(/rel="canonical"[^>]*href="([^"]+)"/)?.[1]);
+        const ogUrl = strip(html.match(/property="og:url"[^>]*content="([^"]+)"/)?.[1]);
+
+        if (canonical !== path) fail(path, `canonical is "${canonical || "missing"}", expected "${path}"`);
+        else if (ogUrl !== path) fail(path, `og:url is "${ogUrl || "missing"}", expected "${path}"`);
+        else ok(`${path} → ${canonical}`);
+      }
     }
   }
 } finally {

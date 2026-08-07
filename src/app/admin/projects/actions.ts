@@ -124,6 +124,9 @@ function projectPayload(formData: FormData) {
     end_date: text(formData, "end_date"),
     status,
     is_public: formData.get("is_public") === "on",
+    // Unchecked boxes are simply absent from the payload, so this reads false
+    // only when the engineer actually cleared it.
+    portal_access_enabled: formData.get("portal_access_enabled") === "on",
     // Publishing requires an explicit approval timestamp as well as the flag.
     publish_approved_at:
       formData.get("publish_approved_at") === "on" ? new Date().toISOString() : null,

@@ -181,6 +181,9 @@ export const ar = {
     submitting: "بيتحقق…",
     // Deliberately does not say which field was wrong.
     error: "الكود أو الرقم مش صحيح.",
+    // Shown only after the code and الرقم matched — so it is a status, not a
+    // rejection, and it must not read like the client did something wrong.
+    disabled: "متابعة المشروع ده مقفولة حالياً. لو محتاج كشف الحساب، كلمنا على واتساب وهنبعتهولك.",
     rateLimited: "حاولت كتير. استنى ربع ساعة وجرب تاني.",
     unavailable: "في مشكلة مؤقتة. جرب تاني بعد شوية.",
     help: "معرفتش الكود؟",

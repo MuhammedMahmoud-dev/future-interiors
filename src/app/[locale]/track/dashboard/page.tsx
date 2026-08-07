@@ -9,6 +9,10 @@ import { formatMoney } from "@/lib/finance";
 import { signMedia } from "@/lib/media";
 import { getPortalData, getSessionProjectId } from "@/lib/portal";
 import { getWhatsappNumber } from "@/lib/data";
+import { privateMetadata } from "@/lib/pageMeta";
+
+/** One client's figures behind a session — never indexed, never canonical. */
+export const metadata = privateMetadata;
 
 export const dynamic = "force-dynamic";
 

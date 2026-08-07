@@ -4,8 +4,14 @@ import { PageHeader } from "@/components/Sections";
 import { getDictionary } from "@/lib/dictionary";
 import { isLocale, whatsappLink, type Locale } from "@/lib/i18n";
 import { getEngineer, getWhatsappNumber } from "@/lib/data";
+import { localeMetadata } from "@/lib/pageMeta";
 
 export const revalidate = 3600;
+
+/** Canonical and hreflang for this page — never inherited from the layout. */
+export function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  return localeMetadata("/contact", params);
+}
 
 /** No form, no map, no opening hours — WhatsApp and a phone number, per spec. */
 export default async function ContactPage({ params }: { params: Promise<{ locale: string }> }) {

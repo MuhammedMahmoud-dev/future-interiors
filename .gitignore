@@ -53,6 +53,9 @@ yarn-error.log*
 # source photography handed over for the preview seed — working files, not content
 /photos-source/
 
+# database exports — client names, phone numbers and every figure
+/backups/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

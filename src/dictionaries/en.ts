@@ -166,6 +166,8 @@ export const en: Dictionary = {
     submit: "Sign in",
     submitting: "Checking…",
     error: "That code or number is not correct.",
+    disabled:
+      "Tracking for this project is currently closed. If you need your statement, message us on WhatsApp and we will send it to you.",
     rateLimited: "Too many attempts. Please wait 15 minutes and try again.",
     unavailable: "Something went wrong. Please try again shortly.",
     help: "Do not have your code?",

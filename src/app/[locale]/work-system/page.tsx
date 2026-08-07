@@ -4,8 +4,14 @@ import { PageHeader } from "@/components/Sections";
 import { getDictionary } from "@/lib/dictionary";
 import { isLocale, whatsappLink, type Locale } from "@/lib/i18n";
 import { getWhatsappNumber } from "@/lib/data";
+import { localeMetadata } from "@/lib/pageMeta";
 
 export const revalidate = 3600;
+
+/** Canonical and hreflang for this page — never inherited from the layout. */
+export function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  return localeMetadata("/work-system", params);
+}
 
 /**
  * Process only. No figures, no percentages, no price per metre anywhere on this

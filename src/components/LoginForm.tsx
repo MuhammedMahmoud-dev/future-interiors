@@ -12,6 +12,7 @@ type Strings = {
   submit: string;
   submitting: string;
   error: string;
+  disabled: string;
   rateLimited: string;
   unavailable: string;
 };
@@ -32,9 +33,11 @@ export function LoginForm({ locale, t }: { locale: Locale; t: Strings }) {
       ? t.rateLimited
       : state.error === "unavailable"
         ? t.unavailable
-        : state.error
-          ? t.error
-          : null;
+        : state.error === "disabled"
+          ? t.disabled
+          : state.error
+            ? t.error
+            : null;
 
   return (
     <form action={formAction} className="mt-8 space-y-5 text-start">
