@@ -41,14 +41,12 @@ yarn-error.log*
 # local dev preview data — a development tool, never a migration (spec §14)
 /scripts/seed-dev-preview.mjs
 /scripts/.seed-dev-preview.json
+# Only the generated placeholder, which the dev seed writes to this exact name
+# when photos-source/ is empty. The REAL hero photographs are committed: they are
+# brand furniture and the largest contentful paint on the homepage, so they ship
+# with the code and get a stable, edge-cached URL rather than an expiring signed
+# one that would re-encode on every revalidate.
 /public/hero.png
-/public/hero.jpeg
-/public/hero.webp
-/public/hero.jpg
-/public/hero-mobile.jpg
-/public/hero-mobile.jpeg
-/public/hero-mobile.png
-/public/hero-mobile.webp
 
 # source photography handed over for the preview seed — working files, not content
 /photos-source/
