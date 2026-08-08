@@ -62,11 +62,34 @@ async function findFixture() {
 
 async function cleanup() {
   const existing = await findFixture();
-  if (!existing) return console.log("nothing to clean up");
-  // expenses/payments cascade on delete
-  await api(`projects?id=eq.${existing.id}`, { method: "DELETE" });
-  await api(`login_attempts?code=eq.${existing.code}`, { method: "DELETE" });
-  console.log(`removed fixture ${existing.code}`);
+  if (existing) {
+    // expenses/payments cascade on delete
+    await api(`projects?id=eq.${existing.id}`, { method: "DELETE" });
+    await api(`login_attempts?code=eq.${existing.code}`, { method: "DELETE" });
+    console.log(`removed fixture ${existing.code}`);
+  }
+
+  /*
+   * The client too, which this used to leave behind "to reuse across reseeds".
+   * That was a false economy: ensureClient() already finds or creates it, so
+   * nothing was saved, and the orphan sat in the database looking like real
+   * data after every other trace of the fixture was gone.
+   *
+   * Only ever after the project, and only when nothing references it — the FK
+   * is ON DELETE RESTRICT precisely so a ledger cannot lose its owner.
+   */
+  const stored = PHONE.replace(/\D/g, "").replace(/^0+/, "");
+  const [client] = await (await api(`clients?phone=eq.${stored}&select=id`)).json();
+  if (!client) return;
+
+  const refs = await (await api(`projects?client_id=eq.${client.id}&select=id`)).json();
+  if (refs.length > 0) {
+    console.log(`client kept — ${refs.length} project(s) still reference it`);
+    return;
+  }
+
+  await api(`clients?id=eq.${client.id}`, { method: "DELETE" });
+  console.log("removed fixture client");
 }
 
 async function seed() {
