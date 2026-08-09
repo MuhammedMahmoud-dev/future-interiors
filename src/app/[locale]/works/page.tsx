@@ -5,7 +5,7 @@ import { Lightbox, type GalleryImage } from "@/components/Lightbox";
 import { getDictionary } from "@/lib/dictionary";
 import { isLocale, type Locale } from "@/lib/i18n";
 import { signMedia } from "@/lib/media";
-import { getPublicProjectMedia, getPublishedProjects } from "@/lib/data";
+import { getGalleryImages } from "@/lib/data";
 import { localeMetadata } from "@/lib/pageMeta";
 
 export const revalidate = 3600;
@@ -22,6 +22,9 @@ export function generateMetadata({ params }: { params: Promise<{ locale: string 
  * location, each linking to a detail page. The engineer asked for the images on
  * their own — no compound names anywhere, and no surrounding data — so the page
  * is now one gallery of every published photo, opening in a lightbox.
+ *
+ * The photographs come from gallery_images, which belongs to no project. They
+ * were read out of project_media until deleting a project emptied this page.
  */
 export default async function WorksPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale: raw } = await params;
@@ -29,35 +32,25 @@ export default async function WorksPage({ params }: { params: Promise<{ locale: 
   const locale: Locale = raw;
   const t = getDictionary(locale);
 
-  // Completed projects only — nothing still in progress appears here.
-  const projects = await getPublishedProjects({ completedOnly: true });
-  const galleries = await Promise.all(projects.map((project) => getPublicProjectMedia(project.id)));
+  /*
+   * One flat, ordered list from a table of its own.
+   *
+   * This used to walk published projects, collect each one's media, put the
+   * cover first and then dedupe by URL — machinery that existed only because
+   * the photographs were attached to projects. They are not any more, so a
+   * single read replaces all of it, and deleting a project cannot empty this
+   * page.
+   */
+  const gallery = await getGalleryImages();
+  const signed = await signMedia(gallery.map((image) => image.url));
 
-  const covers = projects.map((project) => project.cover_image).filter(Boolean) as string[];
-  const shots = galleries.flat();
-  const signed = await signMedia([...covers, ...shots.map((shot) => shot.url)]);
-
-  // Cover first for each project, then its remaining photos, so the strongest
-  // frame of each apartment leads rather than whatever happened to sort first.
-  const collected: GalleryImage[] = projects.flatMap((project, index) => {
-    const cover = project.cover_image;
-    const ordered = [
-      ...(cover ? [{ id: `${project.id}-cover`, url: cover }] : []),
-      ...(galleries[index] ?? [])
-        .filter((shot) => shot.url !== cover)
-        .map((shot) => ({ id: shot.id, url: shot.url })),
-    ];
-
-    return ordered
-      .map((item) => ({ id: item.id, url: signed.get(item.url), caption: "" }))
-      .filter((item): item is GalleryImage => Boolean(item.url));
-  });
-
-  // A project whose cover is also one of its own media rows would otherwise
-  // render the same photograph twice. This cannot catch the same picture stored
-  // under two object paths — the seed is what guarantees that — but it is one
-  // line against a mistake the admin makes easily.
-  const images = [...new Map(collected.map((image) => [image.url, image])).values()];
+  const images: GalleryImage[] = gallery
+    .map((image) => ({
+      id: image.id,
+      url: signed.get(image.url),
+      caption: "",
+    }))
+    .filter((image): image is GalleryImage => Boolean(image.url));
 
   return (
     <>

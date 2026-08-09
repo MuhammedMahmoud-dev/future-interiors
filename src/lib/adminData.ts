@@ -251,3 +251,27 @@ export async function listRecords(
   }
   return data ?? [];
 }
+
+// ------------------------------------------------------------------ gallery
+
+export type AdminGalleryImage = {
+  id: string;
+  url: string;
+  caption_ar: string | null;
+  is_public: boolean;
+  sort_order: number;
+};
+
+/**
+ * Every gallery photograph, hidden ones included — the admin is where a hidden
+ * photo has to be visible, or it is simply lost.
+ */
+export async function listGalleryImages(): Promise<AdminGalleryImage[]> {
+  const supabase = getSupabase();
+  if (!supabase) return [];
+  const { data } = await supabase
+    .from("gallery_images")
+    .select("id,url,caption_ar,is_public,sort_order")
+    .order("sort_order", { ascending: true });
+  return (data ?? []) as AdminGalleryImage[];
+}

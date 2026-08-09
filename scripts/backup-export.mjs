@@ -41,6 +41,8 @@ const TABLES = [
   "payments",
   "project_stages",
   "project_media",
+  // Site content with no owner — nothing else in this list backs it up.
+  "gallery_images",
   "services",
   "testimonials",
   "faqs",
@@ -117,6 +119,7 @@ async function serverCount(table) {
   });
   const range = res.headers.get("content-range") ?? "";
   const total = range.split("/")[1];
+  if (total === undefined) return undefined; // header unreadable — see the retry below
   return total === "*" ? null : Number(total);
 }
 
@@ -129,14 +132,22 @@ const manifest = { exported_at: stamp, tables: {}, restore_order: TABLES };
 let mismatch = 0;
 
 for (const table of TABLES) {
-  const [rows, expected] = await Promise.all([fetchAll(table), serverCount(table)]);
+  const [rows, firstCount] = await Promise.all([fetchAll(table), serverCount(table)]);
+
+  /*
+   * One retry when the count header could not be read. A dropped header used to
+   * produce NaN, which never equals a row count, so the whole export declared
+   * itself untrustworthy over a transient blip. A real short export still fails
+   * loudly — the retry only distinguishes "could not ask" from "answer differs".
+   */
+  const expected = firstCount === undefined ? await serverCount(table) : firstCount;
 
   writeFileSync(path.join(outDir, `${table}.json`), JSON.stringify(rows, null, 2), "utf8");
   manifest.tables[table] = { rows: rows.length, server_count: expected };
 
   // The whole point of the paging loop. If these ever disagree, the export is
   // short and must not be trusted as a backup.
-  const agree = expected === null || expected === rows.length;
+  const agree = expected === null || expected === undefined || expected === rows.length;
   if (!agree) mismatch++;
 
   console.log(

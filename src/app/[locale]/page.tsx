@@ -17,8 +17,7 @@ import { signMedia } from "@/lib/media";
 import { localeMetadata } from "@/lib/pageMeta";
 import {
   getFaqs,
-  getPublicProjectMedia,
-  getPublishedProjects,
+  getGalleryImages,
   getServices,
   getStats,
   getTestimonials,
@@ -49,20 +48,27 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const locale: Locale = raw;
   const t = getDictionary(locale);
 
-  const [services, stats, projects, testimonials, faqs, whatsapp] = await Promise.all([
+  const [services, stats, testimonials, faqs, whatsapp] = await Promise.all([
     getServices(),
     getStats(),
-    getPublishedProjects({ limit: 3 }),
     getTestimonials(),
     getFaqs(),
     getWhatsappNumber(),
   ]);
 
-  const galleries = await Promise.all(projects.map((project) => getPublicProjectMedia(project.id)));
-  const signedUrls = await signMedia([
-    ...projects.map((project) => project.cover_image ?? ""),
-    ...galleries.flat().map((media) => media.url),
-  ]);
+  /*
+   * Every photograph on this page comes from gallery_images now.
+   *
+   * It used to come from whichever projects happened to be published — their
+   * covers for the featured row, their media for the supporting frames — which
+   * meant deleting a project stripped the homepage as well as /works. The
+   * gallery table has no owner, so nothing about a project can empty it.
+   */
+  const gallery = await getGalleryImages();
+  const signedUrls = await signMedia(gallery.map((image) => image.url));
+  const galleryUrls = gallery
+    .map((image) => signedUrls.get(image.url))
+    .filter((url): url is string => Boolean(url));
 
   const hero = findPublic("hero");
   /*
@@ -76,22 +82,19 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const bookHref = whatsappLink(whatsapp, t.whatsapp.book);
   const askHref = whatsappLink(whatsapp, t.whatsapp.ask);
 
-  // Supporting imagery for the sections that need a photograph. Falls back to
-  // an empty frame rather than to a placeholder — a blank half is honest, an
-  // invented image is not.
-  const supporting = galleries
-    .flat()
-    .map((media) => signedUrls.get(media.url))
-    .filter((url): url is string => Boolean(url));
+  // The featured row leads with the first three, in the order the engineer set
+  // in the admin. It used to be one cover per published project.
+  const featured: GalleryImage[] = gallery.slice(0, 3).map((image) => ({
+    id: image.id,
+    url: signedUrls.get(image.url) ?? "",
+    caption: "",
+  })).filter((item) => Boolean(item.url));
 
-  // The featured row: one cover per published project, photographs only.
-  const featured: GalleryImage[] = projects
-    .map((project) => ({
-      id: project.id,
-      url: project.cover_image ? signedUrls.get(project.cover_image) : undefined,
-      caption: "",
-    }))
-    .filter((item): item is GalleryImage => Boolean(item.url));
+  // Supporting imagery for the sections that need a photograph — the rest of
+  // the gallery, so the featured row and the section frames never repeat a
+  // picture. Falls back to an empty frame rather than to a placeholder: a blank
+  // half is honest, an invented image is not.
+  const supporting = galleryUrls.slice(3);
 
   return (
     <>

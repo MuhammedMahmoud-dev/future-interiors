@@ -12,7 +12,8 @@
     "verify:admin": "node --env-file=.env.local scripts/verify-admin.mjs",
     "verify:clients": "node --env-file=.env.local scripts/verify-clients.mjs",
     "verify:lifecycle": "node --env-file=.env.local scripts/verify-lifecycle.mjs",
-    "verify:fields": "node --env-file=.env.local scripts/verify-adminfields.mjs"
+    "verify:fields": "node --env-file=.env.local scripts/verify-adminfields.mjs",
+    "verify:gallery": "node --env-file=.env.local scripts/verify-gallery.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.111.0",

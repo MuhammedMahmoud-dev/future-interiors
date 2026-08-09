@@ -516,7 +516,7 @@ export async function deleteProject(
 
   const { data: project } = await supabase
     .from("projects")
-    .select("id,code,title_ar,client_id")
+    .select("id,code,title_ar,client_id,cover_image")
     .eq("id", id)
     .maybeSingle();
 
@@ -538,13 +538,29 @@ export async function deleteProject(
     return { error: "كود المشروع اللي كتبته مش مطابق." };
   }
 
-  // Storage does not cascade; collect the objects before the rows go.
+  /*
+   * Storage does not cascade; collect the objects before the rows go.
+   *
+   * The cover joins the media here. It used to be left behind, because the
+   * sweep only read project_media — which is how three orphaned objects ended
+   * up sitting in the bucket after a delete, paying for storage and belonging
+   * to nothing.
+   *
+   * Every path collected is this project's own. gallery_images is a separate
+   * table with no link to projects, so nothing here can reach a gallery
+   * photograph — which is the whole point of that split, and is asserted by
+   * verify:gallery.
+   */
   const { data: media } = await supabase
     .from("project_media")
     .select("url")
     .eq("project_id", id);
 
-  const paths = (media ?? []).map((row) => row.url).filter(Boolean);
+  const paths = [
+    ...(media ?? []).map((row) => row.url),
+    project.cover_image,
+  ].filter((path): path is string => Boolean(path));
+
   if (paths.length > 0) await supabase.storage.from("media").remove(paths);
 
   const { error: deleteError } = await supabase.from("projects").delete().eq("id", id);

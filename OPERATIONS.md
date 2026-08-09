@@ -75,6 +75,7 @@ Run in the Supabase SQL editor, in this order, on a new project:
 | 3 | `supabase/migrations/0003_clients.sql` | Clients as their own table |
 | 4 | `supabase/migrations/0004_portal_access.sql` | `projects.portal_access_enabled` |
 | 5 | `supabase/migrations/0005_project_lifecycle.sql` | `projects.archived_at`, `deleted_projects_log` |
+| 6 | `supabase/migrations/0006_gallery_images.sql` | `gallery_images` — the works gallery, owned by no project |
 
 **They are not idempotent.** Running one twice raises an error (`already exists`)
 rather than doing nothing. On an existing database run only the ones that have
@@ -224,7 +225,37 @@ npm run verify:lifecycle # archive/delete refusals, called straight at the actio
 
 ---
 
-## 7. Retiring a project: archive, or delete
+## 7. Two kinds of photograph
+
+They live in different tables on purpose, and the difference matters when you
+delete things.
+
+**Gallery photographs** — `gallery_images`, managed at **معرض الأعمال** in the
+admin. These are the public portfolio on `/works`, and the first three also lead
+the homepage. They belong to the site, not to any job: **no project references
+them, and deleting or archiving any project cannot touch them.** Upload, reorder
+and delete them there; order is what decides which three reach the homepage.
+
+**Project photographs** — `project_media`, on a project's «الصور» tab. These are
+the stage photographs the client sees in their own portal, grouped by stage.
+They belong to that project and **are deleted with it, along with their storage
+objects** — which is correct, because they are that client's private record of
+their own flat.
+
+This split exists because it was once wrong. The gallery used to live in
+`project_media`, so deleting a project emptied the public portfolio. If you ever
+find yourself adding a `project_id` to `gallery_images`, that is the bug coming
+back; `src/lib/gallery.test.ts` fails if anyone tries.
+
+To restore the gallery from the original files on disk:
+
+```bash
+node --env-file=.env.local scripts/restore-gallery.mjs apply
+```
+
+---
+
+## 8. Retiring a project: archive, or delete
 
 Both live at the bottom of a project's **بيانات المشروع** tab.
 
@@ -252,10 +283,10 @@ button.
 
 ---
 
-## 8. Routine checks
+## 9. Routine checks
 
 ```bash
-npm test              # 61 unit tests, no network
+npm test              # 84 unit tests, no network
 npm run lint
 npm run build
 ```
@@ -267,6 +298,8 @@ npm run verify          # RLS, the privacy sweep, canonical tags
 npm run verify:admin    # admin guards, session isolation, the money figures
 npm run verify:clients  # archiving and portal access
 npm run verify:lifecycle # archive and delete, called straight at the action
+npm run verify:fields   # collapsed admin fields still save
+npm run verify:gallery  # deleting a project cannot touch the works gallery
 ```
 
 Each writes a throwaway probe row and deletes it again. Safe to run against

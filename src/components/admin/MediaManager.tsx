@@ -11,14 +11,14 @@ export type MediaItem = {
   signedUrl: string | null;
   caption_ar: string | null;
   stage_id: string | null;
-  is_public: boolean;
 };
 
 /**
  * Upload, classify and approve photos.
  *
- * Nothing is publishable on upload: is_public starts false and has to be ticked
- * per photo, so a client's interior never reaches the public gallery by default.
+ * These are the client's own stage photographs, shown to them in their portal
+ * and nowhere else. The public works gallery is a separate table with its own
+ * screen — see /admin/gallery — so nothing uploaded here can reach the site.
  */
 export function MediaManager({
   projectId,
@@ -71,7 +71,8 @@ export function MediaManager({
           />
         </label>
         <p className="mt-2 text-xs text-muted-ink">
-          JPG أو PNG أو WebP، الحد 15 ميجا للصورة. الصور بتترفع مخفية لحد ما توافق على نشرها.
+          JPG أو PNG أو WebP، الحد 15 ميجا للصورة. الصور دي بيشوفها صاحب المشروع
+          في بوابته بس — مابتوصلش للموقع العام. صور المعرض مكانها «معرض الأعمال».
         </p>
         <button
           type="submit"
@@ -139,15 +140,17 @@ export function MediaManager({
                   ))}
                 </select>
 
-                <label className="flex items-center gap-2 text-xs">
-                  <input
-                    type="checkbox"
-                    defaultChecked={item.is_public}
-                    onChange={(event) => patch(item.id, { is_public: event.target.checked })}
-                    className="h-4 w-4 accent-[#c6a664]"
-                  />
-                  اعرضها على الموقع العام
-                </label>
+                {/*
+                  The "اعرضها على الموقع العام" checkbox was here, and it became
+                  a lie when the works gallery moved to its own table. It only
+                  ever gated the public gallery — the portal shows a client
+                  every photograph of their own project regardless — so after
+                  the split it gated nothing at all.
+
+                  Photographs for the public site are uploaded at /admin/gallery
+                  now. These are the client's own, and they stay the client's.
+                  The column survives with whatever it already held.
+                */}
 
                 <div className="flex items-center justify-between pt-1 text-xs">
                   <button

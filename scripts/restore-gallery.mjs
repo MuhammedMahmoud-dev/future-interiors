@@ -4,16 +4,13 @@
  *   node --env-file=.env.local scripts/restore-gallery.mjs        # dry run
  *   node --env-file=.env.local scripts/restore-gallery.mjs apply
  *
- * The photographs live on Supabase Storage and the rows that point at them live
- * in the database; both were cleared with the seed data. The originals are
- * still on this machine, so this uploads them again under the same distribution
- * rule the seed used, and reproduces the grouping and order recorded in
- * backups/2026-08-07/.
+ * Writes `gallery_images` rows — site content, owned by nothing.
  *
- * What it deliberately does NOT restore: clients, expenses, payments, leads and
- * the rest of the seeded fiction. Those were deleted on purpose. This creates
- * only what the gallery reads — published, completed projects carrying photos —
- * and no financial record at all.
+ * The first version of this script invented three fake projects to hang the
+ * photographs from, because project_media was the only place a photo could
+ * live. That is what let a project deletion empty the gallery, twice. There are
+ * no projects here now, nothing is published or approved, and deleting every
+ * project in the database would leave this untouched.
  *
  * hero.jpg and hero-mobile.jpg are committed files served from /public. This
  * script never touches them.
@@ -32,16 +29,7 @@ if (!url || !key) {
 
 const APPLY = process.argv[2] === "apply";
 const PHOTOS_DIR = path.join(process.cwd(), "photos-source");
-
-/*
- * A separate namespace from the seed's `zz-preview`, on purpose.
- *
- * `zz-` is the throwaway prefix: seed-dev-preview.mjs wipes `zz-preview*` on
- * every run and the verification scripts delete their own `zz-` rows. Restoring
- * the gallery into that namespace would mean the next seed silently erases it
- * again. These photographs are the real portfolio, so they get a real prefix.
- */
-const TAG = "gallery";
+const PREFIX = "gallery";
 
 /**
  * 7.jpeg carried another studio's watermark ("… CREATIVE DESIGN") and was
@@ -51,7 +39,12 @@ const TAG = "gallery";
  */
 const BANNED = ["7.jpeg", "7.jpg", "7.png", "7.webp"];
 
-const MIME = { ".jpeg": "image/jpeg", ".jpg": "image/jpeg", ".png": "image/png", ".webp": "image/webp" };
+const MIME = {
+  ".jpeg": "image/jpeg",
+  ".jpg": "image/jpeg",
+  ".png": "image/png",
+  ".webp": "image/webp",
+};
 
 const api = (route, init = {}) =>
   fetch(`${url}/rest/v1/${route}`, {
@@ -79,18 +72,15 @@ async function upload(objectPath, bytes) {
   return objectPath;
 }
 
-/*
- * The three projects, with the publish dates from the backup.
- *
- * Those dates are not decoration: getPublishedProjects orders by
- * publish_approved_at descending, so they are what puts the gallery back in the
- * order it was in rather than an arbitrary one.
- */
-const PROJECTS = [
-  { slug: `${TAG}-01`, title_ar: "شقة 200م", title_en: "200 sqm apartment", area_m2: 200, approved: "2025-01-12T00:00:00+00:00" },
-  { slug: `${TAG}-02`, title_ar: "شقة 165م", title_en: "165 sqm apartment", area_m2: 165, approved: "2025-02-12T00:00:00+00:00" },
-  { slug: `${TAG}-03`, title_ar: "شقة 240م", title_en: "240 sqm apartment", area_m2: 240, approved: "2025-03-12T00:00:00+00:00" },
-];
+async function listStored() {
+  const res = await fetch(`${url}/storage/v1/object/list/media`, {
+    method: "POST",
+    headers: { apikey: key, Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ prefix: PREFIX, limit: 1000 }),
+  });
+  const rows = res.ok ? await res.json() : [];
+  return rows.map((row) => `${PREFIX}/${row.name}`);
+}
 
 // ------------------------------------------------------------------- plan
 
@@ -113,32 +103,21 @@ if (gallery.length === 0) {
   process.exit(1);
 }
 
-/*
- * The seed's rule, unchanged: contiguous chunks so consecutively-named shots
- * stay together, and every file used exactly once. The first of each chunk
- * becomes the cover and leads that project's run in the gallery.
- */
-const wanted = Math.min(PROJECTS.length, gallery.length);
-const per = Math.ceil(gallery.length / wanted);
-const chunks = Array.from({ length: wanted }, (_, i) =>
-  gallery.slice(i * per, (i + 1) * per),
-).filter((chunk) => chunk.length > 0);
-
 const sha = (name) =>
   createHash("sha256").update(readFileSync(path.join(PHOTOS_DIR, name))).digest("hex").slice(0, 12);
 
-console.log(`\n${gallery.length} gallery photograph(s), ${chunks.length} project(s)\n`);
-chunks.forEach((chunk, i) => {
-  const spec = PROJECTS[i];
-  console.log(`${spec.slug}  (published ${spec.approved.slice(0, 10)})`);
-  chunk.forEach((name, j) => {
-    const object = j === 0 ? `${TAG}/${spec.slug}-cover` : `${TAG}/${spec.slug}-${j - 1}`;
-    console.log(`   ${j === 0 ? "cover" : `#${j - 1}  `}  ${name.padEnd(10)} ${sha(name)}  ->  ${object}${path.extname(name).toLowerCase()}`);
-  });
+console.log(`\n${gallery.length} gallery photograph(s)\n`);
+gallery.forEach((name, i) => {
+  const object = `${PREFIX}/${String(i).padStart(2, "0")}-${name.toLowerCase()}`;
+  console.log(`  ${String(i).padStart(2)}  ${name.padEnd(10)} ${sha(name)}  ->  ${object}`);
 });
 
 const distinct = new Set(gallery.map(sha));
-console.log(`\n${distinct.size} distinct image(s) by content hash — ${distinct.size === gallery.length ? "no duplicates" : "DUPLICATES PRESENT"}`);
+console.log(
+  `\n${distinct.size} distinct image(s) by content hash — ${
+    distinct.size === gallery.length ? "no duplicates" : "DUPLICATES PRESENT"
+  }`,
+);
 
 if (!APPLY) {
   console.log("\nDry run. Re-run with `apply` to upload.\n");
@@ -154,67 +133,42 @@ if (distinct.size !== gallery.length) {
 
 console.log("\napplying");
 
-// Idempotent: clear a previous run of THIS script only. Media rows cascade.
-const existing = await (await api(`projects?slug=like.${TAG}-*&select=id,slug`)).json();
-if (existing.length > 0) {
-  const objects = await (
-    await api(`project_media?project_id=in.(${existing.map((p) => p.id).join(",")})&select=url`)
-  ).json();
-  const covers = existing.map((p) => `${TAG}/${p.slug}-cover.jpeg`);
+/*
+ * Clear the table and everything under gallery/ in storage, including objects
+ * no row points at. Three such orphans were left behind by an earlier project
+ * delete — it removed the media rows' objects but never the project cover —
+ * and without this sweep they would sit in the bucket forever.
+ */
+const existingObjects = await listStored();
+if (existingObjects.length > 0) {
   await fetch(`${url}/storage/v1/object/media`, {
     method: "DELETE",
     headers: { apikey: key, Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ prefixes: [...objects.map((o) => o.url), ...covers] }),
+    body: JSON.stringify({ prefixes: existingObjects }),
   });
-  await api(`projects?slug=like.${TAG}-*`, { method: "DELETE" });
-  console.log(`  cleared ${existing.length} previous project(s)`);
+  console.log(`  swept ${existingObjects.length} object(s) from storage`);
 }
 
-let uploaded = 0;
+const wiped = await api("gallery_images?id=not.is.null", { method: "DELETE" });
+if (!wiped.ok) {
+  console.error(`  could not clear gallery_images: ${wiped.status} ${await wiped.text()}`);
+  process.exit(1);
+}
 
-for (const [index, chunk] of chunks.entries()) {
-  const spec = PROJECTS[index];
-  const ext = path.extname(chunk[0]).toLowerCase();
-
-  const cover = await upload(
-    `${TAG}/${spec.slug}-cover${ext}`,
-    readFileSync(path.join(PHOTOS_DIR, chunk[0])),
+const rows = [];
+for (const [index, name] of gallery.entries()) {
+  const object = await upload(
+    `${PREFIX}/${String(index).padStart(2, "0")}-${name.toLowerCase()}`,
+    readFileSync(path.join(PHOTOS_DIR, name)),
   );
-  uploaded += 1;
-
-  const res = await api("projects", {
-    method: "POST",
-    headers: { Prefer: "return=representation" },
-    body: JSON.stringify({
-      slug: spec.slug,
-      title_ar: spec.title_ar,
-      title_en: spec.title_en,
-      area_m2: spec.area_m2,
-      status: "completed",
-      cover_image: cover,
-      is_public: true,
-      publish_approved_at: spec.approved,
-    }),
-  });
-  if (!res.ok) throw new Error(`insert ${spec.slug}: ${res.status} ${await res.text()}`);
-  const [project] = await res.json();
-
-  const rows = [];
-  for (const [i, name] of chunk.slice(1).entries()) {
-    const object = await upload(
-      `${TAG}/${spec.slug}-${i}${path.extname(name).toLowerCase()}`,
-      readFileSync(path.join(PHOTOS_DIR, name)),
-    );
-    uploaded += 1;
-    rows.push({ project_id: project.id, url: object, type: "image", is_public: true, sort_order: i });
-  }
-
-  if (rows.length > 0) {
-    const media = await api("project_media", { method: "POST", body: JSON.stringify(rows) });
-    if (!media.ok) throw new Error(`media ${spec.slug}: ${media.status} ${await media.text()}`);
-  }
-
-  console.log(`  ${spec.slug}: cover + ${rows.length} photo(s)`);
+  rows.push({ url: object, sort_order: index, is_public: true });
 }
 
-console.log(`\n${uploaded} object(s) uploaded, ${chunks.length} project(s) published.\n`);
+const inserted = await api("gallery_images", { method: "POST", body: JSON.stringify(rows) });
+if (!inserted.ok) {
+  console.error(`  insert failed: ${inserted.status} ${await inserted.text()}`);
+  process.exit(1);
+}
+
+const check = await (await api("gallery_images?select=id,url,sort_order&order=sort_order")).json();
+console.log(`\n${rows.length} object(s) uploaded, ${check.length} row(s) in gallery_images.\n`);

@@ -1,6 +1,10 @@
 import "server-only";
 import { getSupabase } from "./supabase";
-import { PUBLIC_PROJECT_COLUMNS, PUBLIC_MEDIA_COLUMNS } from "./publicFields";
+import {
+  PUBLIC_PROJECT_COLUMNS,
+  PUBLIC_MEDIA_COLUMNS,
+  PUBLIC_GALLERY_COLUMNS,
+} from "./publicFields";
 
 /**
  * Every public read goes through this module.
@@ -137,6 +141,43 @@ export async function getPublishedProjects(options?: {
  * engineer no longer controls — the slug is now derived from the project code
  * and is not addressable by anything.
  */
+
+// ------------------------------------------------------------------ gallery
+
+export type GalleryRow = {
+  id: string;
+  url: string;
+  caption_ar: string | null;
+  caption_en: string | null;
+  sort_order: number;
+};
+
+/**
+ * The works gallery — the photographs on /works and on the homepage.
+ *
+ * These used to be read out of project_media, joined through whichever projects
+ * happened to be published. That coupling is what let a project deletion empty
+ * the gallery, so this reads its own table and touches `projects` nowhere.
+ */
+export async function getGalleryImages(options?: { limit?: number }): Promise<GalleryRow[]> {
+  const supabase = getSupabase();
+  if (!supabase) return [];
+
+  let query = supabase
+    .from("gallery_images")
+    .select(PUBLIC_GALLERY_COLUMNS)
+    .eq("is_public", true)
+    .order("sort_order", { ascending: true });
+
+  if (options?.limit) query = query.limit(options.limit);
+
+  const { data, error } = await query;
+  if (error) {
+    console.error("[data] getGalleryImages", error.message);
+    return [];
+  }
+  return (data ?? []) as unknown as GalleryRow[];
+}
 
 /** Only media the engineer has approved for publication. */
 export async function getPublicProjectMedia(projectId: string): Promise<MediaRow[]> {

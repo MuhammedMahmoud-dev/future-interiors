@@ -176,7 +176,6 @@ async function MediaTab({
     signedUrl: signed.get(item.url) ?? null,
     caption_ar: item.caption_ar,
     stage_id: item.stage_id,
-    is_public: item.is_public,
   }));
 
   return <MediaManager projectId={projectId} items={items} stages={stages} coverPath={coverPath} />;

@@ -56,3 +56,19 @@ export const PUBLIC_MEDIA_COLUMNS = [
   "stage_id",
   "sort_order",
 ].join(",");
+
+/**
+ * The works gallery.
+ *
+ * A short list because the table is short: gallery_images carries no owner, no
+ * project reference and nothing private, which is exactly why it exists. The
+ * allowlist is here anyway rather than inlined at the query, so every public
+ * read in the codebase keeps going through one file.
+ */
+export const PUBLIC_GALLERY_COLUMNS = [
+  "id",
+  "url",
+  "caption_ar",
+  "caption_en",
+  "sort_order",
+].join(",");

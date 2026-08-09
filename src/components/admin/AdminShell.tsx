@@ -5,6 +5,7 @@ const LINKS = [
   { href: "/admin", label: "نظرة عامة" },
   { href: "/admin/projects", label: "المشاريع" },
   { href: "/admin/clients", label: "العملاء" },
+  { href: "/admin/gallery", label: "معرض الأعمال" },
   { href: "/admin/content/services", label: "الخدمات" },
   { href: "/admin/content/faqs", label: "الأسئلة" },
   { href: "/admin/content/testimonials", label: "آراء العملاء" },
