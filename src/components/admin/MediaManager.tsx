@@ -11,16 +11,8 @@ export type MediaItem = {
   signedUrl: string | null;
   caption_ar: string | null;
   stage_id: string | null;
-  phase: "before" | "during" | "after" | null;
   is_public: boolean;
 };
-
-const PHASES = [
-  { value: "", label: "—" },
-  { value: "before", label: "قبل" },
-  { value: "during", label: "أثناء" },
-  { value: "after", label: "بعد" },
-];
 
 /**
  * Upload, classify and approve photos.
@@ -128,32 +120,24 @@ export function MediaManager({
                   className="w-full border-b border-border bg-transparent py-1 text-xs placeholder:text-muted-ink focus:border-accent"
                 />
 
-                <div className="grid grid-cols-2 gap-2">
-                  <select
-                    defaultValue={item.stage_id ?? ""}
-                    onChange={(event) => patch(item.id, { stage_id: event.target.value || null })}
-                    className="rounded-card border border-border px-2 py-1.5 text-xs focus:border-accent"
-                  >
-                    <option value="">المرحلة —</option>
-                    {stages.map((stage) => (
-                      <option key={stage.id} value={stage.id}>
-                        {stage.name_ar}
-                      </option>
-                    ))}
-                  </select>
-
-                  <select
-                    defaultValue={item.phase ?? ""}
-                    onChange={(event) => patch(item.id, { phase: event.target.value || null })}
-                    className="rounded-card border border-border px-2 py-1.5 text-xs focus:border-accent"
-                  >
-                    {PHASES.map((phase) => (
-                      <option key={phase.value} value={phase.value}>
-                        {phase.value ? phase.label : "المرحلة الزمنية —"}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                {/*
+                  The قبل/أثناء/بعد select sat beside this one. The stage is what
+                  the client's portal actually groups photographs by; the phase
+                  was read nowhere, and no photo in the database had ever been
+                  given one. Two dropdowns per photo where one does the work.
+                */}
+                <select
+                  defaultValue={item.stage_id ?? ""}
+                  onChange={(event) => patch(item.id, { stage_id: event.target.value || null })}
+                  className="w-full rounded-card border border-border px-2 py-1.5 text-xs focus:border-accent"
+                >
+                  <option value="">المرحلة —</option>
+                  {stages.map((stage) => (
+                    <option key={stage.id} value={stage.id}>
+                      {stage.name_ar}
+                    </option>
+                  ))}
+                </select>
 
                 <label className="flex items-center gap-2 text-xs">
                   <input

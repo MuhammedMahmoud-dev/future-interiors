@@ -27,58 +27,43 @@ export function ProjectForm({
 
   return (
     <form action={formAction} className="space-y-10">
-      <Section title="بيانات عامة" note="دي البيانات اللي بتظهر على الموقع">
+      {/*
+        The old title here was "دي البيانات اللي بتظهر على الموقع", which stopped
+        being true when the portfolio became a photo gallery: the only thing in
+        this section that reaches a public page now is the photograph, and the
+        title reaches the client's own portal rather than the site.
+      */}
+      <Section title="المشروع" note="الاسم اللي العميل بيشوفه في البوابة وفي كشف الحساب">
         <Field label="العنوان المعروض (عربي)" required>
           <input
             name="title_ar"
             required
             defaultValue={project?.title_ar ?? ""}
-            placeholder="شقة 200م - كمبوند كالما"
+            placeholder="شقة 200م"
             className={input}
           />
         </Field>
 
-        <Field label="العنوان المعروض (إنجليزي)">
+        <Field label="العنوان المعروض (إنجليزي)" note="بيظهر لو العميل فتح البوابة بالإنجليزي">
           <input name="title_en" defaultValue={project?.title_en ?? ""} dir="ltr" className={input} />
         </Field>
 
-        <Field label="الـ slug (في اللينك)" required>
-          <input
-            name="slug"
-            required
-            dir="ltr"
-            defaultValue={project?.slug ?? ""}
-            placeholder="kalma-200"
-            pattern="[a-z0-9\-]+"
-            className={input}
-          />
-        </Field>
+        {/*
+          The slug field was here. It was a required, pattern-validated text box
+          for a URL segment that no longer exists — /works/[slug] was removed
+          when the portfolio became a photo gallery — so it rejected perfectly
+          reasonable names to protect a link nobody can follow.
 
-        <Field label="الكمبوند">
-          <input name="compound" defaultValue={project?.compound ?? ""} className={input} />
-        </Field>
+          It is now derived from the project code on the server. See
+          slugFromCode in lib/slug.ts.
+        */}
 
-        <Field label="المنطقة">
-          <input name="district" defaultValue={project?.district ?? ""} className={input} />
-        </Field>
-
-        <Field label="المساحة (م²)">
-          <input
-            name="area_m2"
-            inputMode="decimal"
-            dir="ltr"
-            defaultValue={project?.area_m2 ? String(project.area_m2) : ""}
-            className={input}
-          />
-        </Field>
-
-        <Field label="تاريخ البداية">
-          <input type="date" name="start_date" defaultValue={project?.start_date ?? ""} className={input} />
-        </Field>
-
-        <Field label="تاريخ الانتهاء">
-          <input type="date" name="end_date" defaultValue={project?.end_date ?? ""} className={input} />
-        </Field>
+        {/*
+          The two description textareas were here. Nothing renders them — the
+          gallery shows photographs with no surrounding text — and across every
+          project in the database neither had ever been filled in. The columns
+          stay; the form no longer asks.
+        */}
 
         <Field label="الحالة">
           <select name="status" defaultValue={project?.status ?? "in_progress"} className={input}>
@@ -87,25 +72,6 @@ export function ProjectForm({
             <option value="on_hold">متوقف مؤقتاً</option>
           </select>
         </Field>
-
-        <Field label="الوصف (عربي)" wide>
-          <textarea
-            name="description_ar"
-            rows={4}
-            defaultValue={project?.description_ar ?? ""}
-            className={input}
-          />
-        </Field>
-
-        <Field label="الوصف (إنجليزي)" wide>
-          <textarea
-            name="description_en"
-            rows={4}
-            dir="ltr"
-            defaultValue={project?.description_en ?? ""}
-            className={input}
-          />
-        </Field>
       </Section>
 
       <Section
@@ -113,14 +79,6 @@ export function ProjectForm({
         note="دي مابتظهرش على الموقع العام أبداً — بس في اللوحة دي وفي صفحة العميل"
         private
       >
-        <Field label="رقم الوحدة">
-          <input name="unit_no" defaultValue={project?.unit_no ?? ""} className={input} />
-        </Field>
-
-        <Field label="رقم العمارة">
-          <input name="building_no" defaultValue={project?.building_no ?? ""} className={input} />
-        </Field>
-
         {/* The client is a record of its own now, so one person can hold several
             projects. The phone here is what they sign in to the portal with. */}
         <ClientPicker
@@ -139,6 +97,65 @@ export function ProjectForm({
             className={input}
           />
         </Field>
+
+        {/*
+          Seven fields nothing reads, kept because they are the engineer's own
+          reference — which flat, how big, when it ran. Folded away rather than
+          deleted: they are still saved, still show what was entered before, and
+          a project that already has them keeps them whether this opens or not.
+        */}
+        <details className="group sm:col-span-2">
+          <summary className="cursor-pointer list-none text-xs text-muted-ink underline underline-offset-4 hover:text-ink">
+            تفاصيل إضافية
+            <span className="group-open:hidden"> — للرجوع ليها بس، مابتظهرش في أي مكان</span>
+          </summary>
+
+          <div className="mt-5 grid gap-5 sm:grid-cols-2">
+            <Field label="رقم الوحدة">
+              <input name="unit_no" defaultValue={project?.unit_no ?? ""} className={input} />
+            </Field>
+
+            <Field label="رقم العمارة">
+              <input name="building_no" defaultValue={project?.building_no ?? ""} className={input} />
+            </Field>
+
+            <Field label="الكمبوند">
+              <input name="compound" defaultValue={project?.compound ?? ""} className={input} />
+            </Field>
+
+            <Field label="المنطقة">
+              <input name="district" defaultValue={project?.district ?? ""} className={input} />
+            </Field>
+
+            <Field label="المساحة (م²)">
+              <input
+                name="area_m2"
+                inputMode="decimal"
+                dir="ltr"
+                defaultValue={project?.area_m2 ? String(project.area_m2) : ""}
+                className={input}
+              />
+            </Field>
+
+            <Field label="تاريخ البداية">
+              <input
+                type="date"
+                name="start_date"
+                defaultValue={project?.start_date ?? ""}
+                className={input}
+              />
+            </Field>
+
+            <Field label="تاريخ الانتهاء">
+              <input
+                type="date"
+                name="end_date"
+                defaultValue={project?.end_date ?? ""}
+                className={input}
+              />
+            </Field>
+          </div>
+        </details>
       </Section>
 
       <Section title="النشر" note="المشروع مايظهرش في المعرض غير لما الاتنين يتفعلوا">

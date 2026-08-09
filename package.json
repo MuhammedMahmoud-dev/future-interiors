@@ -10,7 +10,9 @@
     "test": "node --test src/lib/*.test.ts",
     "verify": "node --env-file=.env.local scripts/verify-privacy.mjs",
     "verify:admin": "node --env-file=.env.local scripts/verify-admin.mjs",
-    "verify:clients": "node --env-file=.env.local scripts/verify-clients.mjs"
+    "verify:clients": "node --env-file=.env.local scripts/verify-clients.mjs",
+    "verify:lifecycle": "node --env-file=.env.local scripts/verify-lifecycle.mjs",
+    "verify:fields": "node --env-file=.env.local scripts/verify-adminfields.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.111.0",

@@ -201,7 +201,7 @@ export function LedgerGrid({
       </div>
 
       <div className="overflow-x-auto border border-border bg-white">
-        <table className="w-full min-w-[720px] border-collapse text-sm">
+        <table className="ledger-dense w-full min-w-[720px] border-collapse text-sm">
           <thead>
             <tr className="bg-surface text-start text-xs text-muted-ink">
               <th className="w-32 border-b border-border px-3 py-2 text-start font-normal">التاريخ</th>

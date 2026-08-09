@@ -6,6 +6,7 @@ import { LedgerGrid } from "@/components/admin/LedgerGrid";
 import { MediaManager, type MediaItem } from "@/components/admin/MediaManager";
 import { ProjectForm } from "@/components/admin/ProjectForm";
 import { StagesEditor } from "@/components/admin/StagesEditor";
+import { ProjectLifecycle } from "@/components/admin/ProjectLifecycle";
 import { requireAdmin } from "@/lib/admin";
 import {
   getAdminMedia,
@@ -92,12 +93,24 @@ export default async function AdminProjectPage({
       </nav>
 
       {tab === "details" && (
-        <ProjectForm
-          action={updateProject.bind(null, id)}
-          project={project}
-          submitLabel="حفظ التعديلات"
-          clients={clients}
-        />
+        <>
+          <ProjectForm
+            action={updateProject.bind(null, id)}
+            project={project}
+            submitLabel="حفظ التعديلات"
+            clients={clients}
+          />
+
+          {/* Counts come from the rows already loaded above. The server counts
+              them again on every delete — this pair only decides what to show. */}
+          <ProjectLifecycle
+            id={id}
+            code={project.code}
+            archivedAt={project.archived_at}
+            expenseCount={expenses.length}
+            paymentCount={payments.length}
+          />
+        </>
       )}
 
       {tab === "expenses" && (
@@ -163,7 +176,6 @@ async function MediaTab({
     signedUrl: signed.get(item.url) ?? null,
     caption_ar: item.caption_ar,
     stage_id: item.stage_id,
-    phase: item.phase,
     is_public: item.is_public,
   }));
 

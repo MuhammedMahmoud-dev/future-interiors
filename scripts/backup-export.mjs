@@ -47,6 +47,9 @@ const TABLES = [
   "site_stats",
   "engineer_profile",
   "leads",
+  // The whole point of this table is remembering what is gone; a backup that
+  // skipped it would lose exactly the thing it was created to preserve.
+  "deleted_projects_log",
 ];
 
 /*

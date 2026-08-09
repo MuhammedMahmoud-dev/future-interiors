@@ -162,6 +162,33 @@ h3 {
   --text-7xl: 4.5rem; /* hero, desktop — 72px */
 }
 
+/*
+ * The admin's own scale.
+ *
+ * /admin was left on Tailwind's defaults — 12px for text-xs, 14px for text-sm —
+ * and since the panel is almost entirely those two sizes, all of it read small
+ * next to the public site. That was never a decision; it was what happens when
+ * a scale is applied to one layout and not the other.
+ *
+ * A shade larger than the public scale, not the same: this is a working surface
+ * read for an hour at a stretch, not a page skimmed once.
+ */
+.type-scale-admin {
+  --text-xs: 0.875rem; /* 14px, was 12 */
+  --text-sm: 1rem; /* 16px, was 14 */
+  --text-base: 1.125rem; /* 18px, was 16 */
+}
+
+/*
+ * The ledger is the exception the original note was about: it runs past a
+ * hundred rows, where every extra pixel of row height costs a row on screen.
+ * It opts back down rather than the whole panel staying small for its sake.
+ */
+.type-scale-admin .ledger-dense {
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+}
+
 @utility no-scrollbar {
   scrollbar-width: none;
   &::-webkit-scrollbar {

@@ -10,7 +10,12 @@ const LINKS = [
   { href: "/admin/content/testimonials", label: "آراء العملاء" },
   { href: "/admin/content/stats", label: "الأرقام" },
   { href: "/admin/content/engineer", label: "بيانات المهندس" },
-  { href: "/admin/leads", label: "الاستفسارات" },
+  /*
+   * "الاستفسارات" was here. Nothing writes to the leads table — the contact page
+   * is a WhatsApp link and a phone number by design, with no form — and the
+   * spec's own description says so. The page still answers at /admin/leads for
+   * manual entry; it just no longer occupies a slot in the nav.
+   */
 ];
 
 /** Chrome for every authenticated admin page. The login page does not use it. */

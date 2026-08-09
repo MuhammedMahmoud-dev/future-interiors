@@ -130,24 +130,13 @@ export async function getPublishedProjects(options?: {
   return (data ?? []) as unknown as ProjectRow[];
 }
 
-export async function getProjectBySlug(slug: string): Promise<ProjectRow | null> {
-  const supabase = getSupabase();
-  if (!supabase) return null;
-
-  const { data, error } = await supabase
-    .from("projects")
-    .select(PUBLIC_PROJECT_COLUMNS)
-    .eq("slug", slug)
-    .eq("is_public", true)
-    .not("publish_approved_at", "is", null)
-    .maybeSingle();
-
-  if (error) {
-    console.error("[data] getProjectBySlug", error.message);
-    return null;
-  }
-  return (data as unknown as ProjectRow) ?? null;
-}
+/*
+ * getProjectBySlug was here. It was the lookup behind /works/[slug], which was
+ * removed when the portfolio became a photo gallery, and it has had no callers
+ * since. Left in place it was an invitation to resolve projects by a value the
+ * engineer no longer controls — the slug is now derived from the project code
+ * and is not addressable by anything.
+ */
 
 /** Only media the engineer has approved for publication. */
 export async function getPublicProjectMedia(projectId: string): Promise<MediaRow[]> {

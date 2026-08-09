@@ -74,6 +74,7 @@ Run in the Supabase SQL editor, in this order, on a new project:
 | 2 | `supabase/migrations/0002_seed_lookups.sql` | Six stages, six services, seven FAQs |
 | 3 | `supabase/migrations/0003_clients.sql` | Clients as their own table |
 | 4 | `supabase/migrations/0004_portal_access.sql` | `projects.portal_access_enabled` |
+| 5 | `supabase/migrations/0005_project_lifecycle.sql` | `projects.archived_at`, `deleted_projects_log` |
 
 **They are not idempotent.** Running one twice raises an error (`already exists`)
 rather than doing nothing. On an existing database run only the ones that have
@@ -218,14 +219,43 @@ Each project has its own switch: **Projects → the project → "وصول الع
 **This has nothing to do with archiving a client.** Archiving only hides them
 from the admin's active list; an archived client whose switch is on still signs
 in normally. That separation is enforced by `src/lib/portalAccess.test.ts` and
-proved end to end by `npm run verify:clients`.
+proved end to end by `npm run verify:clients   # portal access and archiving, end to end
+npm run verify:lifecycle # archive/delete refusals, called straight at the action`.
 
 ---
 
-## 7. Routine checks
+## 7. Retiring a project: archive, or delete
+
+Both live at the bottom of a project's **بيانات المشروع** tab.
+
+**Archiving is the normal one.** It hides the project from the admin list and
+does nothing else — the photos stay in the public gallery if the project was
+published, and the client's portal keeps working. There is a
+`عرض المؤرشف (n)` link above the list to bring them back into view, and
+`استرجاع المشروع` on the project itself. Archive a finished project; that is
+what it is for.
+
+**Deleting is for a project that should never have existed** — a duplicate, a
+typo, a test row. It is permanent, and it is refused outright if the project has
+even one expense or one payment. That refusal is enforced on the server, not by
+the button: `deleteProject` counts both ledgers before it deletes anything
+(`src/lib/projectDelete.test.ts` asserts that ordering). If you genuinely need a
+project with a ledger gone, empty the ledger first — deliberately, row by row.
+
+A delete also removes the project's photographs from storage, and writes the
+code, title, client id and timestamp into `deleted_projects_log`. That log is
+the only trace left, and it exists because project codes get written down and
+asked about weeks later. It is included in the backup set.
+
+To confirm a delete you type the project's code. Nothing else enables the
+button.
+
+---
+
+## 8. Routine checks
 
 ```bash
-npm test              # 56 unit tests, no network
+npm test              # 61 unit tests, no network
 npm run lint
 npm run build
 ```
@@ -236,6 +266,7 @@ Against the live project, with `npm run dev` running:
 npm run verify          # RLS, the privacy sweep, canonical tags
 npm run verify:admin    # admin guards, session isolation, the money figures
 npm run verify:clients  # archiving and portal access
+npm run verify:lifecycle # archive and delete, called straight at the action
 ```
 
 Each writes a throwaway probe row and deletes it again. Safe to run against

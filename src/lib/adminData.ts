@@ -32,6 +32,8 @@ export type AdminProject = {
   cover_image: string | null;
   is_public: boolean;
   publish_approved_at: string | null;
+  /** Hidden from the admin list only — never affects the portal or the gallery. */
+  archived_at: string | null;
   /** Client can open the tracking portal. Independent of clients.archived_at. */
   portal_access_enabled: boolean;
   created_at: string;

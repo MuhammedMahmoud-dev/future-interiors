@@ -38,7 +38,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       dir="rtl"
       className={`${plexArabic.variable} ${manrope.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-surface font-sans text-ink">{children}</body>
+      <body className="type-scale-admin min-h-full bg-surface font-sans text-ink">{children}</body>
     </html>
   );
 }
