@@ -10,6 +10,7 @@ import { getSupabase } from "@/lib/supabase";
 import { parseAmount } from "@/lib/finance";
 import { normalizePhone } from "@/lib/i18n";
 import { firstFreeSlug, slugFromCode } from "@/lib/slug";
+import { ledgerBlocksDelete, ledgerRefusal } from "@/lib/projectLifecycle";
 
 /**
  * Every action here re-checks the admin session. A Server Action is a public
@@ -528,11 +529,10 @@ export async function deleteProject(
     supabase.from("payments").select("id", { count: "exact", head: true }).eq("project_id", id),
   ]);
 
-  if ((expenses ?? 0) > 0 || (payments ?? 0) > 0) {
-    return {
-      error: `مايتحذفش — فيه ${expenses ?? 0} بند و${payments ?? 0} دفعة. أرشفه بدل ما تحذفه.`,
-    };
-  }
+  // The rule itself lives in lib/projectLifecycle so a test can call it
+  // instead of inspecting this file's text. See projectDelete.test.ts.
+  const counts = { expenses: expenses ?? 0, payments: payments ?? 0 };
+  if (ledgerBlocksDelete(counts)) return { error: ledgerRefusal(counts) };
 
   if (typed !== project.code.toUpperCase()) {
     return { error: "كود المشروع اللي كتبته مش مطابق." };
