@@ -21,13 +21,18 @@
 
 import { createHmac } from "node:crypto";
 
-const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const secret = process.env.SESSION_SECRET;
+import { assertSameDatabase, requireTestDatabase } from "./lib/test-db.mjs";
+
+// Stops dead if this is production. See scripts/lib/test-db.mjs.
+const { url, secret: key, sessionSecret: secret } = requireTestDatabase();
+
 const site = process.env.SITE_URL ?? "http://localhost:3000";
 
-if (!url || !key || !secret) {
-  console.error("Missing NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY or SESSION_SECRET");
+// And that the dev server we are about to drive reads that same database.
+await assertSameDatabase({ url, secret: key, sessionSecret: secret, site });
+
+if (!secret) {
+  console.error("Missing SESSION_SECRET");
   process.exit(1);
 }
 

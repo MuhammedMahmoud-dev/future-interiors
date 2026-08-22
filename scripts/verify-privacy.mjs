@@ -12,15 +12,16 @@
  * Step 3 writes to the database. The row is removed in a finally block.
  */
 
-const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const secret = process.env.SUPABASE_SERVICE_ROLE_KEY;
+import { assertSameDatabase, requireTestDatabase } from "./lib/test-db.mjs";
+
+// Stops dead if this is production. See scripts/lib/test-db.mjs.
+const { url, secret, sessionSecret } = requireTestDatabase();
+
 const publishable = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 const site = process.env.SITE_URL ?? "http://localhost:3000";
 
-if (!url || !secret) {
-  console.error("Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY");
-  process.exit(1);
-}
+// And that the dev server we are about to drive reads that same database.
+await assertSameDatabase({ url, secret, sessionSecret, site });
 
 const TABLES = [
   "projects", "clients", "expenses", "payments", "stages", "project_stages", "project_media",

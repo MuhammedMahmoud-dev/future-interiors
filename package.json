@@ -8,12 +8,14 @@
     "start": "next start",
     "lint": "eslint",
     "test": "node --test src/lib/*.test.ts",
-    "verify": "node --env-file=.env.local scripts/verify-privacy.mjs",
-    "verify:admin": "node --env-file=.env.local scripts/verify-admin.mjs",
-    "verify:clients": "node --env-file=.env.local scripts/verify-clients.mjs",
-    "verify:lifecycle": "node --env-file=.env.local scripts/verify-lifecycle.mjs",
-    "verify:fields": "node --env-file=.env.local scripts/verify-adminfields.mjs",
-    "verify:gallery": "node --env-file=.env.local scripts/verify-gallery.mjs"
+    "verify": "node --env-file=.env.test scripts/verify-privacy.mjs",
+    "verify:admin": "node --env-file=.env.test scripts/verify-admin.mjs",
+    "verify:clients": "node --env-file=.env.test scripts/verify-clients.mjs",
+    "verify:lifecycle": "node --env-file=.env.test scripts/verify-lifecycle.mjs",
+    "verify:fields": "node --env-file=.env.test scripts/verify-adminfields.mjs",
+    "verify:gallery": "node --env-file=.env.test scripts/verify-gallery.mjs",
+    "migrate:test": "node --env-file=.env.test scripts/migrate-test-db.mjs",
+    "dev:test": "node scripts/dev-test.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.111.0",

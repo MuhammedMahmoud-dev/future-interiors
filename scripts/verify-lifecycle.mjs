@@ -20,15 +20,15 @@ import { existsSync, readFileSync } from "node:fs";
 
 import { createSessionToken } from "../src/lib/session.ts";
 
-const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const secret = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const sessionSecret = process.env.SESSION_SECRET;
+import { assertSameDatabase, requireTestDatabase } from "./lib/test-db.mjs";
+
+// Stops dead if this is production. See scripts/lib/test-db.mjs.
+const { url, secret, sessionSecret } = requireTestDatabase();
+
 const site = process.env.SITE_URL ?? "http://localhost:3000";
 
-if (!url || !secret || !sessionSecret) {
-  console.error("Missing Supabase or SESSION_SECRET env");
-  process.exit(1);
-}
+// And that the dev server we are about to drive reads that same database.
+await assertSameDatabase({ url, secret, sessionSecret, site });
 
 let failures = 0;
 const ok = (name) => console.log(`  PASS  ${name}`);

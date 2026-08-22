@@ -283,10 +283,90 @@ button.
 
 ---
 
-## 9. Routine checks
+## 9. The test database
+
+The verification scripts write: they create projects, upload storage objects,
+archive, delete. They must never run against production. During a mutation
+test a deliberately broken delete swept a real gallery photograph out of the
+production bucket — with real client ledgers in those tables the same accident
+is not recoverable from last week's export.
+
+### Creating it, once
+
+1. **supabase.com/dashboard -> New project.** Same organisation is fine. Name it
+   something unmistakable — `future-interiors-test`. Pick the same region as
+   production so behaviour matches. Free tier is enough.
+2. Wait for it to finish provisioning (a minute or two).
+3. **Project Settings -> API.** Copy three things:
+   - **Project URL** -> `NEXT_PUBLIC_SUPABASE_URL`
+   - **service_role** key (under Project API keys, "reveal") -> `SUPABASE_SERVICE_ROLE_KEY`
+   - **anon / publishable** key -> `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+4. `cp .env.test.example .env.test` and paste them in. Keep `FI_TEST_DB=1`.
+   `.env.test` is gitignored; `.env.test.example` is the committed template.
+5. *(Optional)* **Account -> Access Tokens -> Generate new token** ->
+   `SUPABASE_ACCESS_TOKEN` in `.env.test`. With it the migrations run
+   automatically; without it you paste them once.
+
+### Loading the schema
 
 ```bash
-npm test              # 84 unit tests, no network
+npm run migrate:test
+```
+
+Lists the migrations in order and changes nothing. Then:
+
+```bash
+npm run migrate:test -- apply
+```
+
+With a token it runs `0001` … `0006` in order through the Management API,
+stopping at the first failure. Without one it writes
+`backups/test-db-migrations.sql` — every migration concatenated in order — to
+paste into the test project's SQL Editor in one go. **They are not idempotent**,
+so one paste is safer than six.
+
+Then seed the lookup content and run the suites:
+
+```bash
+npm run verify && npm run verify:admin && npm run verify:clients
+```
+```bash
+npm run verify:lifecycle && npm run verify:fields && npm run verify:gallery
+```
+
+### The barrier
+
+`scripts/lib/test-db.mjs` is imported by every verify script and by the
+migration runner. Two independent checks:
+
+- **A deny-list of the production project ref, hard-coded in that file.** This
+  is the one that matters: it lives in committed source, so a forgotten
+  environment variable cannot defeat it. The ref is not a secret — it is the
+  hostname every browser already sees in `NEXT_PUBLIC_SUPABASE_URL`.
+- **`FI_TEST_DB=1`**, a positive declaration, which catches a third project that
+  is neither production nor the intended target.
+
+There is **no override flag**, on purpose. Every guarded script writes; none has
+a legitimate reason to write to production. If that ever changes it should be a
+visible edit to that file, not an environment variable somebody sets once.
+
+Point anything at production and it stops before the first write:
+
+```
+REFUSING TO RUN
+This is the PRODUCTION database (gtfgogayoxmamldvttls).
+```
+
+`src/lib/testGuard.test.ts` reads `scripts/` from disk and fails if any
+`verify-*.mjs` does not call the guard — so a script added later is covered the
+day it appears, not the day someone remembers.
+
+---
+
+## 10. Routine checks
+
+```bash
+npm test              # 93 unit tests, no network
 npm run lint
 npm run build
 ```
