@@ -145,11 +145,6 @@ export async function listClients(options?: { includeArchived?: boolean }): Prom
   });
 }
 
-export async function getClient(id: string): Promise<AdminClient | null> {
-  const clients = await listClients({ includeArchived: true });
-  return clients.find((client) => client.id === id) ?? null;
-}
-
 export type LedgerExpense = {
   id: string;
   date: string;

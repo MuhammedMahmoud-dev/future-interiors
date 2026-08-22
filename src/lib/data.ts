@@ -44,17 +44,6 @@ export type MediaRow = {
   sort_order: number;
 };
 
-export type StageRow = { id: string; name_ar: string; name_en: string | null; order_index: number };
-
-export type ProjectStageRow = {
-  stage_id: string;
-  status: "not_started" | "in_progress" | "done";
-  started_at: string | null;
-  completed_at: string | null;
-  note_ar: string | null;
-  note_en: string | null;
-};
-
 export type ServiceRow = {
   id: string;
   title_ar: string;
@@ -198,33 +187,7 @@ export async function getPublicProjectMedia(projectId: string): Promise<MediaRow
   return (data ?? []) as unknown as MediaRow[];
 }
 
-export async function getProjectStages(projectId: string): Promise<ProjectStageRow[]> {
-  const supabase = getSupabase();
-  if (!supabase) return [];
-
-  const { data, error } = await supabase
-    .from("project_stages")
-    .select("stage_id,status,started_at,completed_at,note_ar,note_en")
-    .eq("project_id", projectId);
-
-  if (error) {
-    console.error("[data] getProjectStages", error.message);
-    return [];
-  }
-  return (data ?? []) as ProjectStageRow[];
-}
-
 // ------------------------------------------------------------------ content
-
-export async function getStages(): Promise<StageRow[]> {
-  const supabase = getSupabase();
-  if (!supabase) return [];
-  const { data } = await supabase
-    .from("stages")
-    .select("id,name_ar,name_en,order_index")
-    .order("order_index", { ascending: true });
-  return (data ?? []) as StageRow[];
-}
 
 export async function getServices(): Promise<ServiceRow[]> {
   const supabase = getSupabase();

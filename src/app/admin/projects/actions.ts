@@ -151,6 +151,14 @@ async function resolveSlug(
   return firstFreeSlug(base, taken);
 }
 
+/*
+ * setProjectStatus was here: a Server Action that set projects.status on its
+ * own. Nothing ever called it — not in any commit since it was written — and
+ * status is edited through the select in ProjectForm, which saves with the
+ * rest of the project. It was a second write path to a field that already had
+ * one, and an HTTP endpoint nobody needed.
+ */
+
 /** Validation failures come back as a message for the form; success redirects. */
 export type ProjectFormState = { error: string | null; savedAt?: number };
 
@@ -240,15 +248,6 @@ function translateDbError(message: string): string {
   if (message.includes("projects_slug_key")) return "الـ slug ده مستخدم في مشروع تاني";
   if (message.includes("projects_code_key")) return "كود المشروع اتكرر — جرب تاني";
   return message;
-}
-
-export async function setProjectStatus(id: string, status: string) {
-  await requireAdmin();
-  const supabase = requireDb();
-  if (!["in_progress", "completed", "on_hold"].includes(status)) return;
-  await supabase.from("projects").update({ status }).eq("id", id);
-  publicRevalidate();
-  revalidatePath("/admin/projects");
 }
 
 /*

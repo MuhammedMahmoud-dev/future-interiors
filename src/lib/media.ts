@@ -30,9 +30,3 @@ export async function signMedia(paths: readonly string[]): Promise<Map<string, s
   }
   return map;
 }
-
-export async function signOne(path: string | null | undefined): Promise<string | null> {
-  if (!path) return null;
-  const map = await signMedia([path]);
-  return map.get(path) ?? null;
-}

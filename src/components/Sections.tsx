@@ -88,15 +88,6 @@ export function PageHeader({
   );
 }
 
-export function Fact({ label, value }: { label: string; value: string }) {
-  return (
-    <div>
-      <dt className="text-xs text-muted-ink">{label}</dt>
-      <dd className="mt-1 text-ink">{value}</dd>
-    </div>
-  );
-}
-
 export function EmptyState({ message }: { message: string }) {
   return (
     <div className="rounded-card border border-dashed border-border px-6 py-20 text-center text-sm text-muted-ink">
