@@ -8,7 +8,7 @@ import {
   type LedgerKind,
   type LedgerRow,
 } from "@/app/admin/projects/actions";
-import { parseAmount, formatMoney } from "@/lib/finance";
+import { addMoney, parseAmount, formatMoney } from "@/lib/finance";
 import { parseDateInput } from "@/lib/format";
 
 /**
@@ -188,7 +188,7 @@ export function LedgerGrid({
     });
   };
 
-  const total = rows.reduce((sum, row) => sum + (parseAmount(row.amount) ?? 0), 0);
+  const total = addMoney(rows.map((row) => parseAmount(row.amount) ?? 0));
   const isExpenses = kind === "expenses";
 
   return (

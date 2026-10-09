@@ -22,18 +22,55 @@ export type Statement = {
 };
 
 /**
+ * All arithmetic happens in whole piastres (1/100 pound), never in fractional
+ * pounds. Binary floats cannot represent 0.1 exactly, so adding pound amounts
+ * directly drifts: 0.1 + 0.2 = 0.30000000000000004, and a ledger of a few
+ * hundred decimal rows can end up showing a balance of -0.0000001 or rounding
+ * a fee the wrong way. Integers below 2^53 add exactly.
+ */
+function toPiastres(value: number): number {
+  const piastres = Math.round(value * 100);
+  if (!Number.isSafeInteger(piastres)) {
+    throw new Error(`finance: amount out of range ${value}`);
+  }
+  return piastres;
+}
+
+function fromPiastres(piastres: number): number {
+  return piastres / 100;
+}
+
+/** Half away from zero, so a refund of -0.5 rounds to -1 just like 0.5 rounds to 1. */
+function roundHalfAwayFromZero(value: number): number {
+  return Math.sign(value) * Math.round(Math.abs(value)) || 0;
+}
+
+/**
+ * Exact sum of plain numbers, for running totals shown in the UI. Callers must
+ * use this instead of `reduce((a, b) => a + b)` so on-screen totals match the
+ * statement to the piastre.
+ */
+export function addMoney(values: readonly number[]): number {
+  return fromPiastres(values.reduce((total, value) => total + toPiastres(value), 0));
+}
+
+/**
  * Postgres returns `numeric` as a string, so `rows.reduce((a, r) => a + r.amount, 0)`
  * silently concatenates ("0" + "100" + "-20" = "0100-20") instead of adding.
  * Every amount goes through Number() here, and nowhere else.
  */
-export function sumAmounts(rows: readonly MoneyRow[]): number {
+function sumPiastres(rows: readonly MoneyRow[]): number {
   return rows.reduce((total, row) => {
     const value = Number(row.amount);
     if (!Number.isFinite(value)) {
       throw new Error(`finance: non-numeric amount ${JSON.stringify(row.amount)}`);
     }
-    return total + value;
+    return total + toPiastres(value);
   }, 0);
+}
+
+export function sumAmounts(rows: readonly MoneyRow[]): number {
+  return fromPiastres(sumPiastres(rows));
 }
 
 export function computeStatement(
@@ -46,18 +83,27 @@ export function computeStatement(
     throw new Error(`finance: supervision rate out of range ${JSON.stringify(supervisionRate)}`);
   }
 
-  const total_cost = sumAmounts(expenses);
-  const supervision_fee = Math.round(total_cost * rate);
-  const grand_total = total_cost + supervision_fee;
-  const total_payments = sumAmounts(payments);
+  // The column is numeric(5,4), so the rate is an exact count of 1/10000ths.
+  const rateUnits = Math.round(rate * 10_000);
+
+  const costPiastres = sumPiastres(expenses);
+  const paymentPiastres = sumPiastres(payments);
+
+  const feeProduct = costPiastres * rateUnits; // piastres x 1/10000
+  if (!Number.isSafeInteger(feeProduct)) {
+    throw new Error("finance: total too large to compute the fee exactly");
+  }
+  // Nearest whole pound: 100 piastres x 10000 rate units per pound.
+  const feePiastres = roundHalfAwayFromZero(feeProduct / 1_000_000) * 100;
+  const grandPiastres = costPiastres + feePiastres;
 
   // The rate itself is never returned — it must not leak into any payload.
   return {
-    total_cost,
-    supervision_fee,
-    grand_total,
-    total_payments,
-    balance: total_payments - grand_total,
+    total_cost: fromPiastres(costPiastres),
+    supervision_fee: fromPiastres(feePiastres),
+    grand_total: fromPiastres(grandPiastres),
+    total_payments: fromPiastres(paymentPiastres),
+    balance: fromPiastres(paymentPiastres - grandPiastres),
   };
 }
 

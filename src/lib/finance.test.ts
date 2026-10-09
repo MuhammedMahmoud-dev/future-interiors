@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { computeStatement, sumAmounts, formatMoney, parseAmount } from "./finance.ts";
+import { addMoney, computeStatement, sumAmounts, formatMoney, parseAmount } from "./finance.ts";
 import { PUBLIC_PROJECT_COLUMNS, PRIVATE_PROJECT_FIELDS } from "./publicFields.ts";
 
 test("mandatory acceptance test from the spec", () => {
@@ -87,4 +87,37 @@ test("public project column allowlist leaks nothing private", () => {
   for (const field of PRIVATE_PROJECT_FIELDS) {
     assert.equal(selected.includes(field), false, `${field} must never be selected publicly`);
   }
+});
+
+test("decimal amounts add up exactly, without float drift", () => {
+  assert.equal(sumAmounts([{ amount: "0.1" }, { amount: "0.2" }]), 0.3);
+  assert.equal(addMoney([0.1, 0.2]), 0.3);
+
+  // A long ledger of piastre amounts must still land on an exact figure.
+  const rows = Array.from({ length: 1000 }, () => ({ amount: "19.99" }));
+  assert.equal(sumAmounts(rows), 19990);
+});
+
+test("a fully paid project shows a balance of exactly zero", () => {
+  const statement = computeStatement(
+    [{ amount: "1000.10" }, { amount: "2000.20" }],
+    [{ amount: "3450.30" }],
+    0.15,
+  );
+  assert.equal(statement.total_cost, 3000.3);
+  assert.equal(statement.supervision_fee, 450);
+  assert.equal(statement.grand_total, 3450.3);
+  assert.equal(statement.balance, 0);
+});
+
+test("the fee rounds half away from zero, symmetrically for net credits", () => {
+  // 10 x 0.05 = 0.5 pound -> 1; a net-credit ledger of -10 -> -1, not -0.
+  assert.equal(computeStatement([{ amount: 10 }], [], 0.05).supervision_fee, 1);
+  assert.equal(computeStatement([{ amount: -10 }], [], 0.05).supervision_fee, -1);
+  assert.equal(Object.is(computeStatement([{ amount: 1 }, { amount: -1 }], [], 0.15).supervision_fee, -0), false);
+});
+
+test("a four-decimal supervision rate is applied exactly", () => {
+  // 0.1275 is not exact in binary; 100,000 x 0.1275 must still be 12,750.
+  assert.equal(computeStatement([{ amount: 100000 }], [], "0.1275").supervision_fee, 12750);
 });

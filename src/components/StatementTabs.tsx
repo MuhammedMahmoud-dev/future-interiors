@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { formatMoney } from "@/lib/finance";
+import { addMoney, formatMoney } from "@/lib/finance";
 
 export type ExpenseRow = { id: string; date: string; item: string; amount: number };
 export type PaymentRow = { id: string; date: string; label: string; amount: number };
@@ -52,7 +52,7 @@ export function StatementTabs({
 
   // Live subtotal of exactly what is on screen, so filtering stays honest.
   const subtotal = useMemo(
-    () => filtered.reduce((total, row) => total + row.amount, 0),
+    () => addMoney(filtered.map((row) => row.amount)),
     [filtered],
   );
 
