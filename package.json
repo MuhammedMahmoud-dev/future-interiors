@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --test src/lib/*.test.ts",
+    "test": "node --conditions=react-server --import ./scripts/test-resolve.mjs --test src/lib/*.test.ts",
     "verify": "node --env-file=.env.test scripts/verify-privacy.mjs",
     "verify:admin": "node --env-file=.env.test scripts/verify-admin.mjs",
     "verify:clients": "node --env-file=.env.test scripts/verify-clients.mjs",

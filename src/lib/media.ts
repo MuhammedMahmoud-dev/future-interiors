@@ -23,7 +23,13 @@ export async function signMedia(paths: readonly string[]): Promise<Map<string, s
   if (!supabase) return map;
 
   const { data, error } = await supabase.storage.from(BUCKET).createSignedUrls(unique, EXPIRES_IN);
-  if (error || !data) return map;
+  /*
+   * Throw, never return an empty map, when the request as a whole fails: an
+   * empty map renders every photograph as missing, and on a cached page that
+   * becomes the page. A single missing object still just drops that entry.
+   */
+  if (error) throw new Error(`[media] signMedia: ${error.message}`);
+  if (!data) return map;
 
   for (const entry of data) {
     if (entry.signedUrl && entry.path) map.set(entry.path, entry.signedUrl);

@@ -18,6 +18,27 @@ import {
  * site builds and renders its empty states before the keys exist.
  */
 
+/**
+ * A failed query is an outage, never an empty result — so it throws.
+ *
+ * Every public page reading from here is cached and rebuilt in the background.
+ * If a rebuild throws, Next keeps serving the last good copy and retries on the
+ * next visit; if it *returns*, whatever it returned becomes the page. These
+ * readers used to log the error and return [], so when the Supabase project was
+ * paused the next rebuild of /works produced a gallery with no photographs and
+ * cached it for an hour — while the data sat intact the whole time.
+ *
+ * "Unconfigured" is different and still returns empty (the early returns
+ * below): with no keys at all there is no good copy to protect.
+ */
+function unwrap<T>(
+  result: { data: unknown; error: { message: string } | null },
+  reader: string,
+): T | null {
+  if (result.error) throw new Error(`[data] ${reader}: ${result.error.message}`);
+  return result.data as T | null;
+}
+
 /** Mirrors PUBLIC_PROJECT_COLUMNS — no location, so none can reach a page. */
 export type ProjectRow = {
   id: string;
@@ -115,12 +136,7 @@ export async function getPublishedProjects(options?: {
   if (options?.completedOnly) query = query.eq("status", "completed");
   if (options?.limit) query = query.limit(options.limit);
 
-  const { data, error } = await query;
-  if (error) {
-    console.error("[data] getPublishedProjects", error.message);
-    return [];
-  }
-  return (data ?? []) as unknown as ProjectRow[];
+  return unwrap<ProjectRow[]>(await query, "getPublishedProjects") ?? [];
 }
 
 /*
@@ -160,12 +176,7 @@ export async function getGalleryImages(options?: { limit?: number }): Promise<Ga
 
   if (options?.limit) query = query.limit(options.limit);
 
-  const { data, error } = await query;
-  if (error) {
-    console.error("[data] getGalleryImages", error.message);
-    return [];
-  }
-  return (data ?? []) as unknown as GalleryRow[];
+  return unwrap<GalleryRow[]>(await query, "getGalleryImages") ?? [];
 }
 
 /** Only media the engineer has approved for publication. */
@@ -173,18 +184,14 @@ export async function getPublicProjectMedia(projectId: string): Promise<MediaRow
   const supabase = getSupabase();
   if (!supabase) return [];
 
-  const { data, error } = await supabase
+  const result = await supabase
     .from("project_media")
     .select(PUBLIC_MEDIA_COLUMNS)
     .eq("project_id", projectId)
     .eq("is_public", true)
     .order("sort_order", { ascending: true });
 
-  if (error) {
-    console.error("[data] getPublicProjectMedia", error.message);
-    return [];
-  }
-  return (data ?? []) as unknown as MediaRow[];
+  return unwrap<MediaRow[]>(result, "getPublicProjectMedia") ?? [];
 }
 
 // ------------------------------------------------------------------ content
@@ -192,57 +199,57 @@ export async function getPublicProjectMedia(projectId: string): Promise<MediaRow
 export async function getServices(): Promise<ServiceRow[]> {
   const supabase = getSupabase();
   if (!supabase) return [];
-  const { data } = await supabase
+  const result = await supabase
     .from("services")
     .select("id,title_ar,title_en,desc_ar,desc_en,bullets_ar,bullets_en,icon")
     .eq("is_active", true)
     .order("order_index", { ascending: true });
-  return (data ?? []) as ServiceRow[];
+  return unwrap<ServiceRow[]>(result, "getServices") ?? [];
 }
 
 export async function getFaqs(): Promise<FaqRow[]> {
   const supabase = getSupabase();
   if (!supabase) return [];
-  const { data } = await supabase
+  const result = await supabase
     .from("faqs")
     .select("id,question_ar,question_en,answer_ar,answer_en")
     .eq("is_active", true)
     .order("order_index", { ascending: true });
-  return (data ?? []) as FaqRow[];
+  return unwrap<FaqRow[]>(result, "getFaqs") ?? [];
 }
 
 export async function getStats(): Promise<StatRow[]> {
   const supabase = getSupabase();
   if (!supabase) return [];
-  const { data } = await supabase
+  const result = await supabase
     .from("site_stats")
     .select("id,key,label_ar,label_en,value,suffix_ar,suffix_en")
     .order("order_index", { ascending: true });
-  return (data ?? []) as StatRow[];
+  return unwrap<StatRow[]>(result, "getStats") ?? [];
 }
 
 export async function getTestimonials(): Promise<TestimonialRow[]> {
   const supabase = getSupabase();
   if (!supabase) return [];
-  const { data } = await supabase
+  const result = await supabase
     .from("testimonials")
     .select("id,client_name,show_name,quote_ar,quote_en,compound")
     .eq("is_active", true)
     .order("order_index", { ascending: true });
-  return (data ?? []) as TestimonialRow[];
+  return unwrap<TestimonialRow[]>(result, "getTestimonials") ?? [];
 }
 
 export async function getEngineer(): Promise<EngineerRow | null> {
   const supabase = getSupabase();
   if (!supabase) return null;
-  const { data } = await supabase
+  const result = await supabase
     .from("engineer_profile")
     .select(
       "name_ar,name_en,title_ar,title_en,bio_ar,bio_en,phone,whatsapp,syndicate_no,credentials_ar,credentials_en",
     )
     .limit(1)
     .maybeSingle();
-  return (data as EngineerRow) ?? null;
+  return unwrap<EngineerRow>(result, "getEngineer");
 }
 
 /** WhatsApp number: env override first, then the profile row. */

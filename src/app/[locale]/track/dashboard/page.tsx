@@ -37,7 +37,16 @@ export default async function DashboardPage({
   const whatsapp = await getWhatsappNumber();
   const { project, statement, expenses, payments, stages, media, progress } = data;
 
-  const signed = await signMedia(media.map((item) => item.url));
+  /*
+   * signMedia throws when storage is unreachable, so cached public pages keep
+   * their last good copy. This page is per-request and its money is already
+   * loaded: a photo outage should cost the client their photos, not their
+   * whole statement.
+   */
+  const signed = await signMedia(media.map((item) => item.url)).catch((error) => {
+    console.error(error);
+    return new Map<string, string>();
+  });
   const stageName = (id: string | null) =>
     id ? (stages.find((stage) => stage.id === id) ?? null) : null;
 
