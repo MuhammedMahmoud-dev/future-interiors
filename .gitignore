@@ -56,6 +56,10 @@ yarn-error.log*
 # database exports — client names, phone numbers and every figure
 /backups/
 
+# the design brief, reference images and the client photographs (Interos
+# photos) — source material, never content, and never for a public host
+/Future/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
