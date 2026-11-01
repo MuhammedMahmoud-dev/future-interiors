@@ -64,7 +64,8 @@ export function Lightbox({
             key={image.id}
             type="button"
             onClick={() => open(position)}
-            className="group relative aspect-[4/3] overflow-hidden rounded-card border border-border bg-ink/5"
+            data-reveal="image"
+            className="frame-zoom relative aspect-[4/3] overflow-hidden rounded-card border border-border bg-ink/5"
           >
             {/*
               Through the optimiser rather than served raw: the gallery was
@@ -79,7 +80,7 @@ export function Lightbox({
               alt={image.caption || alt}
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 620px"
-              className="object-cover transition-transform duration-500 group-hover:scale-105"
+              className="object-cover"
             />
           </button>
         ))}
@@ -87,6 +88,8 @@ export function Lightbox({
 
       <dialog
         ref={dialogRef}
+        // Smooth scrolling pauses inside the open photo viewer.
+        data-lenis-prevent
         onClick={(event) => {
           if (event.target === dialogRef.current) dialogRef.current?.close();
         }}

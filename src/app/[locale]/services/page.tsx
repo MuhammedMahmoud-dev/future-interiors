@@ -35,7 +35,7 @@ export default async function ServicesPage({ params }: { params: Promise<{ local
               {services.map((service, index) => {
                 const bullets = pickList(service, "bullets", locale);
                 return (
-                  <article key={service.id} className="grid gap-8 py-14 md:grid-cols-[auto_1fr]">
+                  <article key={service.id} data-reveal="fade" className="grid gap-8 py-14 md:grid-cols-[auto_1fr]">
                     <div className="flex items-start gap-5">
                       <span className="brand text-sm text-accent-ink">
                         {String(index + 1).padStart(2, "0")}
@@ -73,7 +73,7 @@ export default async function ServicesPage({ params }: { params: Promise<{ local
               href={whatsappLink(whatsapp, t.whatsapp.book)}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-card bg-ink px-8 py-4 text-sm font-medium text-white transition-opacity hover:opacity-90"
+              className="rounded-card bg-ink px-8 py-4 text-sm font-medium text-white lift"
             >
               {t.hero.ctaBook}
             </a>

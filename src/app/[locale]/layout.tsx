@@ -6,6 +6,7 @@ import "../globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { WhatsAppFab } from "@/components/WhatsAppFab";
+import { Motion } from "@/components/Motion";
 import { getDictionary } from "@/lib/dictionary";
 import { dir, isLocale, locales, pick, siteUrl, whatsappLink, type Locale } from "@/lib/i18n";
 import { getEngineer, getServices, getWhatsappNumber } from "@/lib/data";
@@ -124,6 +125,7 @@ export default async function LocaleLayout({
           whatsappHref={bookHref}
         />
         <WhatsAppFab href={bookHref} label={t.whatsapp.float} />
+        <Motion />
       </body>
     </html>
   );

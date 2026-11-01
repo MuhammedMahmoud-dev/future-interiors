@@ -32,7 +32,7 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
             href={whatsappLink(whatsapp, t.whatsapp.book)}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block rounded-card bg-ink px-10 py-5 text-base font-medium text-white transition-opacity hover:opacity-90"
+            className="inline-block rounded-card bg-ink px-10 py-5 text-base font-medium text-white lift"
           >
             {t.contact.whatsappCta}
           </a>

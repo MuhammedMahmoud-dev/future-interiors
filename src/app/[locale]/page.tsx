@@ -8,7 +8,7 @@ import { FaqList } from "@/components/FaqList";
 import { HeroServices } from "@/components/HeroServices";
 import { JourneyScroller } from "@/components/JourneyScroller";
 import { Lightbox, type GalleryImage } from "@/components/Lightbox";
-import { Eyebrow, SectionHeading } from "@/components/Sections";
+import { Eyebrow, SectionHeading, SplitWords } from "@/components/Sections";
 import { TestimonialsSlider } from "@/components/TestimonialsSlider";
 import { PillButton } from "@/components/ui/PillButton";
 import { getDictionary } from "@/lib/dictionary";
@@ -226,10 +226,12 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           <div className="grid items-start gap-12 lg:grid-cols-3 lg:gap-10">
             <div>
               <Eyebrow>{t.why.eyebrow}</Eyebrow>
-              <h2 className="text-4xl font-semibold text-ink sm:text-5xl">{t.why.title}</h2>
-              <p className="mt-5 text-base leading-8 text-muted-ink">{t.why.subtitle}</p>
+              <h2 data-reveal="words" className="text-4xl font-semibold text-ink sm:text-5xl">
+                <SplitWords text={t.why.title} />
+              </h2>
+              <p data-reveal="fade" className="mt-5 text-base leading-8 text-muted-ink">{t.why.subtitle}</p>
 
-              <ul className="mt-8 space-y-4">
+              <ul data-reveal="fade" className="mt-8 space-y-4">
                 {t.why.points.map((point) => (
                   <li key={point} className="flex gap-3 text-base leading-7 text-body">
                     <Check />
@@ -240,7 +242,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             </div>
 
             {/* The middle column is the photograph the spec asks for. */}
-            <div className="relative aspect-[3/4] overflow-hidden rounded-card border border-border bg-ink/5">
+            <div data-reveal="image" className="frame-zoom relative aspect-[3/4] overflow-hidden rounded-card border border-border bg-ink/5">
               {supporting[0] && (
                 <Image
                   src={supporting[0]}
@@ -254,7 +256,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
             <div className="grid gap-4">
               {t.why.cards.map((card) => (
-                <article key={card.title} className="rounded-card border border-border bg-paper p-6">
+                <article key={card.title} data-reveal="fade" className="lift rounded-card border border-border bg-paper p-6">
                   <h3 className="text-lg font-semibold text-ink">{card.title}</h3>
                   <p className="mt-2 text-base leading-7 text-muted-ink">{card.body}</p>
                 </article>
@@ -288,7 +290,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               />
             </div>
 
-            <div className="mt-14 text-center">
+            <div data-reveal="fade" className="mt-14 text-center">
               <PillButton href={href("/works", locale)} variant="ink">
                 {t.works.viewAll}
               </PillButton>
@@ -427,17 +429,19 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-20 sm:px-6 lg:grid-cols-2 lg:py-24">
           <div>
             <Eyebrow tone="dark">{t.cta.eyebrow}</Eyebrow>
-            <h2 className="text-4xl font-semibold sm:text-5xl">{t.cta.title}</h2>
-            <p className="mt-5 max-w-md text-base leading-8 text-white/60">{t.cta.text}</p>
+            <h2 data-reveal="words" className="text-4xl font-semibold sm:text-5xl">
+              <SplitWords text={t.cta.title} />
+            </h2>
+            <p data-reveal="fade" className="mt-5 max-w-md text-base leading-8 text-white/60">{t.cta.text}</p>
 
-            <div className="mt-9">
+            <div data-reveal="fade" className="mt-9">
               <PillButton href={bookHref} variant="light" external>
                 {t.cta.button}
               </PillButton>
             </div>
           </div>
 
-          <div className="relative aspect-[4/3] overflow-hidden rounded-card border border-white/10 bg-white/5">
+          <div data-reveal="image" className="frame-zoom relative aspect-[4/3] overflow-hidden rounded-card border border-white/10 bg-white/5">
             {supporting[3] && (
               <Image
                 src={supporting[3]}
@@ -482,10 +486,12 @@ function Split({
       <div className="mx-auto grid max-w-7xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-2">
         <div className={reversed ? "lg:order-2" : ""}>
           <Eyebrow>{eyebrow}</Eyebrow>
-          <h2 className="text-4xl font-semibold text-ink sm:text-5xl">{title}</h2>
-          <p className="mt-5 text-base leading-8 text-muted-ink">{body}</p>
+          <h2 data-reveal="words" className="text-4xl font-semibold text-ink sm:text-5xl">
+            <SplitWords text={title} />
+          </h2>
+          <p data-reveal="fade" className="mt-5 text-base leading-8 text-muted-ink">{body}</p>
 
-          <ul className="mt-7 space-y-3">
+          <ul data-reveal="fade" className="mt-7 space-y-3">
             {points.map((point) => (
               <li key={point} className="flex gap-3 text-base leading-7 text-body">
                 <Check />
@@ -494,14 +500,14 @@ function Split({
             ))}
           </ul>
 
-          <div className="mt-9">
+          <div data-reveal="fade" className="mt-9">
             <PillButton href={linkHref} variant="ink">
               {linkLabel}
             </PillButton>
           </div>
         </div>
 
-        <div className="relative aspect-[4/3] overflow-hidden rounded-card border border-border bg-ink/5">
+        <div data-reveal="image" className="frame-zoom relative aspect-[4/3] overflow-hidden rounded-card border border-border bg-ink/5">
           {image && (
             <Image
               src={image}

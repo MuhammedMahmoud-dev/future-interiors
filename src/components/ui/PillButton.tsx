@@ -11,6 +11,11 @@ import Link from "next/link";
  *
  * The arrow points along the reading direction — it means "onward", so it flips
  * in Arabic rather than always pointing right.
+ *
+ * Hover (pointer devices only): gold sweeps in from the side the reader starts
+ * on and the arrow steps forward. The accent appears only under the pointer, a
+ * touch rather than a resting colour, so §7 still holds. Text turns ink while
+ * filled because white on the gold measures about 2:1.
  */
 
 type Variant = "light" | "ink" | "outline";
@@ -18,17 +23,17 @@ type Variant = "light" | "ink" | "outline";
 const VARIANTS: Record<Variant, { shell: string; puck: string }> = {
   /** On a dark ground. */
   light: {
-    shell: "bg-paper text-ink hover:opacity-90",
+    shell: "bg-paper text-ink",
     puck: "bg-ink/10 text-ink",
   },
   /** On a light ground. */
   ink: {
-    shell: "bg-ink text-white hover:opacity-90",
-    puck: "bg-white/15 text-white",
+    shell: "bg-ink text-white hover:text-ink",
+    puck: "bg-white/15 text-white group-hover:bg-ink/10 group-hover:text-ink",
   },
   /** Secondary, either ground — inherits the current text colour. */
   outline: {
-    shell: "border border-current text-current hover:opacity-70",
+    shell: "border border-current text-current hover:border-accent hover:text-ink",
     puck: "border border-current",
   },
 };
@@ -39,7 +44,7 @@ function Inner({ children, variant }: { children: React.ReactNode; variant: Vari
       <span>{children}</span>
       <span
         aria-hidden="true"
-        className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${VARIANTS[variant].puck}`}
+        className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition-[transform,background-color,color] duration-[550ms] ease-cinema group-hover:translate-x-[5px] rtl:group-hover:-translate-x-[5px] ${VARIANTS[variant].puck}`}
       >
         <svg
           width="13"
@@ -57,8 +62,14 @@ function Inner({ children, variant }: { children: React.ReactNode; variant: Vari
   );
 }
 
-const base =
-  "inline-flex items-center gap-3 rounded-pill py-2 ps-7 pe-2 text-sm font-medium transition-opacity duration-200";
+const base = [
+  "group relative isolate inline-flex items-center gap-3 overflow-hidden rounded-pill py-2 ps-7 pe-2 text-sm font-medium",
+  "transition-[color,border-color] duration-[550ms] ease-cinema",
+  // the gold sweep, anchored on the reading start
+  "before:absolute before:inset-0 before:-z-10 before:scale-x-0 before:bg-accent",
+  "before:transition-transform before:duration-[550ms] before:ease-cinema hover:before:scale-x-100",
+  "ltr:before:origin-left rtl:before:origin-right",
+].join(" ");
 
 export function PillButton({
   href,

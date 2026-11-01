@@ -223,3 +223,51 @@ h3 {
     scroll-behavior: auto !important;
   }
 }
+
+/*
+ * Motion (src/components/Motion.tsx). One curve for every movement on the
+ * public site — fast out, long settle — so reveals and hovers read as a family.
+ */
+@theme {
+  --ease-cinema: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Lenis owns scrolling while it runs; native smooth scroll would fight it. */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* Cards rise toward the pointer. Pointer devices only: a tap must not stick. */
+@utility lift {
+  transition:
+    transform 0.45s var(--ease-cinema),
+    box-shadow 0.45s var(--ease-cinema),
+    border-color 0.45s var(--ease-cinema);
+  @media (hover: hover) {
+    &:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 18px 40px rgb(26 29 28 / 0.12);
+      border-color: var(--color-accent);
+    }
+  }
+}
+
+/* A photo frame's image eases closer on hover. `scale` composes with the
+   parallax transform Motion sets on the same image. */
+@utility frame-zoom {
+  & img {
+    transition: scale 0.9s var(--ease-cinema);
+  }
+  @media (hover: hover) {
+    &:hover img {
+      scale: 1.05;
+    }
+  }
+}

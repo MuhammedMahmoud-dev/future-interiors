@@ -50,7 +50,7 @@ export function HeroServices({ services, href }: { services: HeroService[]; href
           <li key={service.id} className="min-w-[82%] shrink-0 snap-center md:min-w-0">
             <Link
               href={href}
-              className="group flex h-full flex-col rounded-card border border-white/15 bg-ink/70 p-6 backdrop-blur-sm transition-colors duration-200 hover:border-white/40"
+              className="group flex h-full flex-col rounded-card border border-white/15 bg-ink/70 p-6 backdrop-blur-sm lift"
             >
               <ServiceIcon name={service.icon} />
 

@@ -102,7 +102,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
               href={whatsappLink(whatsapp, t.whatsapp.book)}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-card bg-ink px-8 py-4 text-sm font-medium text-white transition-opacity hover:opacity-90"
+              className="rounded-card bg-ink px-8 py-4 text-sm font-medium text-white lift"
             >
               {t.hero.ctaBook}
             </a>

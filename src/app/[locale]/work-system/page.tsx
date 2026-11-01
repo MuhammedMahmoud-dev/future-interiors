@@ -32,7 +32,7 @@ export default async function WorkSystemPage({ params }: { params: Promise<{ loc
         <div className="mx-auto max-w-3xl px-4 sm:px-6">
           <ol className="space-y-14">
             {t.workSystem.steps.map((step, index) => (
-              <li key={step.title} className="grid gap-6 sm:grid-cols-[auto_1fr]">
+              <li key={step.title} data-reveal="fade" className="grid gap-6 sm:grid-cols-[auto_1fr]">
                 <span className="brand text-2xl text-accent-ink">
                   {String(index + 1).padStart(2, "0")}
                 </span>
@@ -49,7 +49,7 @@ export default async function WorkSystemPage({ params }: { params: Promise<{ loc
               href={whatsappLink(whatsapp, t.whatsapp.book)}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-card bg-ink px-8 py-4 text-sm font-medium text-white transition-opacity hover:opacity-90"
+              className="rounded-card bg-ink px-8 py-4 text-sm font-medium text-white lift"
             >
               {t.hero.ctaBook}
             </a>
