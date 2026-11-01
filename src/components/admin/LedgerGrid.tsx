@@ -305,8 +305,9 @@ export function LedgerGrid({
               <td colSpan={isExpenses ? 3 : 2} className="px-3 py-3 text-xs text-muted-ink">
                 {rows.filter((row) => row.text.trim()).length} سطر
               </td>
-              <td className="px-3 py-3 text-end" dir="ltr">
-                {formatMoney(total)}
+              {/* text-start, like the المبلغ header and the inputs above it. */}
+              <td className="px-3 py-3 text-start">
+                <bdi dir="ltr">{formatMoney(total)}</bdi>
               </td>
               <td />
             </tr>

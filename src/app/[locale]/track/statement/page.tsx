@@ -81,15 +81,13 @@ export default async function StatementPage({
           <tbody className="divide-y divide-border">
             {expenses.map((row) => (
               <tr key={row.id} className="break-inside-avoid">
-                <td className="py-2 whitespace-nowrap text-muted-ink" dir="ltr">
-                  {row.date}
+                {/* dir on an inline <bdi>, not the cell — see StatementTabs. */}
+                <td className="py-2 whitespace-nowrap text-muted-ink">
+                  <bdi dir="ltr">{row.date}</bdi>
                 </td>
                 <td className="py-2">{pick(row, "item", locale)}</td>
-                <td
-                  className={`brand py-2 text-end whitespace-nowrap ${row.amount < 0 ? "text-green-700" : ""}`}
-                  dir="ltr"
-                >
-                  {formatMoney(row.amount)}
+                <td className={`brand py-2 text-end whitespace-nowrap ${row.amount < 0 ? "text-green-700" : ""}`}>
+                  <bdi dir="ltr">{formatMoney(row.amount)}</bdi>
                 </td>
               </tr>
             ))}
@@ -110,12 +108,12 @@ export default async function StatementPage({
           <tbody className="divide-y divide-border">
             {payments.map((row) => (
               <tr key={row.id} className="break-inside-avoid">
-                <td className="py-2 whitespace-nowrap text-muted-ink" dir="ltr">
-                  {row.date}
+                <td className="py-2 whitespace-nowrap text-muted-ink">
+                  <bdi dir="ltr">{row.date}</bdi>
                 </td>
                 <td className="py-2">{pick(row, "label", locale)}</td>
-                <td className="brand py-2 text-end whitespace-nowrap" dir="ltr">
-                  {formatMoney(row.amount)}
+                <td className="brand py-2 text-end whitespace-nowrap">
+                  <bdi dir="ltr">{formatMoney(row.amount)}</bdi>
                 </td>
               </tr>
             ))}

@@ -86,22 +86,24 @@ export default async function AdminProjectsPage({
                     {/* The compound was here, and now reads "—" for most rows
                         since it moved into the collapsed details. The code is
                         always present and is what gets quoted to a client. */}
-                    <span className="brand block text-xs text-muted-ink" dir="ltr">
-                      {project.code}
+                    <span className="brand block text-xs text-muted-ink">
+                      <bdi dir="ltr">{project.code}</bdi>
                     </span>
                   </td>
-                  <td className="brand px-4 py-3 text-xs" dir="ltr">
-                    {project.code}
+                  <td className="brand px-4 py-3 text-xs">
+                    <bdi dir="ltr">{project.code}</bdi>
                   </td>
                   {/* Read through the client_id relation, not duplicated here. */}
                   <td className="px-4 py-3 text-muted-ink">
                     {project.clients ? (
                       <>
                         {project.clients.name}
-                        <span className="block text-xs text-muted-ink" dir="ltr">
-                          {/^1\d{9}$/.test(project.clients.phone)
-                            ? `0${project.clients.phone}`
-                            : project.clients.phone}
+                        <span className="block text-xs text-muted-ink">
+                          <bdi dir="ltr">
+                            {/^1\d{9}$/.test(project.clients.phone)
+                              ? `0${project.clients.phone}`
+                              : project.clients.phone}
+                          </bdi>
                         </span>
                       </>
                     ) : (

@@ -60,8 +60,8 @@ function Stat({ label, value }: { label: string; value: number }) {
   return (
     <div className="border border-border bg-white p-6">
       <p className="text-xs text-muted-ink">{label}</p>
-      <p className="brand mt-3 text-3xl" dir="ltr">
-        {value}
+      <p className="brand mt-3 text-3xl">
+        <bdi dir="ltr">{value}</bdi>
       </p>
     </div>
   );

@@ -194,8 +194,8 @@ function Total({
   return (
     <div className="border border-border bg-white p-4">
       <p className="text-xs text-muted-ink">{label}</p>
-      <p className={`brand mt-2 text-lg ${tone}`} dir="ltr">
-        {formatMoney(value)}
+      <p className={`brand mt-2 text-lg ${tone}`}>
+        <bdi dir="ltr">{formatMoney(value)}</bdi>
       </p>
     </div>
   );

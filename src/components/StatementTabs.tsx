@@ -141,8 +141,12 @@ export function StatementTabs({
                   <tbody className="divide-y divide-border">
                     {filtered.map((row) => (
                       <tr key={row.id}>
-                        <td className="py-3 whitespace-nowrap text-muted-ink" dir="ltr">
-                          {row.date}
+                        {/* dir sits on an inline <bdi>, never on the cell: a cell
+                            carrying dir="ltr" resolves its own start/end to the
+                            LTR sides, which pushed every Arabic date against the
+                            item column and every amount away from its header. */}
+                        <td className="py-3 whitespace-nowrap text-muted-ink">
+                          <bdi dir="ltr">{row.date}</bdi>
                         </td>
                         <td className="py-3">{row.item}</td>
                         <td
@@ -150,9 +154,8 @@ export function StatementTabs({
                           className={`brand py-3 text-end whitespace-nowrap ${
                             row.amount < 0 ? "text-green-600" : ""
                           }`}
-                          dir="ltr"
                         >
-                          {formatMoney(row.amount)}
+                          <bdi dir="ltr">{formatMoney(row.amount)}</bdi>
                         </td>
                       </tr>
                     ))}
@@ -180,12 +183,12 @@ export function StatementTabs({
               <tbody className="divide-y divide-border">
                 {payments.map((row) => (
                   <tr key={row.id}>
-                    <td className="py-3 whitespace-nowrap text-muted-ink" dir="ltr">
-                      {row.date}
+                    <td className="py-3 whitespace-nowrap text-muted-ink">
+                      <bdi dir="ltr">{row.date}</bdi>
                     </td>
                     <td className="py-3">{row.label}</td>
-                    <td className="brand py-3 text-end whitespace-nowrap" dir="ltr">
-                      {formatMoney(row.amount)}
+                    <td className="brand py-3 text-end whitespace-nowrap">
+                      <bdi dir="ltr">{formatMoney(row.amount)}</bdi>
                     </td>
                   </tr>
                 ))}

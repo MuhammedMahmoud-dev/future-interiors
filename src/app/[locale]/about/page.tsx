@@ -55,8 +55,8 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
               {engineer.syndicate_no && (
                 <div className="border-s border-accent ps-6">
                   <p className="text-xs text-muted-ink">{t.about.syndicate}</p>
-                  <p className="mt-1" dir="ltr">
-                    {engineer.syndicate_no}
+                  <p className="mt-1">
+                    <bdi dir="ltr">{engineer.syndicate_no}</bdi>
                   </p>
                 </div>
               )}

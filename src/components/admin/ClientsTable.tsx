@@ -152,8 +152,8 @@ function ClientRow({
   return (
     <tr className={`transition-colors hover:bg-surface ${archived ? "text-muted-ink" : ""}`}>
       <td className="px-4 py-3">{client.name}</td>
-      <td className="px-4 py-3" dir="ltr">
-        {displayPhone(client.phone)}
+      <td className="px-4 py-3">
+        <bdi dir="ltr">{displayPhone(client.phone)}</bdi>
       </td>
       <td className="px-4 py-3">{client.projectCount}</td>
       <td className="px-4 py-3">

@@ -42,10 +42,9 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
               <p className="text-xs text-muted-ink">{t.contact.phone}</p>
               <a
                 href={`tel:${engineer.phone}`}
-                dir="ltr"
                 className="brand mt-2 block text-2xl transition-colors hover:text-ink"
               >
-                {engineer.phone}
+                <bdi dir="ltr">{engineer.phone}</bdi>
               </a>
             </div>
           )}
