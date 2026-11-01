@@ -236,7 +236,6 @@ export const en: Dictionary = {
     links: "Links",
     services: "Services",
     contact: "Contact",
-    social: "Follow us",
     rights: "© 2026 Future Interiors",
   },
 

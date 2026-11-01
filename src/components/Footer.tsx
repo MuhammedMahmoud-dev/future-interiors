@@ -4,8 +4,8 @@ import type { Dictionary } from "@/lib/dictionary";
 
 /**
  * Four columns (§8.12): brand, links, services, contact — then the copyright
- * line. The social row is laid out but deliberately not wired up: there are no
- * accounts to point it at yet, and inventing them would be fake content.
+ * line. There is no social row: the business has no accounts to link to, and
+ * empty placeholder circles read as broken links. Add one when accounts exist.
  */
 export function Footer({
   locale,
@@ -37,16 +37,6 @@ export function Footer({
           <div>
             <p className="brand text-xl tracking-[0.18em]">Future Interiors</p>
             <p className="mt-5 max-w-xs text-sm leading-7 text-white/50">{t.footer.blurb}</p>
-
-            <p className="mt-8 text-xs tracking-[0.22em] text-white/60 ltr:uppercase">
-              {t.footer.social}
-            </p>
-            {/* Reserved, not active — there are no accounts to link to yet. */}
-            <div aria-hidden="true" className="mt-3 flex gap-2">
-              {[0, 1, 2].map((slot) => (
-                <span key={slot} className="h-9 w-9 rounded-full border border-white/15" />
-              ))}
-            </div>
           </div>
 
           {/* 2 — Links */}

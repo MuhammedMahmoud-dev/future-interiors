@@ -253,7 +253,6 @@ export const ar = {
     links: "روابط",
     services: "خدماتنا",
     contact: "تواصل",
-    social: "تابعنا",
     rights: "© 2026 Future Interiors",
   },
 
