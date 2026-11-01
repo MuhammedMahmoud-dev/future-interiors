@@ -13,7 +13,7 @@ import { TestimonialsSlider } from "@/components/TestimonialsSlider";
 import { PillButton } from "@/components/ui/PillButton";
 import { getDictionary } from "@/lib/dictionary";
 import { href, isLocale, pick, whatsappLink, type Locale } from "@/lib/i18n";
-import { signMedia } from "@/lib/media";
+import { galleryUrl } from "@/lib/media";
 import { localeMetadata } from "@/lib/pageMeta";
 import {
   getFaqs,
@@ -65,9 +65,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
    * gallery table has no owner, so nothing about a project can empty it.
    */
   const gallery = await getGalleryImages();
-  const signedUrls = await signMedia(gallery.map((image) => image.url));
+  // Stable public links, never signed ones: see galleryUrl.
   const galleryUrls = gallery
-    .map((image) => signedUrls.get(image.url))
+    .map((image) => galleryUrl(image.url))
     .filter((url): url is string => Boolean(url));
 
   const hero = findPublic("hero");
@@ -86,7 +86,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   // in the admin. It used to be one cover per published project.
   const featured: GalleryImage[] = gallery.slice(0, 3).map((image) => ({
     id: image.id,
-    url: signedUrls.get(image.url) ?? "",
+    url: galleryUrl(image.url) ?? "",
     caption: "",
   })).filter((item) => Boolean(item.url));
 

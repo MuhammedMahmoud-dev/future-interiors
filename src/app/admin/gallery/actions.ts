@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { requireAdmin } from "@/lib/admin";
+import { GALLERY_BUCKET } from "@/lib/media";
 import { getSupabase } from "@/lib/supabase";
 
 /**
@@ -53,13 +54,19 @@ export async function uploadGalleryImages(formData: FormData) {
     if (!ALLOWED_TYPES.includes(file.type)) throw new Error(`نوع الملف مش مدعوم: ${file.name}`);
     if (file.size > MAX_BYTES) throw new Error(`الملف كبير أوي (الحد 15 ميجا): ${file.name}`);
 
-    // Unguessable path; the bucket is private but paths should not be enumerable.
+    // Unguessable path: the bucket is public, so a hidden photo is only unlisted.
     const extension = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
     const path = `gallery/${crypto.randomUUID()}.${extension}`;
 
     const { error: uploadError } = await supabase.storage
-      .from("media")
-      .upload(path, file, { contentType: file.type, upsert: false });
+      .from(GALLERY_BUCKET)
+      .upload(path, file, {
+        contentType: file.type,
+        upsert: false,
+        // A path is never reused (random UUID), so the image optimizer may keep it
+        // a year: the photos stay up even while Supabase itself is paused.
+        cacheControl: "31536000",
+      });
     if (uploadError) throw new Error(uploadError.message);
 
     const { error } = await supabase
@@ -67,7 +74,7 @@ export async function uploadGalleryImages(formData: FormData) {
       .insert({ url: path, sort_order: next });
     if (error) {
       // Do not leave an object nothing points at.
-      await supabase.storage.from("media").remove([path]);
+      await supabase.storage.from(GALLERY_BUCKET).remove([path]);
       throw new Error(error.message);
     }
 
@@ -98,7 +105,7 @@ export async function deleteGalleryImage(id: string, path: string) {
   await requireAdmin();
   const supabase = requireDb();
 
-  await supabase.storage.from("media").remove([path]);
+  await supabase.storage.from(GALLERY_BUCKET).remove([path]);
   const { error } = await supabase.from("gallery_images").delete().eq("id", id);
   if (error) throw new Error(error.message);
 

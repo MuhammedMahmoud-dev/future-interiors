@@ -4,6 +4,33 @@ import { getSupabase } from "./supabase";
 const BUCKET = "media";
 
 /**
+ * The works gallery lives in its own PUBLIC bucket, served by plain links that
+ * never expire.
+ *
+ * It used to be signed out of the private bucket like everything else. Public
+ * pages are cached and rebuilt only when someone visits, and the visitor who
+ * triggers a rebuild is handed the old copy — so after a quiet day that copy's
+ * 24-hour links had expired and the first visitor saw no photographs (measured
+ * 2026-11-01: /ar served 57 hours old, all 7 gallery links 33 hours dead). A
+ * link with no expiry cannot go stale with its page. It is also the same URL on
+ * every rebuild, so the image optimizer's cache keeps working instead of
+ * re-processing every photograph after each one.
+ *
+ * Only gallery photographs belong here: they are published by definition. Stage
+ * photos stay private and signed (signMedia). A hidden gallery photo is still
+ * reachable by anyone holding its random UUID path — unlisted, not secret.
+ */
+export const GALLERY_BUCKET = "gallery";
+
+/** Stable public URL for a gallery object path; null when Supabase is unconfigured. */
+export function galleryUrl(path: string): string | null {
+  const base = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  if (!base || !path) return null;
+  const encoded = path.split("/").map(encodeURIComponent).join("/");
+  return `${base}/storage/v1/object/public/${GALLERY_BUCKET}/${encoded}`;
+}
+
+/**
  * The bucket is private, so images are served through signed URLs minted on the
  * server. Expiry (24h) is deliberately far longer than the pages' revalidate
  * window (1h), so a cached page never outlives its own image links.

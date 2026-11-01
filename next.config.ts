@@ -15,6 +15,12 @@ const nextConfig: NextConfig = {
             hostname: supabaseHostname,
             pathname: "/storage/v1/object/sign/**",
           },
+          // The public works gallery (src/lib/media.ts, galleryUrl).
+          {
+            protocol: "https",
+            hostname: supabaseHostname,
+            pathname: "/storage/v1/object/public/gallery/**",
+          },
         ]
       : [],
   },

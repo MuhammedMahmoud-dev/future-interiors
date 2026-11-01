@@ -4,7 +4,7 @@ import { EmptyState, PageHeader } from "@/components/Sections";
 import { Lightbox, type GalleryImage } from "@/components/Lightbox";
 import { getDictionary } from "@/lib/dictionary";
 import { isLocale, type Locale } from "@/lib/i18n";
-import { signMedia } from "@/lib/media";
+import { galleryUrl } from "@/lib/media";
 import { getGalleryImages } from "@/lib/data";
 import { localeMetadata } from "@/lib/pageMeta";
 
@@ -42,12 +42,11 @@ export default async function WorksPage({ params }: { params: Promise<{ locale: 
    * page.
    */
   const gallery = await getGalleryImages();
-  const signed = await signMedia(gallery.map((image) => image.url));
-
+  // Stable public links, never signed ones: see galleryUrl.
   const images: GalleryImage[] = gallery
     .map((image) => ({
       id: image.id,
-      url: signed.get(image.url),
+      url: galleryUrl(image.url) ?? undefined,
       caption: "",
     }))
     .filter((image): image is GalleryImage => Boolean(image.url));

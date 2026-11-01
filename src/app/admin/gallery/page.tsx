@@ -2,7 +2,7 @@ import { AdminShell } from "@/components/admin/AdminShell";
 import { GalleryManager, type GalleryItem } from "@/components/admin/GalleryManager";
 import { requireAdmin } from "@/lib/admin";
 import { listGalleryImages } from "@/lib/adminData";
-import { signMedia } from "@/lib/media";
+import { galleryUrl } from "@/lib/media";
 
 export const dynamic = "force-dynamic";
 
@@ -16,12 +16,10 @@ export default async function AdminGalleryPage() {
   await requireAdmin();
 
   const rows = await listGalleryImages();
-  const signed = await signMedia(rows.map((row) => row.url));
-
   const items: GalleryItem[] = rows.map((row) => ({
     id: row.id,
     url: row.url,
-    signedUrl: signed.get(row.url) ?? null,
+    signedUrl: galleryUrl(row.url),
     caption_ar: row.caption_ar,
     is_public: row.is_public,
   }));

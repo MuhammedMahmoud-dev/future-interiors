@@ -118,3 +118,35 @@ test("gallery reads go through the column allowlist", () => {
   assert.match(body, /PUBLIC_GALLERY_COLUMNS/, "getGalleryImages does not use the allowlist");
   assert.doesNotMatch(body, /select\("\*"\)/, "getGalleryImages selects everything");
 });
+
+/**
+ * Gallery photographs are served by links that never expire.
+ *
+ * Signed links expire, and a cached page is handed to its next visitor before
+ * it is rebuilt — so after a quiet day the homepage went out with every gallery
+ * link dead (2026-11-01: 57 hours old, links expired 33 hours earlier). Signing
+ * gallery photos again would bring that straight back.
+ */
+test("the public pages never sign gallery photographs", () => {
+  for (const page of ["src/app/[locale]/works/page.tsx", "src/app/[locale]/page.tsx"]) {
+    const source = stripComments(readFileSync(page, "utf8"));
+    assert.doesNotMatch(source, /signMedia/, `${page} signs gallery links, which expire`);
+    assert.match(source, /galleryUrl\(/, `${page} does not use the stable gallery links`);
+  }
+});
+
+test("gallery uploads and deletes use the public gallery bucket", () => {
+  const source = stripComments(GALLERY_ACTIONS);
+  assert.doesNotMatch(source, /from\("media"\)/, "a gallery action still writes the private bucket");
+  assert.equal(source.match(/from\(GALLERY_BUCKET\)/g)?.length, 3, "upload + 2 removes expected");
+});
+
+test("a gallery link is the stable public path, with no token", async () => {
+  process.env.NEXT_PUBLIC_SUPABASE_URL = "https://example.supabase.co";
+  const { galleryUrl } = await import("./media.ts");
+  assert.equal(
+    galleryUrl("gallery/a b.jpeg"),
+    "https://example.supabase.co/storage/v1/object/public/gallery/gallery/a%20b.jpeg",
+  );
+  assert.equal(galleryUrl(""), null);
+});
